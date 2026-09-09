@@ -902,8 +902,8 @@ function OnboardingScreen({ onSubmit, onLoginWithSession }) {
           <label style={labelStyle}>{t.codeLabel}</label>
           <input
             style={{ ...inputStyle, textAlign: "center", letterSpacing: 4, fontSize: 16, marginBottom: 8 }}
-            value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-            inputMode="numeric" maxLength={6} placeholder="000000"
+            value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 8))}
+            inputMode="numeric" maxLength={8} placeholder="00000000"
           />
           {error && <div style={{ color: "#B0473C", fontSize: 12.5, marginBottom: 8 }}>{error}</div>}
           <button

@@ -8,9 +8,9 @@ import {
 
 // ---------------------------------------------------------------------------
 // window.storage shim — the real Claude.ai artifact preview provides this API
-// natively. Outside that sandbox (e.g. once deployed to your own site), it
-// doesn't exist, so we polyfill the same shape using the browser's
-// localStorage. Nothing else in this file needs to change.
+// natively. Outside that sandbox (this deployed site), it doesn't exist, so
+// we polyfill the same shape using the browser's localStorage. Nothing else
+// in this file needs to change.
 // ---------------------------------------------------------------------------
 if (typeof window !== "undefined" && !window.storage) {
   const nsKey = (key) => `pronahome:${key}`;
@@ -64,6 +64,8 @@ const STRINGS = {
     onboardNamePlaceholder: "p.sh. Arben Leka", onboardEmailPlaceholder: "p.sh. arben@shembull.com",
     onboardError: "Shkruaj emrin tënd dhe një email të vlefshëm.",
     onboardSubmit: "Fillo të kërkosh", onboardSubmitting: "Duke vazhduar...",
+    sendCodeBtn: "Dërgo kodin", codeSentTo: (email) => `Dërguam një kod 6-shifror në ${email}`,
+    useAnotherEmail: "Përdor një email tjetër", almostDoneHint: "Edhe pak — si të quajmë?",
     onboardTerms: "Duke vazhduar, pranon Kushtet e Përdorimit të PronaHome.",
     editTitle: "Ndrysho profilin", saveChanges: "Ruaj ndryshimet", saving: "Duke ruajtur...",
     sectionAccountType: "Lloji i llogarisë", accountTypeIndividual: "Individ", accountTypeAgency: "Agjenci / Profesionist",
@@ -168,6 +170,8 @@ const STRINGS = {
     onboardNamePlaceholder: "z. B. Anna Krasniqi", onboardEmailPlaceholder: "z. B. anna@beispiel.de",
     onboardError: "Gib deinen Namen und eine gültige E-Mail-Adresse ein.",
     onboardSubmit: "Jetzt starten", onboardSubmitting: "Wird fortgesetzt...",
+    sendCodeBtn: "Code senden", codeSentTo: (email) => `Wir haben einen 6-stelligen Code an ${email} gesendet`,
+    useAnotherEmail: "Andere E-Mail verwenden", almostDoneHint: "Fast fertig — wie sollen wir dich nennen?",
     onboardTerms: "Mit dem Fortfahren akzeptierst du die Nutzungsbedingungen von PronaHome.",
     editTitle: "Profil bearbeiten", saveChanges: "Änderungen speichern", saving: "Wird gespeichert...",
     sectionAccountType: "Kontotyp", accountTypeIndividual: "Privatperson", accountTypeAgency: "Agentur / Profi",
@@ -272,6 +276,8 @@ const STRINGS = {
     onboardNamePlaceholder: "e.g. Arben Leka", onboardEmailPlaceholder: "e.g. arben@example.com",
     onboardError: "Enter your name and a valid email address.",
     onboardSubmit: "Start searching", onboardSubmitting: "Continuing...",
+    sendCodeBtn: "Send code", codeSentTo: (email) => `We sent a 6-digit code to ${email}`,
+    useAnotherEmail: "Use a different email", almostDoneHint: "Almost done — what should we call you?",
     onboardTerms: "By continuing, you accept PronaHome's Terms of Use.",
     editTitle: "Edit profile", saveChanges: "Save changes", saving: "Saving...",
     sectionAccountType: "Account type", accountTypeIndividual: "Individual", accountTypeAgency: "Agency / Professional",
@@ -559,18 +565,99 @@ const SUPABASE_CONFIGURED = !SUPABASE_URL.includes("YOUR-PROJECT") && !SUPABASE_
 let lastSupabaseError = null; // surfaced in a debug banner so connection issues are visible on-device, not just in devtools
 
 async function supabaseFetch(path, options = {}) {
+  const token = getAccessToken();
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     ...options,
     headers: {
       apikey: SUPABASE_ANON_KEY,
       "Content-Type": "application/json",
       Prefer: options.prefer || "return=representation",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(options.headers || {}),
     },
   });
   if (!res.ok) throw new Error(`Supabase ${res.status}: ${await res.text()}`);
   const text = await res.text();
   return text ? JSON.parse(text) : null;
+}
+
+// ---------------------------------------------------------------------------
+// Supabase Auth — Phase 2: real accounts via email one-time codes.
+// Same REST-only approach as the data layer above (no SDK). A session
+// (access token + user) is cached in memory and persisted so it survives
+// a page reload, using the same window.storage/localStorage layer as
+// everything else in this file.
+// ---------------------------------------------------------------------------
+let currentSession = null; // { access_token, refresh_token, user }
+function getAccessToken() {
+  return currentSession ? currentSession.access_token : null;
+}
+async function authFetch(path, body) {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/${path}`, {
+    method: "POST",
+    headers: { apikey: SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error_description || data.msg || data.error || `Auth ${res.status}`);
+  return data;
+}
+async function sendLoginCode(email) {
+  // create_user: true means this doubles as sign-up on first use.
+  return authFetch("otp", { email, create_user: true });
+}
+async function verifyLoginCode(email, code) {
+  const data = await authFetch("verify", { type: "email", email, token: code });
+  currentSession = { access_token: data.access_token, refresh_token: data.refresh_token, user: data.user };
+  await savePersonal("session", currentSession);
+  return currentSession;
+}
+async function restoreSession() {
+  const saved = await loadPersonal("session", null);
+  if (saved && saved.access_token) currentSession = saved;
+  return currentSession;
+}
+async function signOutRemote() {
+  if (!currentSession) return;
+  try {
+    await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
+      method: "POST",
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${currentSession.access_token}` },
+    });
+  } catch (e) {}
+  currentSession = null;
+  await deletePersonal("session");
+}
+
+// profiles / favorites row <-> app-shape mapping (DB uses snake-ish names already close to ours)
+async function loadProfileRemote(userId) {
+  const rows = await supabaseFetch(`profiles?id=eq.${userId}&select=*`);
+  if (!rows || !rows[0]) return null;
+  const r = rows[0];
+  return {
+    name: r.name || "", email: r.email || "", phone: r.phone || "", avatar: r.avatar || null,
+    city: r.city || "", bio: r.bio || "", company: r.company || "", accountType: r.account_type || "individual",
+    emailVerified: !!r.email_verified, phoneVerified: !!r.phone_verified, createdAt: r.created_at,
+  };
+}
+async function saveProfileRemote(userId, profile) {
+  const row = {
+    id: userId, name: profile.name || "", email: profile.email || "", phone: profile.phone || "",
+    avatar: profile.avatar || null, city: profile.city || "", bio: profile.bio || "", company: profile.company || "",
+    account_type: profile.accountType || "individual",
+    email_verified: !!profile.emailVerified, phone_verified: !!profile.phoneVerified,
+  };
+  await supabaseFetch("profiles", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=representation" }, body: JSON.stringify([row]) });
+}
+async function loadFavoritesRemote(userId) {
+  const rows = await supabaseFetch(`favorites?user_id=eq.${userId}&select=listing_id`);
+  return (rows || []).map((r) => r.listing_id);
+}
+async function addFavoriteRemote(userId, listingId) {
+  await supabaseFetch("favorites", { method: "POST", body: JSON.stringify([{ user_id: userId, listing_id: listingId }]) });
+}
+async function removeFavoriteRemote(userId, listingId) {
+  await supabaseFetch(`favorites?user_id=eq.${userId}&listing_id=eq.${encodeURIComponent(listingId)}`, { method: "DELETE" });
 }
 
 // Our JS listing objects use `desc`; the DB column is `description` (avoids
@@ -702,17 +789,64 @@ const labelStyle = { fontSize: 12, fontWeight: 600, color: "var(--ph-text-muted)
 // ---------------------------------------------------------------------------
 // Onboarding / login
 // ---------------------------------------------------------------------------
-function OnboardingScreen({ onSubmit }) {
+function OnboardingScreen({ onSubmit, onLoginWithSession }) {
   const { t } = useLang();
-  const [name, setName] = useState("");
+
+  // --- Real login path (Supabase configured): email -> code -> (name if new) ---
+  const [step, setStep] = useState("email"); // "email" | "code" | "name"
   const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const submit = async () => {
+  const sendCode = async () => {
+    if (!email.trim().includes("@")) { setError(t.onboardError); return; }
+    setError(""); setSaving(true);
+    try {
+      await sendLoginCode(email.trim());
+      setStep("code");
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+  const confirmCode = async () => {
+    if (code.trim().length < 6) { setError(t.wrongCode); return; }
+    setError(""); setSaving(true);
+    try {
+      const session = await verifyLoginCode(email.trim(), code.trim());
+      let profile = await loadProfileRemote(session.user.id);
+      if (profile && profile.name) {
+        await onLoginWithSession(session, profile);
+      } else {
+        setStep("name");
+      }
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+  const finishSignup = async () => {
+    if (!name.trim()) { setError(t.onboardError); return; }
+    setError(""); setSaving(true);
+    try {
+      const profile = { name: name.trim(), email: email.trim(), emailVerified: true, accountType: "individual" };
+      await saveProfileRemote(currentSession.user.id, profile);
+      await onLoginWithSession(currentSession, { ...profile, createdAt: new Date().toISOString() });
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // --- Local fallback path (Supabase not configured yet) ---
+  const submitLocal = async () => {
     if (!name.trim() || !email.trim().includes("@")) { setError(t.onboardError); return; }
-    setError("");
-    setSaving(true);
+    setError(""); setSaving(true);
     await onSubmit({ name: name.trim(), email: email.trim() });
     setSaving(false);
   };
@@ -730,26 +864,75 @@ function OnboardingScreen({ onSubmit }) {
         <div style={{ fontSize: 12.5, color: "var(--ph-text-muted)", marginTop: 4, textAlign: "center" }}>{t.tagline}</div>
       </div>
 
-      <div style={{ marginBottom: 12 }}>
-        <label style={labelStyle}>{t.onboardNameLabel}</label>
-        <input style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} placeholder={t.onboardNamePlaceholder} />
-      </div>
-      <div style={{ marginBottom: 8 }}>
-        <label style={labelStyle}>{t.onboardEmailLabel}</label>
-        <input style={inputStyle} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.onboardEmailPlaceholder} />
-      </div>
-      {error && <div style={{ color: "#B0473C", fontSize: 12.5, marginBottom: 8 }}>{error}</div>}
-
-      <button
-        onClick={submit} disabled={saving}
-        style={{
-          width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0",
-          fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, marginTop: 10,
-          cursor: saving ? "default" : "pointer", opacity: saving ? 0.7 : 1,
-        }}
-      >
-        {saving ? t.onboardSubmitting : t.onboardSubmit}
-      </button>
+      {!SUPABASE_CONFIGURED ? (
+        <>
+          <div style={{ marginBottom: 12 }}>
+            <label style={labelStyle}>{t.onboardNameLabel}</label>
+            <input style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} placeholder={t.onboardNamePlaceholder} />
+          </div>
+          <div style={{ marginBottom: 8 }}>
+            <label style={labelStyle}>{t.onboardEmailLabel}</label>
+            <input style={inputStyle} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.onboardEmailPlaceholder} />
+          </div>
+          {error && <div style={{ color: "#B0473C", fontSize: 12.5, marginBottom: 8 }}>{error}</div>}
+          <button
+            onClick={submitLocal} disabled={saving}
+            style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, marginTop: 10, cursor: saving ? "default" : "pointer", opacity: saving ? 0.7 : 1 }}
+          >
+            {saving ? t.onboardSubmitting : t.onboardSubmit}
+          </button>
+        </>
+      ) : step === "email" ? (
+        <>
+          <div style={{ marginBottom: 8 }}>
+            <label style={labelStyle}>{t.onboardEmailLabel}</label>
+            <input style={inputStyle} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.onboardEmailPlaceholder} />
+          </div>
+          {error && <div style={{ color: "#B0473C", fontSize: 12.5, marginBottom: 8 }}>{error}</div>}
+          <button
+            onClick={sendCode} disabled={saving}
+            style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, marginTop: 10, cursor: saving ? "default" : "pointer", opacity: saving ? 0.7 : 1 }}
+          >
+            {saving ? t.onboardSubmitting : t.sendCodeBtn}
+          </button>
+        </>
+      ) : step === "code" ? (
+        <>
+          <div style={{ fontSize: 12.5, color: "var(--ph-text-muted)", marginBottom: 12 }}>{t.codeSentTo(email)}</div>
+          <label style={labelStyle}>{t.codeLabel}</label>
+          <input
+            style={{ ...inputStyle, textAlign: "center", letterSpacing: 4, fontSize: 16, marginBottom: 8 }}
+            value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+            inputMode="numeric" maxLength={6} placeholder="000000"
+          />
+          {error && <div style={{ color: "#B0473C", fontSize: 12.5, marginBottom: 8 }}>{error}</div>}
+          <button
+            onClick={confirmCode} disabled={saving}
+            style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, marginTop: 10, cursor: saving ? "default" : "pointer", opacity: saving ? 0.7 : 1 }}
+          >
+            {saving ? t.onboardSubmitting : t.confirmBtn}
+          </button>
+          <button
+            onClick={() => { setStep("email"); setCode(""); setError(""); }}
+            style={{ width: "100%", border: "none", background: "none", color: "var(--ph-text-muted)", fontSize: 12, marginTop: 10, cursor: "pointer" }}
+          >
+            {t.useAnotherEmail}
+          </button>
+        </>
+      ) : (
+        <>
+          <div style={{ fontSize: 12.5, color: "var(--ph-text-muted)", marginBottom: 12 }}>{t.almostDoneHint}</div>
+          <label style={labelStyle}>{t.onboardNameLabel}</label>
+          <input style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} placeholder={t.onboardNamePlaceholder} />
+          {error && <div style={{ color: "#B0473C", fontSize: 12.5, marginTop: 8 }}>{error}</div>}
+          <button
+            onClick={finishSignup} disabled={saving}
+            style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, marginTop: 10, cursor: saving ? "default" : "pointer", opacity: saving ? 0.7 : 1 }}
+          >
+            {saving ? t.onboardSubmitting : t.onboardSubmit}
+          </button>
+        </>
+      )}
       <div style={{ fontSize: 11, color: "var(--ph-text-muted)", textAlign: "center", marginTop: 12 }}>{t.onboardTerms}</div>
     </div>
   );
@@ -2539,6 +2722,7 @@ export default function PronaHomeApp() {
   const [favorites, setFavorites] = useState(new Set());
   const [myIds, setMyIds] = useState(new Set());
   const [profile, setProfile] = useState(null);
+  const [userId, setUserId] = useState(null); // Supabase auth user id, once logged in
   const [openListing, setOpenListing] = useState(null);
   const [showNewListing, setShowNewListing] = useState(false);
   const [showMyListings, setShowMyListings] = useState(false);
@@ -2559,24 +2743,48 @@ export default function PronaHomeApp() {
   useEffect(() => {
     (async () => {
       try {
-        const [sharedListings, sharedAgencies, favIds, mine, savedProfile, savedLang, savedSettings, savedAccent] = await Promise.all([
+        const [sharedListings, sharedAgencies, savedLang, savedSettings, savedAccent] = await Promise.all([
           loadSharedListings(),
           loadSharedAgencies(),
-          loadPersonal("favorites", []),
-          loadPersonal("my-listings", []),
-          loadPersonal("profile", null),
           loadPersonal("language", "sq"),
           loadPersonal("settings", DEFAULT_SETTINGS),
           loadPersonal("accent", "gold"),
         ]);
         setListings(sharedListings);
         setAgencies(sharedAgencies);
-        setFavorites(new Set(favIds));
-        setMyIds(new Set(mine));
-        setProfile(savedProfile);
         setLangState(savedLang || "sq");
         setSettings({ ...DEFAULT_SETTINGS, ...savedSettings });
         setAccentId(savedAccent && ACCENT_THEMES.some((a) => a.id === savedAccent) ? savedAccent : "gold");
+
+        if (SUPABASE_CONFIGURED) {
+          // Real accounts: try to restore a previously verified session.
+          const session = await restoreSession();
+          if (session) {
+            try {
+              const [remoteProfile, favIds] = await Promise.all([
+                loadProfileRemote(session.user.id),
+                loadFavoritesRemote(session.user.id),
+              ]);
+              setUserId(session.user.id);
+              setProfile(remoteProfile);
+              setFavorites(new Set(favIds));
+            } catch (e) {
+              // Session likely expired — fall back to logged-out state.
+              currentSession = null;
+              await deletePersonal("session");
+            }
+          }
+        } else {
+          // No Supabase yet: local-only profile/favorites, same as before.
+          const [favIds, mine, savedProfile] = await Promise.all([
+            loadPersonal("favorites", []),
+            loadPersonal("my-listings", []),
+            loadPersonal("profile", null),
+          ]);
+          setFavorites(new Set(favIds));
+          setMyIds(new Set(mine));
+          setProfile(savedProfile);
+        }
       } catch (e) {
         console.error(e);
         setListings(SEED_LISTINGS);
@@ -2587,6 +2795,14 @@ export default function PronaHomeApp() {
     })();
   }, []);
 
+  // In real-account mode, "my listings" is simply every listing whose owner_id
+  // matches the logged-in user — no separate list to keep in sync.
+  useEffect(() => {
+    if (SUPABASE_CONFIGURED && userId) {
+      setMyIds(new Set(listings.filter((l) => l.owner_id === userId).map((l) => l.id)));
+    }
+  }, [listings, userId]);
+
   const setLang = (l) => {
     setLangState(l);
     savePersonal("language", l);
@@ -2595,8 +2811,13 @@ export default function PronaHomeApp() {
   const toggleFav = (id) => {
     setFavorites((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      savePersonal("favorites", Array.from(next));
+      const isRemoving = next.has(id);
+      isRemoving ? next.delete(id) : next.add(id);
+      if (SUPABASE_CONFIGURED && userId) {
+        (isRemoving ? removeFavoriteRemote(userId, id) : addFavoriteRemote(userId, id)).catch((e) => console.error(e));
+      } else {
+        savePersonal("favorites", Array.from(next));
+      }
       return next;
     });
   };
@@ -2607,15 +2828,19 @@ export default function PronaHomeApp() {
     const enteredAgency = (newListing.agency || "Privat").trim();
     const existingMatch = agencies.find((a) => a.toLowerCase() === enteredAgency.toLowerCase());
     const resolvedAgency = existingMatch || enteredAgency;
-    const listingToSave = { ...newListing, agency: resolvedAgency };
+    const ownerId = SUPABASE_CONFIGURED && userId ? userId : (newListing.owner_id || null);
+    const listingToSave = { ...newListing, agency: resolvedAgency, owner_id: ownerId };
 
     const nextListings = [listingToSave, ...listings];
     setListings(nextListings);
-    const nextMine = new Set(myIds);
-    nextMine.add(listingToSave.id);
-    setMyIds(nextMine);
 
-    const saves = [saveSharedListings(nextListings), saveListingRemote(listingToSave), savePersonal("my-listings", Array.from(nextMine))];
+    const saves = [saveSharedListings(nextListings), saveListingRemote(listingToSave)];
+    if (!SUPABASE_CONFIGURED) {
+      const nextMine = new Set(myIds);
+      nextMine.add(listingToSave.id);
+      setMyIds(nextMine);
+      saves.push(savePersonal("my-listings", Array.from(nextMine)));
+    }
     if (!existingMatch) {
       const nextAgencies = [...agencies, resolvedAgency];
       setAgencies(nextAgencies);
@@ -2629,19 +2854,21 @@ export default function PronaHomeApp() {
   const deleteListing = async (id) => {
     const nextListings = listings.filter((l) => l.id !== id);
     setListings(nextListings);
-    const nextMine = new Set(myIds);
-    nextMine.delete(id);
-    setMyIds(nextMine);
     const nextFav = new Set(favorites);
     nextFav.delete(id);
     setFavorites(nextFav);
     setOpenListing(null);
-    await Promise.all([
-      saveSharedListings(nextListings),
-      deleteListingRemote(id),
-      savePersonal("my-listings", Array.from(nextMine)),
-      savePersonal("favorites", Array.from(nextFav)),
-    ]);
+
+    const saves = [saveSharedListings(nextListings), deleteListingRemote(id)];
+    if (SUPABASE_CONFIGURED && userId) {
+      saves.push(removeFavoriteRemote(userId, id).catch(() => {}));
+    } else {
+      const nextMine = new Set(myIds);
+      nextMine.delete(id);
+      setMyIds(nextMine);
+      saves.push(savePersonal("my-listings", Array.from(nextMine)), savePersonal("favorites", Array.from(nextFav)));
+    }
+    await Promise.all(saves);
   };
 
   const completeOnboarding = async (p) => {
@@ -2649,15 +2876,25 @@ export default function PronaHomeApp() {
     setProfile(withMeta);
     await savePersonal("profile", withMeta);
   };
+  const onLoginWithSession = async (session, profileData) => {
+    setUserId(session.user.id);
+    setProfile(profileData);
+    try {
+      const favIds = await loadFavoritesRemote(session.user.id);
+      setFavorites(new Set(favIds));
+    } catch (e) { console.error(e); }
+  };
   const saveProfileEdit = async (p) => {
     setProfile(p);
-    await savePersonal("profile", p);
+    if (SUPABASE_CONFIGURED && userId) await saveProfileRemote(userId, p);
+    else await savePersonal("profile", p);
     setShowEditProfile(false);
   };
   const updateAvatar = async (dataUrl) => {
     const next = { ...profile, avatar: dataUrl };
     setProfile(next);
-    await savePersonal("profile", next);
+    if (SUPABASE_CONFIGURED && userId) await saveProfileRemote(userId, next);
+    else await savePersonal("profile", next);
   };
   const updateSettings = async (next) => {
     setSettings(next);
@@ -2668,24 +2905,32 @@ export default function PronaHomeApp() {
     await savePersonal("accent", id);
   };
   const logout = async () => {
+    if (SUPABASE_CONFIGURED) await signOutRemote();
     setProfile(null);
+    setUserId(null);
+    setFavorites(new Set());
+    setMyIds(new Set());
     await deletePersonal("profile");
   };
   const deleteAccount = async () => {
     setShowAccount(false);
+    if (SUPABASE_CONFIGURED && userId) {
+      try { await supabaseFetch(`profiles?id=eq.${userId}`, { method: "DELETE" }); } catch (e) { console.error(e); }
+      await signOutRemote();
+      setUserId(null);
+    } else {
+      await Promise.all([savePersonal("favorites", []), savePersonal("my-listings", [])]);
+    }
     setProfile(null);
     setFavorites(new Set());
     setMyIds(new Set());
-    await Promise.all([
-      deletePersonal("profile"),
-      savePersonal("favorites", []),
-      savePersonal("my-listings", []),
-    ]);
+    await deletePersonal("profile");
   };
   const verifyField = async (field) => {
     const next = { ...profile, [field === "email" ? "emailVerified" : "phoneVerified"]: true };
     setProfile(next);
-    await savePersonal("profile", next);
+    if (SUPABASE_CONFIGURED && userId) await saveProfileRemote(userId, next);
+    else await savePersonal("profile", next);
   };
 
   const t = STRINGS[lang] || STRINGS.sq;
@@ -2746,7 +2991,7 @@ export default function PronaHomeApp() {
               <span style={{ fontSize: 12.5, color: "var(--ph-text-muted)" }}>{t.loadingText}</span>
             </div>
           ) : !profile ? (
-            <OnboardingScreen onSubmit={completeOnboarding} />
+            <OnboardingScreen onSubmit={completeOnboarding} onLoginWithSession={onLoginWithSession} />
           ) : (
             <>
               {tab === "kerko" && (

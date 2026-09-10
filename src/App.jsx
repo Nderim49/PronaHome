@@ -64,8 +64,17 @@ const STRINGS = {
     onboardNamePlaceholder: "p.sh. Arben Leka", onboardEmailPlaceholder: "p.sh. arben@shembull.com",
     onboardError: "Shkruaj emrin tënd dhe një email të vlefshëm.",
     onboardSubmit: "Fillo të kërkosh", onboardSubmitting: "Duke vazhduar...",
-    sendCodeBtn: "Dërgo kodin", codeSentTo: (email) => `Dërguam një kod 6-shifror në ${email}`,
+    sendCodeBtn: "Regjistrohu", loginBtn: "Kyçu", codeSentTo: (email) => `Dërguam një kod 6-shifror në ${email}`,
     useAnotherEmail: "Përdor një email tjetër", almostDoneHint: "Edhe pak — si të quajmë?",
+    continueAsGuestBtn: "Vazhdo si vizitor", orDividerLabel: "OSE", guestPromptTitle: "Nevojitet regjistrimi",
+    passwordLabel: "Fjalëkalimi", passwordPlaceholder: "Të paktën 6 shkronja/shifra",
+    setPasswordHint: "Vendos një fjalëkalim për t'u kyçur më shpejt herën tjetër.",
+    passwordTooShortError: "Fjalëkalimi duhet të ketë të paktën 6 shkronja/shifra.",
+    forgotCodeLink: "Hyr me kod në vend të kësaj", backToStart: "Kthehu",
+    guestPromptMessage: "Për të ruajtur një pronë, kontaktuar agjentin, ose publikuar një shpallje, duhet së pari të regjistrohesh ose të kyçesh.",
+    guestPromptRegister: "Regjistrohu tani",
+    guestProfileTitle: "Nuk je i kyçur", guestProfileMessage: "Kyçu ose regjistrohu për të parë profilin tënd, për të ruajtur shpalljet e tua dhe më shumë.",
+    guestProfileLoginBtn: "Kyçu / Regjistrohu",
     onboardTerms: "Duke vazhduar, pranon Kushtet e Përdorimit të PronaHome.",
     editTitle: "Ndrysho profilin", saveChanges: "Ruaj ndryshimet", saving: "Duke ruajtur...",
     sectionAccountType: "Lloji i llogarisë", accountTypeIndividual: "Individ", accountTypeAgency: "Agjenci / Profesionist",
@@ -170,8 +179,17 @@ const STRINGS = {
     onboardNamePlaceholder: "z. B. Anna Krasniqi", onboardEmailPlaceholder: "z. B. anna@beispiel.de",
     onboardError: "Gib deinen Namen und eine gültige E-Mail-Adresse ein.",
     onboardSubmit: "Jetzt starten", onboardSubmitting: "Wird fortgesetzt...",
-    sendCodeBtn: "Code senden", codeSentTo: (email) => `Wir haben einen 6-stelligen Code an ${email} gesendet`,
+    sendCodeBtn: "Registrieren", loginBtn: "Anmelden", codeSentTo: (email) => `Wir haben einen 6-stelligen Code an ${email} gesendet`,
     useAnotherEmail: "Andere E-Mail verwenden", almostDoneHint: "Fast fertig — wie sollen wir dich nennen?",
+    continueAsGuestBtn: "Als Gast fortfahren", orDividerLabel: "ODER", guestPromptTitle: "Anmeldung erforderlich",
+    passwordLabel: "Passwort", passwordPlaceholder: "Mindestens 6 Zeichen",
+    setPasswordHint: "Lege ein Passwort fest, um dich nächstes Mal schneller anzumelden.",
+    passwordTooShortError: "Das Passwort muss mindestens 6 Zeichen haben.",
+    forgotCodeLink: "Stattdessen mit Code anmelden", backToStart: "Zurück",
+    guestPromptMessage: "Um eine Immobilie zu speichern, den Makler zu kontaktieren oder eine Anzeige zu veröffentlichen, musst du dich zuerst registrieren oder anmelden.",
+    guestPromptRegister: "Jetzt registrieren",
+    guestProfileTitle: "Du bist nicht angemeldet", guestProfileMessage: "Melde dich an oder registriere dich, um dein Profil zu sehen, Anzeigen zu speichern und mehr.",
+    guestProfileLoginBtn: "Anmelden / Registrieren",
     onboardTerms: "Mit dem Fortfahren akzeptierst du die Nutzungsbedingungen von PronaHome.",
     editTitle: "Profil bearbeiten", saveChanges: "Änderungen speichern", saving: "Wird gespeichert...",
     sectionAccountType: "Kontotyp", accountTypeIndividual: "Privatperson", accountTypeAgency: "Agentur / Profi",
@@ -276,8 +294,17 @@ const STRINGS = {
     onboardNamePlaceholder: "e.g. Arben Leka", onboardEmailPlaceholder: "e.g. arben@example.com",
     onboardError: "Enter your name and a valid email address.",
     onboardSubmit: "Start searching", onboardSubmitting: "Continuing...",
-    sendCodeBtn: "Send code", codeSentTo: (email) => `We sent a 6-digit code to ${email}`,
+    sendCodeBtn: "Register", loginBtn: "Log in", codeSentTo: (email) => `We sent a 6-digit code to ${email}`,
     useAnotherEmail: "Use a different email", almostDoneHint: "Almost done — what should we call you?",
+    continueAsGuestBtn: "Continue as guest", orDividerLabel: "OR", guestPromptTitle: "Sign-in required",
+    passwordLabel: "Password", passwordPlaceholder: "At least 6 characters",
+    setPasswordHint: "Set a password to log in faster next time.",
+    passwordTooShortError: "Password must be at least 6 characters.",
+    forgotCodeLink: "Sign in with code instead", backToStart: "Back",
+    guestPromptMessage: "To save a property, contact the agent, or publish a listing, you need to register or sign in first.",
+    guestPromptRegister: "Register now",
+    guestProfileTitle: "You're not signed in", guestProfileMessage: "Sign in or register to see your profile, save listings, and more.",
+    guestProfileLoginBtn: "Log in / Register",
     onboardTerms: "By continuing, you accept PronaHome's Terms of Use.",
     editTitle: "Edit profile", saveChanges: "Save changes", saving: "Saving...",
     sectionAccountType: "Account type", accountTypeIndividual: "Individual", accountTypeAgency: "Agency / Professional",
@@ -612,6 +639,29 @@ async function verifyLoginCode(email, code) {
   await savePersonal("session", currentSession);
   return currentSession;
 }
+async function passwordSignIn(email, password) {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+    method: "POST",
+    headers: { apikey: SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error_description || data.msg || data.error || `Auth ${res.status}`);
+  currentSession = { access_token: data.access_token, refresh_token: data.refresh_token, user: data.user };
+  await savePersonal("session", currentSession);
+  return currentSession;
+}
+async function setAccountPassword(password) {
+  if (!currentSession) throw new Error("Not signed in");
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+    method: "PUT",
+    headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${currentSession.access_token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ password }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error_description || data.msg || data.error || `Auth ${res.status}`);
+  return data;
+}
 async function restoreSession() {
   const saved = await loadPersonal("session", null);
   if (saved && saved.access_token) currentSession = saved;
@@ -789,14 +839,17 @@ const labelStyle = { fontSize: 12, fontWeight: 600, color: "var(--ph-text-muted)
 // ---------------------------------------------------------------------------
 // Onboarding / login
 // ---------------------------------------------------------------------------
-function OnboardingScreen({ onSubmit, onLoginWithSession }) {
+function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
   const { t } = useLang();
 
-  // --- Real login path (Supabase configured): email -> code -> (name if new) ---
-  const [step, setStep] = useState("email"); // "email" | "code" | "name"
+  // --- Real accounts (Supabase configured) ---
+  // "start" (choose) -> "reg-email" -> "reg-code" -> "reg-finish" (name+password, new users only)
+  // "start" -> "login" (email+password, for returning users)
+  const [step, setStep] = useState("start");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -805,7 +858,7 @@ function OnboardingScreen({ onSubmit, onLoginWithSession }) {
     setError(""); setSaving(true);
     try {
       await sendLoginCode(email.trim());
-      setStep("code");
+      setStep("reg-code");
     } catch (e) {
       setError(e.message);
     } finally {
@@ -817,11 +870,11 @@ function OnboardingScreen({ onSubmit, onLoginWithSession }) {
     setError(""); setSaving(true);
     try {
       const session = await verifyLoginCode(email.trim(), code.trim());
-      let profile = await loadProfileRemote(session.user.id);
-      if (profile && profile.name) {
-        await onLoginWithSession(session, profile);
+      let existingProfile = await loadProfileRemote(session.user.id);
+      if (existingProfile && existingProfile.name) {
+        await onLoginWithSession(session, existingProfile);
       } else {
-        setStep("name");
+        setStep("reg-finish");
       }
     } catch (e) {
       setError(e.message);
@@ -831,11 +884,26 @@ function OnboardingScreen({ onSubmit, onLoginWithSession }) {
   };
   const finishSignup = async () => {
     if (!name.trim()) { setError(t.onboardError); return; }
+    if (password.trim().length < 6) { setError(t.passwordTooShortError); return; }
     setError(""); setSaving(true);
     try {
       const profile = { name: name.trim(), email: email.trim(), emailVerified: true, accountType: "individual" };
       await saveProfileRemote(currentSession.user.id, profile);
+      await setAccountPassword(password.trim());
       await onLoginWithSession(currentSession, { ...profile, createdAt: new Date().toISOString() });
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+  const doPasswordLogin = async () => {
+    if (!email.trim().includes("@") || !password.trim()) { setError(t.onboardError); return; }
+    setError(""); setSaving(true);
+    try {
+      const session = await passwordSignIn(email.trim(), password.trim());
+      const existingProfile = await loadProfileRemote(session.user.id);
+      await onLoginWithSession(session, existingProfile);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -850,6 +918,8 @@ function OnboardingScreen({ onSubmit, onLoginWithSession }) {
     await onSubmit({ name: name.trim(), email: email.trim() });
     setSaving(false);
   };
+
+  const resetToStart = () => { setStep("start"); setCode(""); setPassword(""); setError(""); };
 
   return (
     <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 26px", background: "var(--ph-bg)", position: "relative" }}>
@@ -881,8 +951,70 @@ function OnboardingScreen({ onSubmit, onLoginWithSession }) {
           >
             {saving ? t.onboardSubmitting : t.onboardSubmit}
           </button>
+          <button
+            onClick={onContinueAsGuest}
+            style={{ width: "100%", border: `1px solid var(--ph-border)`, background: "transparent", color: "var(--ph-text)", borderRadius: 12, padding: "12px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13.5, marginTop: 10, cursor: "pointer" }}
+          >
+            {t.continueAsGuestBtn}
+          </button>
         </>
-      ) : step === "email" ? (
+      ) : step === "start" ? (
+        <>
+          <button
+            onClick={() => { setStep("reg-email"); setError(""); }}
+            style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: "pointer" }}
+          >
+            {t.sendCodeBtn}
+          </button>
+          <button
+            onClick={() => { setStep("login"); setError(""); }}
+            style={{ width: "100%", border: `1.5px solid ${NAVY}`, background: "transparent", color: "var(--ph-text)", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, marginTop: 10, cursor: "pointer" }}
+          >
+            {t.loginBtn}
+          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "18px 0" }}>
+            <div style={{ flex: 1, height: 1, background: "var(--ph-border)" }} />
+            <span style={{ fontSize: 11, fontWeight: 700, color: "var(--ph-text-muted)", letterSpacing: 0.5 }}>{t.orDividerLabel}</span>
+            <div style={{ flex: 1, height: 1, background: "var(--ph-border)" }} />
+          </div>
+          <button
+            onClick={onContinueAsGuest}
+            style={{ width: "100%", border: "none", background: "none", color: "var(--ph-accent)", fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 14, padding: "6px 0", cursor: "pointer" }}
+          >
+            {t.continueAsGuestBtn}
+          </button>
+        </>
+      ) : step === "login" ? (
+        <>
+          <div style={{ marginBottom: 8 }}>
+            <label style={labelStyle}>{t.onboardEmailLabel}</label>
+            <input style={inputStyle} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.onboardEmailPlaceholder} />
+          </div>
+          <div style={{ marginBottom: 8 }}>
+            <label style={labelStyle}>{t.passwordLabel}</label>
+            <input style={inputStyle} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t.passwordPlaceholder} />
+          </div>
+          {error && <div style={{ color: "#B0473C", fontSize: 12.5, marginBottom: 8 }}>{error}</div>}
+          <button
+            onClick={doPasswordLogin} disabled={saving}
+            style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, marginTop: 10, cursor: saving ? "default" : "pointer", opacity: saving ? 0.7 : 1 }}
+          >
+            {saving ? t.onboardSubmitting : t.loginBtn}
+          </button>
+          <button
+            onClick={() => { setStep("reg-email"); setError(""); }}
+            style={{ width: "100%", border: "none", background: "none", color: "var(--ph-text-muted)", fontSize: 12, marginTop: 10, cursor: "pointer" }}
+          >
+            {t.forgotCodeLink}
+          </button>
+          <button
+            onClick={resetToStart}
+            style={{ width: "100%", border: "none", background: "none", color: "var(--ph-text-muted)", fontSize: 12, marginTop: 4, cursor: "pointer" }}
+          >
+            {t.backToStart}
+          </button>
+        </>
+      ) : step === "reg-email" ? (
         <>
           <div style={{ marginBottom: 8 }}>
             <label style={labelStyle}>{t.onboardEmailLabel}</label>
@@ -895,8 +1027,14 @@ function OnboardingScreen({ onSubmit, onLoginWithSession }) {
           >
             {saving ? t.onboardSubmitting : t.sendCodeBtn}
           </button>
+          <button
+            onClick={resetToStart}
+            style={{ width: "100%", border: "none", background: "none", color: "var(--ph-text-muted)", fontSize: 12, marginTop: 10, cursor: "pointer" }}
+          >
+            {t.backToStart}
+          </button>
         </>
-      ) : step === "code" ? (
+      ) : step === "reg-code" ? (
         <>
           <div style={{ fontSize: 12.5, color: "var(--ph-text-muted)", marginBottom: 12 }}>{t.codeSentTo(email)}</div>
           <label style={labelStyle}>{t.codeLabel}</label>
@@ -913,7 +1051,7 @@ function OnboardingScreen({ onSubmit, onLoginWithSession }) {
             {saving ? t.onboardSubmitting : t.confirmBtn}
           </button>
           <button
-            onClick={() => { setStep("email"); setCode(""); setError(""); }}
+            onClick={() => { setStep("reg-email"); setCode(""); setError(""); }}
             style={{ width: "100%", border: "none", background: "none", color: "var(--ph-text-muted)", fontSize: 12, marginTop: 10, cursor: "pointer" }}
           >
             {t.useAnotherEmail}
@@ -923,7 +1061,10 @@ function OnboardingScreen({ onSubmit, onLoginWithSession }) {
         <>
           <div style={{ fontSize: 12.5, color: "var(--ph-text-muted)", marginBottom: 12 }}>{t.almostDoneHint}</div>
           <label style={labelStyle}>{t.onboardNameLabel}</label>
-          <input style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} placeholder={t.onboardNamePlaceholder} />
+          <input style={{ ...inputStyle, marginBottom: 12 }} value={name} onChange={(e) => setName(e.target.value)} placeholder={t.onboardNamePlaceholder} />
+          <label style={labelStyle}>{t.passwordLabel}</label>
+          <input style={inputStyle} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t.passwordPlaceholder} />
+          <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)", marginTop: 5 }}>{t.setPasswordHint}</div>
           {error && <div style={{ color: "#B0473C", fontSize: 12.5, marginTop: 8 }}>{error}</div>}
           <button
             onClick={finishSignup} disabled={saving}
@@ -934,6 +1075,67 @@ function OnboardingScreen({ onSubmit, onLoginWithSession }) {
         </>
       )}
       <div style={{ fontSize: 11, color: "var(--ph-text-muted)", textAlign: "center", marginTop: 12 }}>{t.onboardTerms}</div>
+    </div>
+  );
+}
+
+// Shown when a guest tries an action that needs an account (contacting an
+// agent, publishing a listing) — nudges them to register without blocking
+// the rest of the app.
+function GuestPrompt({ onRegister, onCancel }) {
+  const { t } = useLang();
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 60, background: "rgba(15,23,41,0.55)",
+      display: "flex", alignItems: "flex-end", justifyContent: "center",
+    }} onClick={onCancel}>
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{ width: "100%", maxWidth: 390, background: "var(--ph-surface)", borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: "22px 20px calc(env(safe-area-inset-bottom, 0px) + 20px)" }}
+      >
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+          <BrandMark size={30} />
+        </div>
+        <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "var(--ph-text)", textAlign: "center", marginBottom: 6 }}>
+          {t.guestPromptTitle}
+        </div>
+        <div style={{ fontSize: 13, color: "var(--ph-text-muted)", textAlign: "center", lineHeight: 1.5, marginBottom: 18 }}>
+          {t.guestPromptMessage}
+        </div>
+        <button
+          onClick={onRegister}
+          style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: "pointer", marginBottom: 8 }}
+        >
+          {t.guestPromptRegister}
+        </button>
+        <button
+          onClick={onCancel}
+          style={{ width: "100%", border: "none", background: "none", color: "var(--ph-text-muted)", fontSize: 13, padding: "6px 0", cursor: "pointer" }}
+        >
+          {t.cancel}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function GuestProfileScreen({ onLogin }) {
+  const { t } = useLang();
+  return (
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "0 30px", textAlign: "center" }}>
+      <BrandMark size={38} />
+      <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 17, color: "var(--ph-text)", marginTop: 14, marginBottom: 6 }}>
+        {t.guestProfileTitle}
+      </div>
+      <div style={{ fontSize: 13, color: "var(--ph-text-muted)", lineHeight: 1.5, marginBottom: 20 }}>
+        {t.guestProfileMessage}
+      </div>
+      <button
+        onClick={onLogin}
+        style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: "pointer" }}
+      >
+        {t.guestProfileLoginBtn}
+      </button>
     </div>
   );
 }
@@ -1572,7 +1774,7 @@ function ListingCard({ listing, isFav, onToggleFav, onOpen }) {
 // ---------------------------------------------------------------------------
 // Detail screen
 // ---------------------------------------------------------------------------
-function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete }) {
+function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, onContactAgent }) {
   const { t } = useLang();
   const Icon = CAT_ICON[listing.cat] || Building2;
   const categories = CATEGORIES(t);
@@ -1701,7 +1903,9 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete })
       </div>
 
       <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "linear-gradient(180deg, rgba(246,242,234,0) 0%, #F6F2EA 22%)" }}>
-        <button style={{
+        <button
+          onClick={onContactAgent}
+          style={{
           width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0",
           fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer",
         }}>
@@ -2723,6 +2927,8 @@ export default function PronaHomeApp() {
   const [myIds, setMyIds] = useState(new Set());
   const [profile, setProfile] = useState(null);
   const [userId, setUserId] = useState(null); // Supabase auth user id, once logged in
+  const [guestMode, setGuestMode] = useState(false);
+  const [showGuestPrompt, setShowGuestPrompt] = useState(false);
   const [openListing, setOpenListing] = useState(null);
   const [showNewListing, setShowNewListing] = useState(false);
   const [showMyListings, setShowMyListings] = useState(false);
@@ -2809,6 +3015,7 @@ export default function PronaHomeApp() {
   };
 
   const toggleFav = (id) => {
+    if (!profile) { setShowGuestPrompt(true); return; }
     setFavorites((prev) => {
       const next = new Set(prev);
       const isRemoving = next.has(id);
@@ -2879,10 +3086,20 @@ export default function PronaHomeApp() {
   const onLoginWithSession = async (session, profileData) => {
     setUserId(session.user.id);
     setProfile(profileData);
+    setGuestMode(false);
     try {
       const favIds = await loadFavoritesRemote(session.user.id);
       setFavorites(new Set(favIds));
     } catch (e) { console.error(e); }
+  };
+  const continueAsGuest = () => setGuestMode(true);
+  const requireAuth = (action) => {
+    if (profile) action();
+    else setShowGuestPrompt(true);
+  };
+  const goToRegisterFromPrompt = () => {
+    setShowGuestPrompt(false);
+    setGuestMode(false);
   };
   const saveProfileEdit = async (p) => {
     setProfile(p);
@@ -2990,14 +3207,14 @@ export default function PronaHomeApp() {
               <Loader2 size={20} color={"var(--ph-accent)"} className="spin" />
               <span style={{ fontSize: 12.5, color: "var(--ph-text-muted)" }}>{t.loadingText}</span>
             </div>
-          ) : !profile ? (
-            <OnboardingScreen onSubmit={completeOnboarding} onLoginWithSession={onLoginWithSession} />
+          ) : !profile && !guestMode ? (
+            <OnboardingScreen onSubmit={completeOnboarding} onLoginWithSession={onLoginWithSession} onContinueAsGuest={continueAsGuest} />
           ) : (
             <>
               {tab === "kerko" && (
                 <SearchScreen
                   listings={listings} favorites={favorites} toggleFav={toggleFav} onOpen={setOpenListing}
-                  onAddNew={() => setShowNewListing(true)} onOpenFilters={() => setShowFilters(true)}
+                  onAddNew={() => requireAuth(() => setShowNewListing(true))} onOpenFilters={() => setShowFilters(true)}
                   onOpenHotelScreen={() => setShowHotelScreen(true)}
                   onOpenAgenciesScreen={() => setShowAgenciesScreen(true)}
                   filters={filters}
@@ -3007,18 +3224,26 @@ export default function PronaHomeApp() {
               {tab === "preferuara" && <FavoritesScreen listings={listings} favorites={favorites} toggleFav={toggleFav} onOpen={setOpenListing} />}
               {tab === "njoftime" && <NotificationsScreen />}
               {tab === "profili" && (
-                <ProfileScreen
-                  profile={profile} favCount={favorites.size} myCount={myIds.size}
-                  onOpenMyListings={() => setShowMyListings(true)} onAddNew={() => setShowNewListing(true)}
-                  onEditProfile={() => setShowEditProfile(true)} onLogout={logout} onAvatarChange={updateAvatar}
-                  onOpenSettings={() => setShowSettings(true)} onOpenAccount={() => setShowAccount(true)}
-                />
+                profile ? (
+                  <ProfileScreen
+                    profile={profile} favCount={favorites.size} myCount={myIds.size}
+                    onOpenMyListings={() => setShowMyListings(true)} onAddNew={() => requireAuth(() => setShowNewListing(true))}
+                    onEditProfile={() => setShowEditProfile(true)} onLogout={logout} onAvatarChange={updateAvatar}
+                    onOpenSettings={() => setShowSettings(true)} onOpenAccount={() => setShowAccount(true)}
+                  />
+                ) : (
+                  <GuestProfileScreen onLogin={() => setGuestMode(false)} />
+                )
               )}
 
               <TabBar active={tab} setActive={setTab} favCount={favorites.size} />
 
               {openListing && (
-                <DetailScreen listing={openListing} isFav={favorites.has(openListing.id)} onToggleFav={toggleFav} onBack={() => setOpenListing(null)} isMine={myIds.has(openListing.id)} onDelete={deleteListing} />
+                <DetailScreen
+                  listing={openListing} isFav={favorites.has(openListing.id)} onToggleFav={toggleFav}
+                  onBack={() => setOpenListing(null)} isMine={myIds.has(openListing.id)} onDelete={deleteListing}
+                  onContactAgent={() => requireAuth(() => {})}
+                />
               )}
               {showNewListing && <NewListingScreen onBack={() => setShowNewListing(false)} onPublish={publishListing} agencies={agencies} />}
               {showMyListings && (
@@ -3033,6 +3258,9 @@ export default function PronaHomeApp() {
                 />
               )}
               {legalDoc && <LegalDocScreen docKey={legalDoc} onBack={() => setLegalDoc(null)} />}
+              {showGuestPrompt && (
+                <GuestPrompt onRegister={goToRegisterFromPrompt} onCancel={() => setShowGuestPrompt(false)} />
+              )}
               {showAccount && profile && (
                 <AccountScreen
                   profile={profile} favorites={favorites} myListingIds={myIds} listings={listings}

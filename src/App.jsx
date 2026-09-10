@@ -806,13 +806,6 @@ const WORLD_COUNTRIES = [
   { code: "CH", name: "Zvicër", dial: "+41" },
 ];
 
-// Tiered m² steps: fine-grained for apartments/houses, coarser for large land plots.
-const AREA_OPTIONS = [
-  ...Array.from({ length: 38 }, (_, i) => 15 + i * 5),   // 15–200, step 5
-  ...Array.from({ length: 30 }, (_, i) => 210 + i * 10), // 210–500, step 10
-  ...Array.from({ length: 30 }, (_, i) => 550 + i * 50), // 550–2000, step 50
-];
-
 const CITY_GROUPS = [
   { country: "countryKosovo", cities: ["Ferizaj", "Gjakovë", "Gjilan", "Mitrovicë", "Pejë", "Prishtinë", "Prizren"] },
   { country: "countryAlbania", cities: ["Durrës", "Elbasan", "Korçë", "Shkodër", "Tiranë", "Vlorë"] },
@@ -1113,25 +1106,21 @@ async function loadSharedListings() {
 }
 async function saveListingRemote(listing) {
   if (!SUPABASE_CONFIGURED) return;
-  try {
-    await supabaseFetch("listings", {
-      method: "POST",
-      headers: { Prefer: "resolution=merge-duplicates,return=representation" },
-      body: JSON.stringify([listingToRow(listing)]),
-    });
-  } catch (e) { console.error("Supabase save listing failed", e); }
+  await supabaseFetch("listings", {
+    method: "POST",
+    headers: { Prefer: "resolution=merge-duplicates,return=representation" },
+    body: JSON.stringify([listingToRow(listing)]),
+  });
 }
 async function deleteListingRemote(id) {
   if (!SUPABASE_CONFIGURED) return;
-  try { await supabaseFetch(`listings?id=eq.${encodeURIComponent(id)}`, { method: "DELETE" }); }
-  catch (e) { console.error("Supabase delete listing failed", e); }
+  await supabaseFetch(`listings?id=eq.${encodeURIComponent(id)}`, { method: "DELETE" });
 }
 // Kept for the local (non-Supabase) fallback path only — Supabase writes go
 // through saveListingRemote/deleteListingRemote per-row instead.
 async function saveSharedListings(list) {
   if (SUPABASE_CONFIGURED) return;
-  try { await window.storage.set("listings", JSON.stringify(list), true); }
-  catch (e) { console.error("Save listings failed", e); }
+  await window.storage.set("listings", JSON.stringify(list), true);
 }
 async function loadSharedAgencies() {
   if (!SUPABASE_CONFIGURED) {
@@ -1154,18 +1143,15 @@ async function loadSharedAgencies() {
 }
 async function addAgencyRemote(name) {
   if (!SUPABASE_CONFIGURED) return;
-  try {
-    await supabaseFetch("agencies", {
-      method: "POST",
-      headers: { Prefer: "resolution=merge-duplicates,return=representation" },
-      body: JSON.stringify([{ name }]),
-    });
-  } catch (e) { console.error("Supabase add agency failed", e); }
+  await supabaseFetch("agencies", {
+    method: "POST",
+    headers: { Prefer: "resolution=merge-duplicates,return=representation" },
+    body: JSON.stringify([{ name }]),
+  });
 }
 async function saveSharedAgencies(list) {
   if (SUPABASE_CONFIGURED) return;
-  try { await window.storage.set("agencies", JSON.stringify(list), true); }
-  catch (e) { console.error("Save agencies failed", e); }
+  await window.storage.set("agencies", JSON.stringify(list), true);
 }
 async function loadPersonal(key, fallback) {
   try {
@@ -1175,8 +1161,7 @@ async function loadPersonal(key, fallback) {
   return fallback;
 }
 async function savePersonal(key, value) {
-  try { await window.storage.set(key, JSON.stringify(value), false); }
-  catch (e) { console.error("Save personal failed", e); }
+  await window.storage.set(key, JSON.stringify(value), false);
 }
 async function deletePersonal(key) {
   try { await window.storage.delete(key, false); } catch (e) {}
@@ -2556,12 +2541,7 @@ function NewListingScreen({ onBack, onPublish, agencies }) {
           </div>
           <div style={{ flex: 1 }}>
             <label style={labelStyle}>{t.areaM2Label}</label>
-            <select style={inputStyle} value={form.m2} onChange={set("m2")}>
-              <option value="">{t.chooseOption}</option>
-              {AREA_OPTIONS.map((v) => (
-                <option key={v} value={v}>{v} m²</option>
-              ))}
-            </select>
+            <input style={inputStyle} type="number" min="1" value={form.m2} onChange={set("m2")} placeholder={t.areaM2Placeholder} />
           </div>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
@@ -2569,8 +2549,8 @@ function NewListingScreen({ onBack, onPublish, agencies }) {
             <label style={labelStyle}>{t.roomsFieldLabel}</label>
             <select style={inputStyle} value={form.rooms} onChange={set("rooms")}>
               <option value="">{t.chooseOption}</option>
-              {[1, 2, 3, 4, 5, 6].map((n) => (
-                <option key={n} value={n}>{n === 6 ? "6+" : n}</option>
+              {Array.from({ length: 99 }, (_, i) => i + 1).map((n) => (
+                <option key={n} value={n}>{n}</option>
               ))}
             </select>
           </div>
@@ -2656,9 +2636,7 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
   const [local, setLocal] = useState(filters);
   const set = (k) => (e) => setLocal((f) => ({ ...f, [k]: e.target.value }));
   const propertyTypes = CATEGORIES(t).filter((c) => c.id !== "all" && c.id !== "shitje" && c.id !== "qera" && c.id !== "hotel");
-  const dealTabs = [
-    { id: "all", label: t.catAll }, { id: "shitje", label: t.typeSale }, { id: "qera", label: t.typeRent },
-  ];
+  const dealTabs = [{ id: "shitje", label: t.typeSale }, { id: "qera", label: t.typeRent }];
   const sortOptions = [
     { id: "newest", label: t.sortNewest }, { id: "price_asc", label: t.sortPriceAsc },
     { id: "price_desc", label: t.sortPriceDesc }, { id: "m2_desc", label: t.sortM2Desc },
@@ -2668,6 +2646,7 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
     ? t.anyPlaceholder
     : `${local.roomsMin} - ${local.roomsMax >= 6 ? "6+" : local.roomsMax}`;
   const pct = (v) => (v / 6) * 100;
+  const sectionTitleStyle = { fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 15, color: "var(--ph-text)", marginBottom: 12 };
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
@@ -2678,75 +2657,74 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
         </button>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "20px 18px 8px", display: "flex", flexDirection: "column", gap: 26 }}>
-        <div>
-          <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16.5, color: "var(--ph-text)", marginBottom: 12 }}>{t.propertyTypeLabel}</div>
-          <div style={{ display: "flex", gap: 18, borderBottom: "1px solid var(--ph-border)", marginBottom: 14 }}>
-            {dealTabs.map((tab) => {
-              const active = local.dealType === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setLocal((f) => ({ ...f, dealType: tab.id }))}
-                  style={{
-                    border: "none", background: "none", cursor: "pointer", padding: "0 0 10px",
-                    fontSize: 14.5, fontWeight: 600, color: active ? NAVY : "var(--ph-text-muted)",
-                    borderBottom: active ? `2.5px solid ${NAVY}` : "2.5px solid transparent",
-                  }}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
+      <div style={{ flex: 1, overflowY: "auto", padding: "18px 18px 8px", display: "flex", flexDirection: "column", gap: 16 }}>
+        <SettingsSection title={t.propertyTypeLabel}>
+          <div style={{ padding: 14 }}>
+            <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+              {dealTabs.map((tabOpt) => {
+                const active = local.dealType === tabOpt.id;
+                return (
+                  <button
+                    key={tabOpt.id}
+                    onClick={() => setLocal((f) => ({ ...f, dealType: active ? "all" : tabOpt.id }))}
+                    style={{
+                      flex: 1, padding: "11px 0", borderRadius: 10, cursor: "pointer", fontSize: 13.5, fontWeight: 600,
+                      border: active ? "none" : "1px solid var(--ph-border)",
+                      background: active ? "var(--ph-accent)" : "transparent",
+                      color: active ? "#fff" : "var(--ph-text)",
+                      transition: "background 0.15s",
+                    }}
+                  >
+                    {tabOpt.label}
+                  </button>
+                );
+              })}
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {propertyTypes.map((pt) => {
+                const active = local.propertyType === pt.id;
+                return (
+                  <button
+                    key={pt.id}
+                    onClick={() => setLocal((f) => ({ ...f, propertyType: active ? "all" : pt.id }))}
+                    style={{
+                      border: active ? "1.5px solid var(--ph-accent)" : "1px solid var(--ph-border)",
+                      background: active ? "var(--ph-accent-light)" : "var(--ph-bg)", borderRadius: 999, padding: "9px 15px",
+                      fontSize: 13, fontWeight: 500, color: active ? "var(--ph-text)" : "var(--ph-text-muted)", cursor: "pointer",
+                    }}
+                  >
+                    {pt.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-            {propertyTypes.map((pt) => {
-              const active = local.propertyType === pt.id;
-              return (
-                <button
-                  key={pt.id}
-                  onClick={() => setLocal((f) => ({ ...f, propertyType: active ? "all" : pt.id }))}
-                  style={{
-                    border: active ? `1.5px solid ${NAVY}` : "1px solid #E4DDCB",
-                    background: active ? "#F3ECDD" : "#fff", borderRadius: 999, padding: "10px 16px",
-                    fontSize: 13.5, fontWeight: 500, color: "var(--ph-text)", cursor: "pointer",
-                  }}
-                >
-                  {pt.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        </SettingsSection>
 
-        <div>
-          <label style={labelStyle}>{t.cityLabel}</label>
-          <select
-            style={inputStyle} value={local.city}
-            onChange={(e) => setLocal((f) => ({ ...f, city: e.target.value, area: "" }))}
-          >
-            <option value="">{t.allCities}</option>
-            {CITY_GROUPS.map((g) => (
-              <optgroup key={g.country} label={t[g.country]}>
-                {g.cities.map((c) => <option key={c} value={c}>{c}</option>)}
-              </optgroup>
-            ))}
-          </select>
-        </div>
-
-        {SETTLEMENTS_BY_CITY[local.city] && (
-          <div>
-            <label style={labelStyle}>{t.settlementLabel}</label>
-            <select style={inputStyle} value={local.area} onChange={set("area")}>
-              <option value="">{t.anySettlement}</option>
-              {SETTLEMENTS_BY_CITY[local.city].map((s) => <option key={s} value={s}>{s}</option>)}
+        <SettingsSection title={t.cityLabel}>
+          <div style={{ padding: 14 }}>
+            <select
+              style={inputStyle} value={local.city}
+              onChange={(e) => setLocal((f) => ({ ...f, city: e.target.value, area: "" }))}
+            >
+              <option value="">{t.allCities}</option>
+              {CITY_GROUPS.map((g) => (
+                <optgroup key={g.country} label={t[g.country]}>
+                  {g.cities.map((c) => <option key={c} value={c}>{c}</option>)}
+                </optgroup>
+              ))}
             </select>
+            {SETTLEMENTS_BY_CITY[local.city] && (
+              <select style={{ ...inputStyle, marginTop: 10 }} value={local.area} onChange={set("area")}>
+                <option value="">{t.anySettlement}</option>
+                {SETTLEMENTS_BY_CITY[local.city].map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+            )}
           </div>
-        )}
+        </SettingsSection>
 
-        <div>
-          <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16.5, color: "var(--ph-text)", marginBottom: 12 }}>{t.priceRangeLabel}</div>
-          <div style={{ display: "flex", gap: 14 }}>
+        <SettingsSection title={t.priceRangeLabel}>
+          <div style={{ padding: 14, display: "flex", gap: 14 }}>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>{t.minimumLabel}</label>
               <input style={inputStyle} type="number" placeholder={t.anyPlaceholder} value={local.priceMin} onChange={set("priceMin")} />
@@ -2756,30 +2734,28 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
               <input style={inputStyle} type="number" placeholder={t.anyPlaceholder} value={local.priceMax} onChange={set("priceMax")} />
             </div>
           </div>
-        </div>
+        </SettingsSection>
 
-        <div>
-          <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16.5, color: "var(--ph-text)", marginBottom: 4 }}>{t.roomsRangeLabel}</div>
-          <div style={{ textAlign: "center", fontSize: 13.5, color: "var(--ph-text-muted)", marginBottom: 10 }}>{roomsLabel}</div>
-          <div style={{ position: "relative", height: 30, display: "flex", alignItems: "center" }}>
-            <div style={{ position: "absolute", left: 0, right: 0, height: 4, background: "#E4DDCB", borderRadius: 2 }} />
-            <div style={{ position: "absolute", height: 4, background: NAVY, borderRadius: 2, left: `${pct(local.roomsMin)}%`, right: `${100 - pct(local.roomsMax)}%` }} />
-            <input
-              type="range" min={0} max={6} step={1} value={local.roomsMin} className="dual-thumb"
-              onChange={(e) => setLocal((f) => ({ ...f, roomsMin: Math.min(Number(e.target.value), f.roomsMax) }))}
-            />
-            <input
-              type="range" min={0} max={6} step={1} value={local.roomsMax} className="dual-thumb"
-              onChange={(e) => setLocal((f) => ({ ...f, roomsMax: Math.max(Number(e.target.value), f.roomsMin) }))}
-            />
+        <SettingsSection title={t.roomsRangeLabel}>
+          <div style={{ padding: "14px 16px 18px" }}>
+            <div style={{ textAlign: "center", fontSize: 13.5, fontWeight: 600, color: "var(--ph-accent)", marginBottom: 12 }}>{roomsLabel}</div>
+            <div style={{ position: "relative", height: 30, display: "flex", alignItems: "center" }}>
+              <div style={{ position: "absolute", left: 0, right: 0, height: 4, background: "var(--ph-border)", borderRadius: 2 }} />
+              <div style={{ position: "absolute", height: 4, background: "var(--ph-accent)", borderRadius: 2, left: `${pct(local.roomsMin)}%`, right: `${100 - pct(local.roomsMax)}%` }} />
+              <input
+                type="range" min={0} max={6} step={1} value={local.roomsMin} className="dual-thumb"
+                onChange={(e) => setLocal((f) => ({ ...f, roomsMin: Math.min(Number(e.target.value), f.roomsMax) }))}
+              />
+              <input
+                type="range" min={0} max={6} step={1} value={local.roomsMax} className="dual-thumb"
+                onChange={(e) => setLocal((f) => ({ ...f, roomsMax: Math.max(Number(e.target.value), f.roomsMin) }))}
+              />
+            </div>
           </div>
-        </div>
+        </SettingsSection>
 
-        <div>
-          <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16.5, color: "var(--ph-text)", marginBottom: 12 }}>
-            {local.propertyType === "truall" ? t.landAreaRangeLabel : t.areaRangeLabel}
-          </div>
-          <div style={{ display: "flex", gap: 14 }}>
+        <SettingsSection title={local.propertyType === "truall" ? t.landAreaRangeLabel : t.areaRangeLabel}>
+          <div style={{ padding: 14, display: "flex", gap: 14 }}>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>{t.minimumLabel}</label>
               <input style={inputStyle} type="number" placeholder={t.anyPlaceholder} value={local.m2Min} onChange={set("m2Min")} />
@@ -2789,14 +2765,15 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
               <input style={inputStyle} type="number" placeholder={t.anyPlaceholder} value={local.m2Max} onChange={set("m2Max")} />
             </div>
           </div>
-        </div>
+        </SettingsSection>
 
-        <div>
-          <label style={labelStyle}>{t.sortLabel}</label>
-          <select style={inputStyle} value={local.sort} onChange={set("sort")}>
-            {sortOptions.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
-          </select>
-        </div>
+        <SettingsSection title={t.sortLabel}>
+          <div style={{ padding: 14 }}>
+            <select style={inputStyle} value={local.sort} onChange={set("sort")}>
+              {sortOptions.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+            </select>
+          </div>
+        </SettingsSection>
       </div>
 
       <div style={{ padding: "14px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "var(--ph-surface)", borderTop: "1px solid var(--ph-border)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14 }}>
@@ -2809,7 +2786,7 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
         <button
           onClick={() => onApply(local)}
           style={{
-            flex: 1, background: NAVY, color: "#fff", border: "none", borderRadius: 999, padding: "14px 0",
+            flex: 1, background: "var(--ph-accent)", color: "#fff", border: "none", borderRadius: 999, padding: "14px 0",
             fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: "pointer",
           }}
         >

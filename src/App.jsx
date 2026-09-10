@@ -78,7 +78,8 @@ const STRINGS = {
     guestProfileTitle: "Nuk je i kyçur", guestProfileMessage: "Kyçu ose regjistrohu për të parë profilin tënd, për të ruajtur shpalljet e tua dhe më shumë.",
     guestProfileLoginBtn: "Kyçu / Regjistrohu",
     onboardTerms: "Duke vazhduar, pranon Kushtet e Përdorimit të PronaHome.",
-    editTitle: "Ndrysho profilin", saveChanges: "Ruaj ndryshimet", saving: "Duke ruajtur...",
+    editTitle: "Ndrysho profilin", saveChanges: "Ruaj ndryshimet", saving: "Duke ruajtur...", savedConfirmation: "U ruajt! ✓",
+    saveErrorToast: "Ndryshimi nuk u ruajt. Kontrollo lidhjen dhe provo sërish.",
     sectionAccountType: "Lloji i llogarisë", accountTypeIndividual: "Individ", accountTypeAgency: "Agjenci / Profesionist",
     sectionBasicInfo: "Informacione bazë", phoneLabel: "Telefoni", phonePlaceholder: "p.sh. +383 44 123 456",
     sectionProfessionalInfo: "Informacione profesionale", sectionMoreAboutYou: "Më shumë rreth jush",
@@ -201,7 +202,8 @@ const STRINGS = {
     guestProfileTitle: "Du bist nicht angemeldet", guestProfileMessage: "Melde dich an oder registriere dich, um dein Profil zu sehen, Anzeigen zu speichern und mehr.",
     guestProfileLoginBtn: "Anmelden / Registrieren",
     onboardTerms: "Mit dem Fortfahren akzeptierst du die Nutzungsbedingungen von PronaHome.",
-    editTitle: "Profil bearbeiten", saveChanges: "Änderungen speichern", saving: "Wird gespeichert...",
+    editTitle: "Profil bearbeiten", saveChanges: "Änderungen speichern", saving: "Wird gespeichert...", savedConfirmation: "Gespeichert! ✓",
+    saveErrorToast: "Änderung konnte nicht gespeichert werden. Verbindung prüfen und erneut versuchen.",
     sectionAccountType: "Kontotyp", accountTypeIndividual: "Privatperson", accountTypeAgency: "Agentur / Profi",
     sectionBasicInfo: "Grunddaten", phoneLabel: "Telefon", phonePlaceholder: "z. B. +383 44 123 456",
     sectionProfessionalInfo: "Berufliche Angaben", sectionMoreAboutYou: "Mehr über dich",
@@ -324,7 +326,8 @@ const STRINGS = {
     guestProfileTitle: "You're not signed in", guestProfileMessage: "Sign in or register to see your profile, save listings, and more.",
     guestProfileLoginBtn: "Log in / Register",
     onboardTerms: "By continuing, you accept PronaHome's Terms of Use.",
-    editTitle: "Edit profile", saveChanges: "Save changes", saving: "Saving...",
+    editTitle: "Edit profile", saveChanges: "Save changes", saving: "Saving...", savedConfirmation: "Saved! ✓",
+    saveErrorToast: "Change couldn't be saved. Check your connection and try again.",
     sectionAccountType: "Account type", accountTypeIndividual: "Individual", accountTypeAgency: "Agency / Professional",
     sectionBasicInfo: "Basic information", phoneLabel: "Phone", phonePlaceholder: "e.g. +383 44 123 456",
     sectionProfessionalInfo: "Professional information", sectionMoreAboutYou: "More about you",
@@ -1587,17 +1590,26 @@ function EditProfileScreen({ profile, onBack, onSave }) {
   const [homeAddressNumber, setHomeAddressNumber] = useState(profile.homeAddressNumber || "");
   const [bio, setBio] = useState(profile.bio || "");
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
 
   const submit = async () => {
     if (!firstName.trim() || !lastName.trim() || !email.trim().includes("@")) { setError(t.onboardError); return; }
+    setError("");
     setSaving(true);
-    await onSave({
-      ...profile,
-      name: `${firstName.trim()} ${lastName.trim()}`.trim(), email: email.trim(), phone: phone.trim(),
-      accountType, company: company.trim(), dateOfBirth: dob, country, city: city.trim(), homeAddress: homeAddress.trim(), homeAddressNumber: homeAddressNumber.trim(), bio: bio.trim(),
-    });
-    setSaving(false);
+    try {
+      await onSave({
+        ...profile,
+        name: `${firstName.trim()} ${lastName.trim()}`.trim(), email: email.trim(), phone: phone.trim(),
+        accountType, company: company.trim(), dateOfBirth: dob, country, city: city.trim(), homeAddress: homeAddress.trim(), homeAddressNumber: homeAddressNumber.trim(), bio: bio.trim(),
+      });
+      setSaving(false);
+      setSaved(true);
+      setTimeout(onBack, 800);
+    } catch (e) {
+      setSaving(false);
+      setError(e.message || t.onboardError);
+    }
   };
 
   return (
@@ -1696,13 +1708,14 @@ function EditProfileScreen({ profile, onBack, onSave }) {
 
       <div style={{ padding: "12px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "var(--ph-surface)", borderTop: "1px solid var(--ph-border)" }}>
         <button
-          onClick={submit} disabled={saving}
+          onClick={submit} disabled={saving || saved}
           style={{
-            width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0",
-            fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: saving ? "default" : "pointer", opacity: saving ? 0.7 : 1,
+            width: "100%", background: saved ? "#2F7A56" : NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0",
+            fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: (saving || saved) ? "default" : "pointer", opacity: saving ? 0.7 : 1,
+            transition: "background 0.15s",
           }}
         >
-          {saving ? t.saving : t.saveChanges}
+          {saved ? t.savedConfirmation : saving ? t.saving : t.saveChanges}
         </button>
       </div>
     </div>
@@ -2417,8 +2430,13 @@ function NewListingScreen({ onBack, onPublish, agencies }) {
       desc: form.desc.trim() || "", tags: form.tags.split(",").map((x) => x.trim()).filter(Boolean),
       images, image: images[0] || null, agency: form.agency.trim() || "Privat",
     };
-    await onPublish(newListing);
-    setSaving(false);
+    try {
+      await onPublish(newListing);
+    } catch (e) {
+      setError(e.message || t.requiredError);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -3429,6 +3447,12 @@ export default function PronaHomeApp() {
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [loading, setLoading] = useState(true);
   const [debugBanner, setDebugBanner] = useState(null);
+  const [toast, setToast] = useState(null);
+  useEffect(() => {
+    if (!toast) return;
+    const id = setTimeout(() => setToast(null), 3500);
+    return () => clearTimeout(id);
+  }, [toast]);
   const [lang, setLangState] = useState("sq");
   const [accentId, setAccentId] = useState("gold");
 
@@ -3500,19 +3524,24 @@ export default function PronaHomeApp() {
     savePersonal("language", l);
   };
 
-  const toggleFav = (id) => {
+  const toggleFav = async (id) => {
     if (!profile) { setShowGuestPrompt(true); return; }
-    setFavorites((prev) => {
-      const next = new Set(prev);
-      const isRemoving = next.has(id);
-      isRemoving ? next.delete(id) : next.add(id);
+    const prevFavorites = favorites;
+    const isRemoving = favorites.has(id);
+    const next = new Set(favorites);
+    isRemoving ? next.delete(id) : next.add(id);
+    setFavorites(next);
+    try {
       if (SUPABASE_CONFIGURED && userId) {
-        (isRemoving ? removeFavoriteRemote(userId, id) : addFavoriteRemote(userId, id)).catch((e) => console.error(e));
+        await (isRemoving ? removeFavoriteRemote(userId, id) : addFavoriteRemote(userId, id));
       } else {
-        savePersonal("favorites", Array.from(next));
+        await savePersonal("favorites", Array.from(next));
       }
-      return next;
-    });
+    } catch (e) {
+      console.error(e);
+      setFavorites(prevFavorites);
+      setToast(t.saveErrorToast);
+    }
   };
 
   const publishListing = async (newListing) => {
@@ -3524,44 +3553,73 @@ export default function PronaHomeApp() {
     const ownerId = SUPABASE_CONFIGURED && userId ? userId : (newListing.owner_id || null);
     const listingToSave = { ...newListing, agency: resolvedAgency, owner_id: ownerId };
 
+    const prevListings = listings;
+    const prevAgencies = agencies;
+    const prevMyIds = myIds;
+
     const nextListings = [listingToSave, ...listings];
     setListings(nextListings);
 
-    const saves = [saveSharedListings(nextListings), saveListingRemote(listingToSave)];
+    const nextAgencies = existingMatch ? agencies : [...agencies, resolvedAgency];
+    if (!existingMatch) setAgencies(nextAgencies);
+
+    let nextMine = myIds;
     if (!SUPABASE_CONFIGURED) {
-      const nextMine = new Set(myIds);
+      nextMine = new Set(myIds);
       nextMine.add(listingToSave.id);
       setMyIds(nextMine);
-      saves.push(savePersonal("my-listings", Array.from(nextMine)));
     }
-    if (!existingMatch) {
-      const nextAgencies = [...agencies, resolvedAgency];
-      setAgencies(nextAgencies);
-      saves.push(saveSharedAgencies(nextAgencies), addAgencyRemote(resolvedAgency));
+
+    try {
+      const saves = [saveSharedListings(nextListings), saveListingRemote(listingToSave)];
+      if (!SUPABASE_CONFIGURED) saves.push(savePersonal("my-listings", Array.from(nextMine)));
+      if (!existingMatch) saves.push(saveSharedAgencies(nextAgencies), addAgencyRemote(resolvedAgency));
+      await Promise.all(saves);
+      setShowNewListing(false);
+      setTab("kerko");
+    } catch (e) {
+      console.error(e);
+      setListings(prevListings);
+      setAgencies(prevAgencies);
+      setMyIds(prevMyIds);
+      throw e; // let the publish form show its own inline error instead of silently "succeeding"
     }
-    await Promise.all(saves);
-    setShowNewListing(false);
-    setTab("kerko");
   };
 
   const deleteListing = async (id) => {
+    const prevListings = listings;
+    const prevFavorites = favorites;
+    const prevMyIds = myIds;
+
     const nextListings = listings.filter((l) => l.id !== id);
-    setListings(nextListings);
     const nextFav = new Set(favorites);
     nextFav.delete(id);
+    setListings(nextListings);
     setFavorites(nextFav);
     setOpenListing(null);
 
-    const saves = [saveSharedListings(nextListings), deleteListingRemote(id)];
-    if (SUPABASE_CONFIGURED && userId) {
-      saves.push(removeFavoriteRemote(userId, id).catch(() => {}));
-    } else {
-      const nextMine = new Set(myIds);
+    let nextMine = myIds;
+    if (!SUPABASE_CONFIGURED) {
+      nextMine = new Set(myIds);
       nextMine.delete(id);
       setMyIds(nextMine);
-      saves.push(savePersonal("my-listings", Array.from(nextMine)), savePersonal("favorites", Array.from(nextFav)));
     }
-    await Promise.all(saves);
+
+    try {
+      const saves = [saveSharedListings(nextListings), deleteListingRemote(id)];
+      if (SUPABASE_CONFIGURED && userId) {
+        saves.push(removeFavoriteRemote(userId, id).catch(() => {}));
+      } else {
+        saves.push(savePersonal("my-listings", Array.from(nextMine)), savePersonal("favorites", Array.from(nextFav)));
+      }
+      await Promise.all(saves);
+    } catch (e) {
+      console.error(e);
+      setListings(prevListings);
+      setFavorites(prevFavorites);
+      setMyIds(prevMyIds);
+      setToast(t.saveErrorToast);
+    }
   };
 
   const completeOnboarding = async (p) => {
@@ -3597,13 +3655,19 @@ export default function PronaHomeApp() {
     setProfile(p);
     if (SUPABASE_CONFIGURED && userId) await saveProfileRemote(userId, p);
     else await savePersonal("profile", p);
-    setShowEditProfile(false);
   };
   const updateAvatar = async (dataUrl) => {
+    const prevProfile = profile;
     const next = { ...profile, avatar: dataUrl };
     setProfile(next);
-    if (SUPABASE_CONFIGURED && userId) await saveProfileRemote(userId, next);
-    else await savePersonal("profile", next);
+    try {
+      if (SUPABASE_CONFIGURED && userId) await saveProfileRemote(userId, next);
+      else await savePersonal("profile", next);
+    } catch (e) {
+      console.error(e);
+      setProfile(prevProfile);
+      setToast(t.saveErrorToast);
+    }
   };
   const updateSettings = async (next) => {
     setSettings(next);
@@ -3636,10 +3700,17 @@ export default function PronaHomeApp() {
     await deletePersonal("profile");
   };
   const verifyField = async (field) => {
+    const prevProfile = profile;
     const next = { ...profile, [field === "email" ? "emailVerified" : "phoneVerified"]: true };
     setProfile(next);
-    if (SUPABASE_CONFIGURED && userId) await saveProfileRemote(userId, next);
-    else await savePersonal("profile", next);
+    try {
+      if (SUPABASE_CONFIGURED && userId) await saveProfileRemote(userId, next);
+      else await savePersonal("profile", next);
+    } catch (e) {
+      console.error(e);
+      setProfile(prevProfile);
+      setToast(t.saveErrorToast);
+    }
   };
 
   const t = STRINGS[lang] || STRINGS.sq;
@@ -3689,6 +3760,18 @@ export default function PronaHomeApp() {
             }}>
               <span style={{ flex: 1, wordBreak: "break-word" }}>Supabase: {debugBanner}</span>
               <button onClick={() => setDebugBanner(null)} style={{ border: "none", background: "none", color: "#fff", cursor: "pointer", flexShrink: 0 }}>
+                <X size={13} />
+              </button>
+            </div>
+          )}
+          {toast && (
+            <div style={{
+              position: "absolute", left: 14, right: 14, bottom: 78, zIndex: 55, background: "#3A1F1C", color: "#fff",
+              fontSize: 12.5, padding: "11px 14px", borderRadius: 12, boxShadow: "0 10px 24px rgba(15,23,41,0.3)",
+              display: "flex", alignItems: "center", gap: 8,
+            }}>
+              <span style={{ flex: 1 }}>{toast}</span>
+              <button onClick={() => setToast(null)} style={{ border: "none", background: "none", color: "#fff", cursor: "pointer", flexShrink: 0 }}>
                 <X size={13} />
               </button>
             </div>

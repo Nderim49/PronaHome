@@ -83,6 +83,10 @@ const STRINGS = {
     sectionBasicInfo: "Informacione bazë", phoneLabel: "Telefoni", phonePlaceholder: "p.sh. +383 44 123 456",
     sectionProfessionalInfo: "Informacione profesionale", sectionMoreAboutYou: "Më shumë rreth jush",
     companyLabel: "Emri i kompanisë / agjencisë", companyPlaceholder: "p.sh. PRO Real Estate",
+    companyOptionalPlaceholder: "Opsionale — nëse përfaqëson një kompani",
+    homeAddressLabel: "Adresa e banimit (opsionale)", homeAddressPlaceholder: "p.sh. Rruga Ilaz Kodra",
+    houseNumberLabel: "Numri", houseNumberPlaceholder: "p.sh. 12",
+    listingAddressLabel: "Adresa e saktë (opsionale)", listingAddressPlaceholder: "p.sh. Rruga Nëna Terezë",
     cityFieldLabel: "Qyteti", bioLabel: "Prezantim i shkurtër", bioPlaceholder: "Shkruaj disa fjalë rreth vetes ose punës tënde...",
     myAccountRow: "Llogaria ime",
     heroTitle1: "Gjej pronën tënde", heroTitle2: "të radhës.",
@@ -162,6 +166,8 @@ const STRINGS = {
     areaM2Label: "Sipërfaqja (m²)", areaM2Placeholder: "p.sh. 75",
     roomsFieldLabel: "Dhoma", roomsPlaceholder: "p.sh. 3",
     floorLabel: "Kati", floorPlaceholder: "p.sh. 3/6",
+    groundFloorLabel: "Përdhesë", basementLabel: "Bodrum", atticLabel: "Papafingo / Mansardë",
+    floorNotApplicableLabel: "Nuk aplikohet (shtëpi/garazhë/truall)", chooseOption: "Zgjidh",
     descLabel: "Përshkrimi", descPlaceholder: "Përshkruaj pronën shkurtimisht...",
     tagsLabel: "Karakteristikat (ndaj me presje)", tagsPlaceholder: "p.sh. Parking, Ashensor, Ballkon",
     agencyFieldLabel: "Ofertuesi", agencyFieldPlaceholder: "Privat, ose emri i agjencisë tënde",
@@ -200,6 +206,10 @@ const STRINGS = {
     sectionBasicInfo: "Grunddaten", phoneLabel: "Telefon", phonePlaceholder: "z. B. +383 44 123 456",
     sectionProfessionalInfo: "Berufliche Angaben", sectionMoreAboutYou: "Mehr über dich",
     companyLabel: "Name der Firma / Agentur", companyPlaceholder: "z. B. PRO Real Estate",
+    companyOptionalPlaceholder: "Optional — falls du ein Unternehmen vertrittst",
+    homeAddressLabel: "Wohnanschrift (optional)", homeAddressPlaceholder: "z. B. Musterstraße",
+    houseNumberLabel: "Hausnummer", houseNumberPlaceholder: "z. B. 12",
+    listingAddressLabel: "Genaue Adresse (optional)", listingAddressPlaceholder: "z. B. Musterstraße",
     cityFieldLabel: "Stadt", bioLabel: "Kurzvorstellung", bioPlaceholder: "Schreib ein paar Worte über dich oder deine Arbeit...",
     myAccountRow: "Mein Konto",
     heroTitle1: "Finde deine", heroTitle2: "nächste Immobilie.",
@@ -279,6 +289,8 @@ const STRINGS = {
     areaM2Label: "Fläche (m²)", areaM2Placeholder: "z. B. 75",
     roomsFieldLabel: "Zimmer", roomsPlaceholder: "z. B. 3",
     floorLabel: "Etage", floorPlaceholder: "z. B. 3/6",
+    groundFloorLabel: "Erdgeschoss", basementLabel: "Keller", atticLabel: "Dachgeschoss",
+    floorNotApplicableLabel: "Nicht zutreffend (Haus/Garage/Grundstück)", chooseOption: "Auswählen",
     descLabel: "Beschreibung", descPlaceholder: "Beschreibe die Immobilie kurz...",
     tagsLabel: "Merkmale (durch Komma getrennt)", tagsPlaceholder: "z. B. Parkplatz, Aufzug, Balkon",
     agencyFieldLabel: "Anbieter", agencyFieldPlaceholder: "Privat, oder der Name deiner Agentur",
@@ -317,6 +329,10 @@ const STRINGS = {
     sectionBasicInfo: "Basic information", phoneLabel: "Phone", phonePlaceholder: "e.g. +383 44 123 456",
     sectionProfessionalInfo: "Professional information", sectionMoreAboutYou: "More about you",
     companyLabel: "Company / agency name", companyPlaceholder: "e.g. PRO Real Estate",
+    companyOptionalPlaceholder: "Optional — if you represent a company",
+    homeAddressLabel: "Home address (optional)", homeAddressPlaceholder: "e.g. Main Street",
+    houseNumberLabel: "House number", houseNumberPlaceholder: "e.g. 12",
+    listingAddressLabel: "Exact address (optional)", listingAddressPlaceholder: "e.g. Main Street",
     cityFieldLabel: "City", bioLabel: "Short bio", bioPlaceholder: "Write a few words about yourself or your work...",
     myAccountRow: "My account",
     heroTitle1: "Find your", heroTitle2: "next property.",
@@ -396,6 +412,8 @@ const STRINGS = {
     areaM2Label: "Area (m²)", areaM2Placeholder: "e.g. 75",
     roomsFieldLabel: "Rooms", roomsPlaceholder: "e.g. 3",
     floorLabel: "Floor", floorPlaceholder: "e.g. 3/6",
+    groundFloorLabel: "Ground floor", basementLabel: "Basement", atticLabel: "Attic / Loft",
+    floorNotApplicableLabel: "Not applicable (house/garage/land)", chooseOption: "Choose",
     descLabel: "Description", descPlaceholder: "Briefly describe the property...",
     tagsLabel: "Features (comma-separated)", tagsPlaceholder: "e.g. Parking, Elevator, Balcony",
     agencyFieldLabel: "Provider", agencyFieldPlaceholder: "Private, or your agency's name",
@@ -460,55 +478,336 @@ const CATEGORIES = (t) => [
 function flagEmoji(code) {
   return code.toUpperCase().replace(/./g, (c) => String.fromCodePoint(127397 + c.charCodeAt(0)));
 }
-// Kosovo/Albania/Montenegro/N. Macedonia first (the app's core markets),
-// then the rest of Europe alphabetically by name.
-const EUROPE_COUNTRIES = [
+
+// Type-and-filter picker over our local WORLD_COUNTRIES list — instant, no
+// network needed since we already hold the full list in the app.
+function CountryTypeahead({ value, onChange, placeholder }) {
+  const selected = WORLD_COUNTRIES.find((c) => c.code === value);
+  const [query, setQuery] = useState(selected ? `${flagEmoji(selected.code)} ${selected.name} (${selected.dial})` : "");
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const sel = WORLD_COUNTRIES.find((c) => c.code === value);
+    setQuery(sel ? `${flagEmoji(sel.code)} ${sel.name} (${sel.dial})` : "");
+  }, [value]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const base = !q || WORLD_COUNTRIES.some((c) => `${flagEmoji(c.code)} ${c.name} (${c.dial})` === query)
+      ? WORLD_COUNTRIES
+      : WORLD_COUNTRIES.filter((c) => c.name.toLowerCase().includes(q));
+    return base.slice(0, 8);
+  }, [query]);
+
+  const pick = (c) => {
+    onChange(c.code);
+    setQuery(`${flagEmoji(c.code)} ${c.name} (${c.dial})`);
+    setOpen(false);
+  };
+
+  return (
+    <div style={{ position: "relative" }}>
+      <input
+        style={inputStyle} value={query} placeholder={placeholder}
+        onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
+        onFocus={(e) => { e.target.select(); setOpen(true); }}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+      />
+      {open && filtered.length > 0 && (
+        <div style={{
+          position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, zIndex: 40,
+          background: "var(--ph-surface)", border: "1px solid var(--ph-border)", borderRadius: 10,
+          maxHeight: 220, overflowY: "auto", boxShadow: "0 10px 24px rgba(15,23,41,0.18)",
+        }}>
+          {filtered.map((c) => (
+            <button
+              key={c.code} onMouseDown={() => pick(c)}
+              style={{ display: "block", width: "100%", textAlign: "left", border: "none", background: "none", padding: "9px 12px", fontSize: 13, color: "var(--ph-text)", cursor: "pointer" }}
+            >
+              {flagEmoji(c.code)} {c.name} <span style={{ color: "var(--ph-text-muted)" }}>({c.dial})</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Type-ahead for cities and street addresses, worldwide — backed by
+// OpenStreetMap's free Nominatim search (no API key, no cost). Debounced so
+// it only queries once someone pauses typing, and only after 3+ characters.
+function GeoTypeahead({ value, onChange, placeholder, kind }) {
+  const [query, setQuery] = useState(value || "");
+  const [suggestions, setSuggestions] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [debounceId, setDebounceId] = useState(null);
+
+  useEffect(() => { setQuery(value || ""); }, [value]);
+
+  const runSearch = async (text) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&q=${encodeURIComponent(text)}`);
+      const data = await res.json();
+      setSuggestions(Array.isArray(data) ? data : []);
+    } catch (e) {
+      setSuggestions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (e) => {
+    const v = e.target.value;
+    setQuery(v);
+    onChange(v);
+    setOpen(true);
+    if (debounceId) clearTimeout(debounceId);
+    if (v.trim().length < 3) { setSuggestions([]); return; }
+    setDebounceId(setTimeout(() => runSearch(v.trim()), 450));
+  };
+
+  const pick = (s) => {
+    // For a city search, prefer the short place name; for a street/address
+    // search, the full formatted line is more useful.
+    const shortName = s.address && (s.address.city || s.address.town || s.address.village || s.address.municipality);
+    const label = kind === "city" && shortName ? shortName : s.display_name;
+    setQuery(label);
+    onChange(label);
+    setSuggestions([]);
+    setOpen(false);
+  };
+
+  return (
+    <div style={{ position: "relative" }}>
+      <input
+        style={inputStyle} value={query} placeholder={placeholder}
+        onChange={handleChange}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+      />
+      {open && (loading || suggestions.length > 0) && (
+        <div style={{
+          position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, zIndex: 40,
+          background: "var(--ph-surface)", border: "1px solid var(--ph-border)", borderRadius: 10,
+          maxHeight: 220, overflowY: "auto", boxShadow: "0 10px 24px rgba(15,23,41,0.18)",
+        }}>
+          {loading && <div style={{ padding: "10px 12px", fontSize: 12, color: "var(--ph-text-muted)" }}>…</div>}
+          {!loading && suggestions.map((s, i) => (
+            <button
+              key={i} onMouseDown={() => pick(s)}
+              style={{ display: "block", width: "100%", textAlign: "left", border: "none", background: "none", padding: "9px 12px", fontSize: 12.5, color: "var(--ph-text)", cursor: "pointer" }}
+            >
+              {s.display_name}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Kosovo/Albania/Montenegro/N. Macedonia pinned first (the app's core markets),
+// then every other country in the world, alphabetically by name.
+const WORLD_COUNTRIES = [
   { code: "XK", name: "Kosovë", dial: "+383" },
   { code: "AL", name: "Shqipëri", dial: "+355" },
   { code: "ME", name: "Mal i Zi", dial: "+382" },
   { code: "MK", name: "Maqedonia e Veriut", dial: "+389" },
+  { code: "AF", name: "Afganistan", dial: "+93" },
+  { code: "ZA", name: "Afrika e Jugut", dial: "+27" },
+  { code: "DZ", name: "Algjeri", dial: "+213" },
   { code: "AD", name: "Andorra", dial: "+376" },
+  { code: "AO", name: "Angola", dial: "+244" },
+  { code: "AG", name: "Antigua dhe Barbuda", dial: "+1268" },
+  { code: "SA", name: "Arabia Saudite", dial: "+966" },
+  { code: "AR", name: "Argjentinë", dial: "+54" },
+  { code: "AM", name: "Armeni", dial: "+374" },
+  { code: "AU", name: "Australi", dial: "+61" },
   { code: "AT", name: "Austri", dial: "+43" },
-  { code: "BY", name: "Bjellorusi", dial: "+375" },
+  { code: "AZ", name: "Azerbajxhan", dial: "+994" },
+  { code: "BS", name: "Bahamas", dial: "+1242" },
+  { code: "BH", name: "Bahrein", dial: "+973" },
+  { code: "BD", name: "Bangladesh", dial: "+880" },
+  { code: "BB", name: "Barbados", dial: "+1246" },
   { code: "BE", name: "Belgjikë", dial: "+32" },
+  { code: "BZ", name: "Belize", dial: "+501" },
+  { code: "BJ", name: "Benin", dial: "+229" },
+  { code: "BT", name: "Bhutan", dial: "+975" },
+  { code: "BY", name: "Bjellorusi", dial: "+375" },
+  { code: "BO", name: "Bolivi", dial: "+591" },
   { code: "BA", name: "Bosnjë dhe Hercegovinë", dial: "+387" },
+  { code: "BW", name: "Botsvana", dial: "+267" },
+  { code: "BR", name: "Brazil", dial: "+55" },
+  { code: "CI", name: "Bregu i Fildishtë", dial: "+225" },
+  { code: "BN", name: "Brunei", dial: "+673" },
   { code: "BG", name: "Bullgari", dial: "+359" },
-  { code: "HR", name: "Kroaci", dial: "+385" },
-  { code: "CY", name: "Qipro", dial: "+357" },
-  { code: "CZ", name: "Republika Çeke", dial: "+420" },
+  { code: "BF", name: "Burkina Faso", dial: "+226" },
+  { code: "BI", name: "Burundi", dial: "+257" },
   { code: "DK", name: "Danimarkë", dial: "+45" },
+  { code: "DM", name: "Dominika", dial: "+1767" },
+  { code: "EG", name: "Egjipt", dial: "+20" },
+  { code: "EC", name: "Ekuador", dial: "+593" },
+  { code: "SV", name: "El Salvador", dial: "+503" },
+  { code: "AE", name: "Emiratet e Bashkuara Arabe", dial: "+971" },
+  { code: "ER", name: "Eritre", dial: "+291" },
   { code: "EE", name: "Estoni", dial: "+372" },
+  { code: "SZ", name: "Esvatini", dial: "+268" },
+  { code: "ET", name: "Etiopi", dial: "+251" },
+  { code: "PH", name: "Filipine", dial: "+63" },
   { code: "FI", name: "Finlandë", dial: "+358" },
+  { code: "FJ", name: "Fixhi", dial: "+679" },
   { code: "FR", name: "Francë", dial: "+33" },
+  { code: "GA", name: "Gabon", dial: "+241" },
+  { code: "GM", name: "Gambia", dial: "+220" },
+  { code: "GH", name: "Gana", dial: "+233" },
+  { code: "GE", name: "Gjeorgji", dial: "+995" },
   { code: "DE", name: "Gjermani", dial: "+49" },
+  { code: "GD", name: "Grenada", dial: "+1473" },
   { code: "GR", name: "Greqi", dial: "+30" },
+  { code: "GY", name: "Guajana", dial: "+592" },
+  { code: "GT", name: "Guatemalë", dial: "+502" },
+  { code: "GN", name: "Guine", dial: "+224" },
+  { code: "GW", name: "Guine-Bisau", dial: "+245" },
+  { code: "GQ", name: "Guinea Ekuatoriale", dial: "+240" },
+  { code: "HT", name: "Haiti", dial: "+509" },
+  { code: "NL", name: "Holandë", dial: "+31" },
+  { code: "HN", name: "Honduras", dial: "+504" },
   { code: "HU", name: "Hungari", dial: "+36" },
-  { code: "IS", name: "Islandë", dial: "+354" },
+  { code: "IN", name: "Indi", dial: "+91" },
+  { code: "ID", name: "Indonezi", dial: "+62" },
+  { code: "IQ", name: "Irak", dial: "+964" },
+  { code: "IR", name: "Iran", dial: "+98" },
   { code: "IE", name: "Irlandë", dial: "+353" },
+  { code: "MH", name: "Ishujt Marshall", dial: "+692" },
+  { code: "SB", name: "Ishujt Solomon", dial: "+677" },
+  { code: "IS", name: "Islandë", dial: "+354" },
   { code: "IT", name: "Itali", dial: "+39" },
+  { code: "IL", name: "Izrael", dial: "+972" },
+  { code: "JP", name: "Japoni", dial: "+81" },
+  { code: "YE", name: "Jemen", dial: "+967" },
+  { code: "JO", name: "Jordani", dial: "+962" },
+  { code: "KH", name: "Kamboxhia", dial: "+855" },
+  { code: "CM", name: "Kamerun", dial: "+237" },
+  { code: "CA", name: "Kanada", dial: "+1" },
+  { code: "QA", name: "Katar", dial: "+974" },
+  { code: "KZ", name: "Kazakistan", dial: "+7" },
+  { code: "KE", name: "Kenia", dial: "+254" },
+  { code: "CN", name: "Kinë", dial: "+86" },
+  { code: "KG", name: "Kirgistan", dial: "+996" },
+  { code: "KI", name: "Kiribati", dial: "+686" },
+  { code: "CO", name: "Kolumbi", dial: "+57" },
+  { code: "KM", name: "Komoret", dial: "+269" },
+  { code: "CG", name: "Kongo", dial: "+242" },
+  { code: "CD", name: "Kongo (RD)", dial: "+243" },
+  { code: "KR", name: "Korea e Jugut", dial: "+82" },
+  { code: "KP", name: "Korea e Veriut", dial: "+850" },
+  { code: "CR", name: "Kosta Rika", dial: "+506" },
+  { code: "HR", name: "Kroaci", dial: "+385" },
+  { code: "CU", name: "Kubë", dial: "+53" },
+  { code: "KW", name: "Kuvajt", dial: "+965" },
+  { code: "LA", name: "Laos", dial: "+856" },
+  { code: "LS", name: "Lesoto", dial: "+266" },
   { code: "LV", name: "Letoni", dial: "+371" },
+  { code: "LB", name: "Liban", dial: "+961" },
+  { code: "LR", name: "Liberi", dial: "+231" },
+  { code: "LY", name: "Libi", dial: "+218" },
   { code: "LI", name: "Lihtenshtajn", dial: "+423" },
   { code: "LT", name: "Lituani", dial: "+370" },
   { code: "LU", name: "Luksemburg", dial: "+352" },
+  { code: "MG", name: "Madagaskar", dial: "+261" },
+  { code: "MY", name: "Malajzi", dial: "+60" },
+  { code: "MW", name: "Malavi", dial: "+265" },
+  { code: "MV", name: "Maldive", dial: "+960" },
+  { code: "ML", name: "Mali", dial: "+223" },
   { code: "MT", name: "Maltë", dial: "+356" },
+  { code: "MA", name: "Marok", dial: "+212" },
+  { code: "MR", name: "Mauritani", dial: "+222" },
+  { code: "MU", name: "Mauritius", dial: "+230" },
+  { code: "GB", name: "Mbretëria e Bashkuar", dial: "+44" },
+  { code: "MX", name: "Meksikë", dial: "+52" },
+  { code: "FM", name: "Mikronezia", dial: "+691" },
   { code: "MD", name: "Moldavi", dial: "+373" },
   { code: "MC", name: "Monako", dial: "+377" },
-  { code: "NL", name: "Holandë", dial: "+31" },
+  { code: "MN", name: "Mongoli", dial: "+976" },
+  { code: "MZ", name: "Mozambik", dial: "+258" },
+  { code: "NA", name: "Namibi", dial: "+264" },
+  { code: "NR", name: "Nauru", dial: "+674" },
+  { code: "NP", name: "Nepal", dial: "+977" },
+  { code: "NE", name: "Niger", dial: "+227" },
+  { code: "NG", name: "Nigeri", dial: "+234" },
+  { code: "NI", name: "Nikaragua", dial: "+505" },
   { code: "NO", name: "Norvegji", dial: "+47" },
+  { code: "OM", name: "Oman", dial: "+968" },
+  { code: "PK", name: "Pakistan", dial: "+92" },
+  { code: "PW", name: "Palau", dial: "+680" },
+  { code: "PA", name: "Panama", dial: "+507" },
+  { code: "PG", name: "Papua Guinea e Re", dial: "+675" },
+  { code: "PY", name: "Paraguaj", dial: "+595" },
+  { code: "PE", name: "Peru", dial: "+51" },
   { code: "PL", name: "Poloni", dial: "+48" },
   { code: "PT", name: "Portugali", dial: "+351" },
+  { code: "CY", name: "Qipro", dial: "+357" },
+  { code: "DO", name: "Republika Dominikane", dial: "+1809" },
+  { code: "CZ", name: "Republika Çeke", dial: "+420" },
+  { code: "RW", name: "Ruandë", dial: "+250" },
   { code: "RO", name: "Rumani", dial: "+40" },
+  { code: "RU", name: "Rusi", dial: "+7" },
+  { code: "WS", name: "Samoa", dial: "+685" },
+  { code: "SM", name: "San Marino", dial: "+378" },
+  { code: "ST", name: "San Tome e Prinsipe", dial: "+239" },
+  { code: "SC", name: "Seishele", dial: "+248" },
+  { code: "SN", name: "Senegal", dial: "+221" },
   { code: "RS", name: "Serbi", dial: "+381" },
+  { code: "US", name: "Shtetet e Bashkuara", dial: "+1" },
+  { code: "KN", name: "Shën Kits e Nevis", dial: "+1869" },
+  { code: "LC", name: "Shën Lucia", dial: "+1758" },
+  { code: "VC", name: "Shën Vinsenti dhe Grenadinet", dial: "+1784" },
+  { code: "SL", name: "Sierra Leone", dial: "+232" },
+  { code: "SG", name: "Singapor", dial: "+65" },
+  { code: "SY", name: "Siri", dial: "+963" },
   { code: "SK", name: "Sllovaki", dial: "+421" },
   { code: "SI", name: "Slloveni", dial: "+386" },
+  { code: "SO", name: "Somali", dial: "+252" },
   { code: "ES", name: "Spanjë", dial: "+34" },
+  { code: "LK", name: "Sri Lanka", dial: "+94" },
+  { code: "SD", name: "Sudan", dial: "+249" },
+  { code: "SS", name: "Sudani i Jugut", dial: "+211" },
   { code: "SE", name: "Suedi", dial: "+46" },
-  { code: "CH", name: "Zvicër", dial: "+41" },
+  { code: "SR", name: "Surinam", dial: "+597" },
+  { code: "TH", name: "Tajlandë", dial: "+66" },
+  { code: "TZ", name: "Tanzani", dial: "+255" },
+  { code: "TJ", name: "Taxhikistan", dial: "+992" },
+  { code: "TL", name: "Timori Lindor", dial: "+670" },
+  { code: "TG", name: "Togo", dial: "+228" },
+  { code: "TO", name: "Tonga", dial: "+676" },
+  { code: "TT", name: "Trinidad e Tobago", dial: "+1868" },
+  { code: "TN", name: "Tunizi", dial: "+216" },
+  { code: "TM", name: "Turkmenistan", dial: "+993" },
   { code: "TR", name: "Turqi", dial: "+90" },
+  { code: "TV", name: "Tuvalu", dial: "+688" },
+  { code: "UG", name: "Ugandë", dial: "+256" },
   { code: "UA", name: "Ukrainë", dial: "+380" },
-  { code: "GB", name: "Mbretëria e Bashkuar", dial: "+44" },
+  { code: "UY", name: "Uruguaj", dial: "+598" },
+  { code: "UZ", name: "Uzbekistan", dial: "+998" },
+  { code: "VU", name: "Vanuatu", dial: "+678" },
   { code: "VA", name: "Vatikan", dial: "+379" },
-  { code: "SM", name: "San Marino", dial: "+378" },
+  { code: "VE", name: "Venezuelë", dial: "+58" },
+  { code: "VN", name: "Vietnam", dial: "+84" },
+  { code: "JM", name: "Xhamajkë", dial: "+1876" },
+  { code: "DJ", name: "Xhibuti", dial: "+253" },
+  { code: "ZM", name: "Zambi", dial: "+260" },
+  { code: "NZ", name: "Zelanda e Re", dial: "+64" },
+  { code: "ZW", name: "Zimbabve", dial: "+263" },
+  { code: "CH", name: "Zvicër", dial: "+41" },
+];
+
+// Tiered m² steps: fine-grained for apartments/houses, coarser for large land plots.
+const AREA_OPTIONS = [
+  ...Array.from({ length: 38 }, (_, i) => 15 + i * 5),   // 15–200, step 5
+  ...Array.from({ length: 30 }, (_, i) => 210 + i * 10), // 210–500, step 10
+  ...Array.from({ length: 30 }, (_, i) => 550 + i * 50), // 550–2000, step 50
 ];
 
 const CITY_GROUPS = [
@@ -749,7 +1048,7 @@ async function loadProfileRemote(userId) {
   return {
     name: r.name || "", email: r.email || "", phone: r.phone || "", avatar: r.avatar || null,
     city: r.city || "", bio: r.bio || "", company: r.company || "", accountType: r.account_type || "individual",
-    country: r.country || "", dateOfBirth: r.date_of_birth || "",
+    country: r.country || "", dateOfBirth: r.date_of_birth || "", homeAddress: r.home_address || "", homeAddressNumber: r.home_address_number || "",
     emailVerified: !!r.email_verified, phoneVerified: !!r.phone_verified, createdAt: r.created_at,
   };
 }
@@ -758,7 +1057,7 @@ async function saveProfileRemote(userId, profile) {
     id: userId, name: profile.name || "", email: profile.email || "", phone: profile.phone || "",
     avatar: profile.avatar || null, city: profile.city || "", bio: profile.bio || "", company: profile.company || "",
     account_type: profile.accountType || "individual",
-    country: profile.country || "", date_of_birth: profile.dateOfBirth || null,
+    country: profile.country || "", date_of_birth: profile.dateOfBirth || null, home_address: profile.homeAddress || "", home_address_number: profile.homeAddressNumber || "",
     email_verified: !!profile.emailVerified, phone_verified: !!profile.phoneVerified,
   };
   await supabaseFetch("profiles", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=representation" }, body: JSON.stringify([row]) });
@@ -914,14 +1213,17 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
   const [code, setCode] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [company, setCompany] = useState("");
   const [dob, setDob] = useState("");
   const [country, setCountry] = useState("XK");
   const [city, setCity] = useState("");
+  const [homeAddress, setHomeAddress] = useState("");
+  const [homeAddressNumber, setHomeAddressNumber] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
-  const selectedCountry = EUROPE_COUNTRIES.find((c) => c.code === country) || EUROPE_COUNTRIES[0];
+  const selectedCountry = WORLD_COUNTRIES.find((c) => c.code === country) || WORLD_COUNTRIES[0];
 
   const sendCode = async () => {
     if (!email.trim().includes("@")) { setError(t.onboardError); return; }
@@ -959,9 +1261,9 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
     try {
       const profile = {
         name: `${firstName.trim()} ${lastName.trim()}`.trim(), email: email.trim(),
-        dateOfBirth: dob || "", country, city: city.trim(),
+        company: company.trim(), dateOfBirth: dob || "", country, city: city.trim(), homeAddress: homeAddress.trim(), homeAddressNumber: homeAddressNumber.trim(),
         phone: phone.trim() ? `${selectedCountry.dial} ${phone.trim()}` : "",
-        emailVerified: true, accountType: "individual",
+        emailVerified: true, accountType: company.trim() ? "agency" : "individual",
       };
       await saveProfileRemote(currentSession.user.id, profile);
       await setAccountPassword(password.trim());
@@ -1148,22 +1450,34 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
           </div>
 
           <div style={{ marginBottom: 12 }}>
+            <label style={labelStyle}>{t.companyLabel}</label>
+            <input style={inputStyle} value={company} onChange={(e) => setCompany(e.target.value)} placeholder={t.companyOptionalPlaceholder} />
+          </div>
+
+          <div style={{ marginBottom: 12 }}>
             <label style={labelStyle}>{t.dobLabel}</label>
             <input style={inputStyle} type="date" value={dob} onChange={(e) => setDob(e.target.value)} max={new Date().toISOString().slice(0, 10)} />
           </div>
 
           <div style={{ marginBottom: 12 }}>
             <label style={labelStyle}>{t.countryLabel}</label>
-            <select style={inputStyle} value={country} onChange={(e) => setCountry(e.target.value)}>
-              {EUROPE_COUNTRIES.map((c) => (
-                <option key={c.code} value={c.code}>{flagEmoji(c.code)} {c.name} ({c.dial})</option>
-              ))}
-            </select>
+            <CountryTypeahead value={country} onChange={setCountry} placeholder={t.countryLabel} />
           </div>
 
           <div style={{ marginBottom: 12 }}>
             <label style={labelStyle}>{t.cityFieldLabel}</label>
-            <input style={inputStyle} value={city} onChange={(e) => setCity(e.target.value)} placeholder={t.cityFreeTextPlaceholder} />
+            <GeoTypeahead value={city} onChange={setCity} placeholder={t.cityFreeTextPlaceholder} kind="city" />
+          </div>
+
+          <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+            <div style={{ flex: 2 }}>
+              <label style={labelStyle}>{t.homeAddressLabel}</label>
+              <GeoTypeahead value={homeAddress} onChange={setHomeAddress} placeholder={t.homeAddressPlaceholder} kind="address" />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={labelStyle}>{t.houseNumberLabel}</label>
+              <input style={inputStyle} value={homeAddressNumber} onChange={(e) => setHomeAddressNumber(e.target.value)} placeholder={t.houseNumberPlaceholder} />
+            </div>
           </div>
 
           <div style={{ marginBottom: 12 }}>
@@ -1259,23 +1573,29 @@ function GuestProfileScreen({ onLogin }) {
 
 function EditProfileScreen({ profile, onBack, onSave }) {
   const { t } = useLang();
-  const [name, setName] = useState(profile.name);
+  const nameParts = (profile.name || "").trim().split(/\s+/);
+  const [firstName, setFirstName] = useState(nameParts[0] || "");
+  const [lastName, setLastName] = useState(nameParts.slice(1).join(" ") || "");
   const [email, setEmail] = useState(profile.email);
   const [phone, setPhone] = useState(profile.phone || "");
   const [accountType, setAccountType] = useState(profile.accountType || "individual");
   const [company, setCompany] = useState(profile.company || "");
+  const [dob, setDob] = useState(profile.dateOfBirth || "");
+  const [country, setCountry] = useState(profile.country || "XK");
   const [city, setCity] = useState(profile.city || "");
+  const [homeAddress, setHomeAddress] = useState(profile.homeAddress || "");
+  const [homeAddressNumber, setHomeAddressNumber] = useState(profile.homeAddressNumber || "");
   const [bio, setBio] = useState(profile.bio || "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   const submit = async () => {
-    if (!name.trim() || !email.trim().includes("@")) { setError(t.onboardError); return; }
+    if (!firstName.trim() || !lastName.trim() || !email.trim().includes("@")) { setError(t.onboardError); return; }
     setSaving(true);
     await onSave({
       ...profile,
-      name: name.trim(), email: email.trim(), phone: phone.trim(),
-      accountType, company: company.trim(), city, bio: bio.trim(),
+      name: `${firstName.trim()} ${lastName.trim()}`.trim(), email: email.trim(), phone: phone.trim(),
+      accountType, company: company.trim(), dateOfBirth: dob, country, city: city.trim(), homeAddress: homeAddress.trim(), homeAddressNumber: homeAddressNumber.trim(), bio: bio.trim(),
     });
     setSaving(false);
   };
@@ -1322,8 +1642,18 @@ function EditProfileScreen({ profile, onBack, onSave }) {
 
         <SettingsSection title={t.sectionBasicInfo}>
           <div style={{ padding: 14 }}>
-            <label style={labelStyle}>{t.onboardNameLabel}</label>
-            <input style={{ ...inputStyle, marginBottom: 12 }} value={name} onChange={(e) => setName(e.target.value)} />
+            <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+              <div style={{ flex: 1 }}>
+                <label style={labelStyle}>{t.firstNameLabel}</label>
+                <input style={inputStyle} value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder={t.firstNamePlaceholder} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label style={labelStyle}>{t.lastNameLabel}</label>
+                <input style={inputStyle} value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder={t.lastNamePlaceholder} />
+              </div>
+            </div>
+            <label style={labelStyle}>{t.companyLabel}</label>
+            <input style={{ ...inputStyle, marginBottom: 12 }} value={company} onChange={(e) => setCompany(e.target.value)} placeholder={t.companyPlaceholder} />
             <label style={labelStyle}>{t.onboardEmailLabel}</label>
             <input style={{ ...inputStyle, marginBottom: 12 }} type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             <label style={labelStyle}>{t.phoneLabel}</label>
@@ -1331,23 +1661,28 @@ function EditProfileScreen({ profile, onBack, onSave }) {
           </div>
         </SettingsSection>
 
-        <SettingsSection title={accountType === "agency" ? t.sectionProfessionalInfo : t.sectionMoreAboutYou}>
+        <SettingsSection title={t.sectionMoreAboutYou}>
           <div style={{ padding: 14 }}>
-            {accountType === "agency" && (
-              <>
-                <label style={labelStyle}>{t.companyLabel}</label>
-                <input style={{ ...inputStyle, marginBottom: 12 }} value={company} onChange={(e) => setCompany(e.target.value)} placeholder={t.companyPlaceholder} />
-              </>
-            )}
+            <label style={labelStyle}>{t.dobLabel}</label>
+            <input style={{ ...inputStyle, marginBottom: 12 }} type="date" value={dob} onChange={(e) => setDob(e.target.value)} max={new Date().toISOString().slice(0, 10)} />
+            <label style={labelStyle}>{t.countryLabel}</label>
+            <div style={{ marginBottom: 12 }}>
+              <CountryTypeahead value={country} onChange={setCountry} placeholder={t.countryLabel} />
+            </div>
             <label style={labelStyle}>{t.cityFieldLabel}</label>
-            <select style={{ ...inputStyle, marginBottom: 12 }} value={city} onChange={(e) => setCity(e.target.value)}>
-              <option value="">{t.allCities}</option>
-              {CITY_GROUPS.map((g) => (
-                <optgroup key={g.country} label={t[g.country]}>
-                  {g.cities.map((c) => <option key={c} value={c}>{c}</option>)}
-                </optgroup>
-              ))}
-            </select>
+            <div style={{ marginBottom: 12 }}>
+              <GeoTypeahead value={city} onChange={setCity} placeholder={t.cityFreeTextPlaceholder} kind="city" />
+            </div>
+            <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+              <div style={{ flex: 2 }}>
+                <label style={labelStyle}>{t.homeAddressLabel}</label>
+                <GeoTypeahead value={homeAddress} onChange={setHomeAddress} placeholder={t.homeAddressPlaceholder} kind="address" />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label style={labelStyle}>{t.houseNumberLabel}</label>
+                <input style={inputStyle} value={homeAddressNumber} onChange={(e) => setHomeAddressNumber(e.target.value)} placeholder={t.houseNumberPlaceholder} />
+              </div>
+            </div>
             <label style={labelStyle}>{t.bioLabel}</label>
             <textarea
               style={{ ...inputStyle, minHeight: 70, resize: "vertical" }} value={bio}
@@ -1974,9 +2309,14 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
         <h1 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 21, fontWeight: 700, color: "var(--ph-text)", margin: "12px 0 4px", lineHeight: 1.25 }}>
           {listing.title}
         </h1>
-        <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--ph-text-muted)", fontSize: 13.5, marginBottom: 14 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--ph-text-muted)", fontSize: 13.5, marginBottom: listing.address ? 2 : 14 }}>
           <MapPin size={13} /> {listing.area}, {listing.city}
         </div>
+        {listing.address && (
+          <div style={{ color: "var(--ph-text-muted)", fontSize: 12, marginBottom: 14, paddingLeft: 17 }}>
+            {listing.address}{listing.addressNumber ? ` ${listing.addressNumber}` : ""}
+          </div>
+        )}
 
         <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 26, fontWeight: 700, color: "var(--ph-accent)", marginBottom: 16 }}>
           {formatPrice(listing, t)}
@@ -2039,7 +2379,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
 function NewListingScreen({ onBack, onPublish, agencies }) {
   const { t } = useLang();
   const categories = CATEGORIES(t).filter((c) => c.id !== "all" && c.id !== "shitje" && c.id !== "qera");
-  const [form, setForm] = useState({ title: "", cat: "banesa", type: "Shitje", city: CITIES_LIST[0], area: "", price: "", m2: "", rooms: "", floor: "", desc: "", tags: "", agency: "Privat" });
+  const [form, setForm] = useState({ title: "", cat: "banesa", type: "Shitje", city: CITIES_LIST[0], area: "", address: "", addressNumber: "", price: "", m2: "", rooms: "", floor: "", desc: "", tags: "", agency: "Privat" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [images, setImages] = useState([]);
@@ -2072,7 +2412,7 @@ function NewListingScreen({ onBack, onPublish, agencies }) {
     const newListing = {
       id: `local-${Date.now()}`,
       title: form.title.trim(), cat: form.cat, type: form.type, city: form.city,
-      area: form.area.trim() || "-", price: Number(form.price), m2: Number(form.m2),
+      area: form.area.trim() || "-", address: form.address.trim(), addressNumber: form.addressNumber.trim(), price: Number(form.price), m2: Number(form.m2),
       rooms: Number(form.rooms) || 0, floor: form.floor.trim() || "-",
       desc: form.desc.trim() || "", tags: form.tags.split(",").map((x) => x.trim()).filter(Boolean),
       images, image: images[0] || null, agency: form.agency.trim() || "Privat",
@@ -2181,6 +2521,16 @@ function NewListingScreen({ onBack, onPublish, agencies }) {
             )}
           </div>
         </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <div style={{ flex: 2 }}>
+            <label style={labelStyle}>{t.listingAddressLabel}</label>
+            <GeoTypeahead value={form.address} onChange={(v) => setForm((f) => ({ ...f, address: v }))} placeholder={t.listingAddressPlaceholder} kind="address" />
+          </div>
+          <div style={{ flex: 1 }}>
+            <label style={labelStyle}>{t.houseNumberLabel}</label>
+            <input style={inputStyle} value={form.addressNumber} onChange={set("addressNumber")} placeholder={t.houseNumberPlaceholder} />
+          </div>
+        </div>
         <div style={{ display: "flex", gap: 10 }}>
           <div style={{ flex: 1 }}>
             <label style={labelStyle}>{t.priceEurLabel}</label>
@@ -2188,17 +2538,36 @@ function NewListingScreen({ onBack, onPublish, agencies }) {
           </div>
           <div style={{ flex: 1 }}>
             <label style={labelStyle}>{t.areaM2Label}</label>
-            <input style={inputStyle} type="number" value={form.m2} onChange={set("m2")} placeholder={t.areaM2Placeholder} />
+            <select style={inputStyle} value={form.m2} onChange={set("m2")}>
+              <option value="">{t.chooseOption}</option>
+              {AREA_OPTIONS.map((v) => (
+                <option key={v} value={v}>{v} m²</option>
+              ))}
+            </select>
           </div>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <div style={{ flex: 1 }}>
             <label style={labelStyle}>{t.roomsFieldLabel}</label>
-            <input style={inputStyle} type="number" value={form.rooms} onChange={set("rooms")} placeholder={t.roomsPlaceholder} />
+            <select style={inputStyle} value={form.rooms} onChange={set("rooms")}>
+              <option value="">{t.chooseOption}</option>
+              {[1, 2, 3, 4, 5, 6].map((n) => (
+                <option key={n} value={n}>{n === 6 ? "6+" : n}</option>
+              ))}
+            </select>
           </div>
           <div style={{ flex: 1 }}>
             <label style={labelStyle}>{t.floorLabel}</label>
-            <input style={inputStyle} value={form.floor} onChange={set("floor")} placeholder={t.floorPlaceholder} />
+            <select style={inputStyle} value={form.floor} onChange={set("floor")}>
+              <option value="">{t.chooseOption}</option>
+              <option value={t.floorNotApplicableLabel}>{t.floorNotApplicableLabel}</option>
+              <option value={t.basementLabel}>{t.basementLabel}</option>
+              <option value={t.groundFloorLabel}>{t.groundFloorLabel}</option>
+              {Array.from({ length: 20 }, (_, i) => i + 1).map((n) => (
+                <option key={n} value={`${n}`}>{n}</option>
+              ))}
+              <option value={t.atticLabel}>{t.atticLabel}</option>
+            </select>
           </div>
         </div>
         <div>
@@ -3205,8 +3574,14 @@ export default function PronaHomeApp() {
     setProfile(profileData);
     setGuestMode(false);
     try {
-      const favIds = await loadFavoritesRemote(session.user.id);
+      const [favIds, freshListings, freshAgencies] = await Promise.all([
+        loadFavoritesRemote(session.user.id),
+        SUPABASE_CONFIGURED ? supabaseFetch("listings?select=*&order=created_at.desc") : Promise.resolve(null),
+        SUPABASE_CONFIGURED ? supabaseFetch("agencies?select=name&order=created_at.asc") : Promise.resolve(null),
+      ]);
       setFavorites(new Set(favIds));
+      if (freshListings) setListings(freshListings.map(rowToListing));
+      if (freshAgencies) setAgencies(freshAgencies.map((r) => r.name));
     } catch (e) { console.error(e); }
   };
   const continueAsGuest = () => setGuestMode(true);

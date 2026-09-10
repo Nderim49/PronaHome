@@ -2040,8 +2040,8 @@ function LegalDocScreen({ docKey, onBack }) {
       <div style={{ flex: 1, overflowY: "auto", padding: "18px 18px 30px" }}>
         <div style={{ fontSize: 11, color: "var(--ph-text-muted)", marginBottom: 16 }}>{doc.updated}</div>
         {doc.sections.map((s) => (
-          <div key={s.h} style={{ marginBottom: 16 }}>
-            <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13.5, color: "var(--ph-text)", marginBottom: 5 }}>{s.h}</div>
+          <div key={s.h} style={{ marginBottom: 16, paddingLeft: 10, borderLeft: "2px solid var(--ph-accent-light)" }}>
+            <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13.5, color: "var(--ph-accent)", marginBottom: 5 }}>{s.h}</div>
             <p style={{ fontSize: 12.5, color: "var(--ph-text)", lineHeight: 1.6, margin: 0 }}>{s.b}</p>
           </div>
         ))}
@@ -2053,10 +2053,11 @@ function LegalDocScreen({ docKey, onBack }) {
 function SettingsSection({ title, children }) {
   return (
     <div style={{ marginBottom: 18 }}>
-      <div style={{ fontSize: 11.5, fontWeight: 700, color: "var(--ph-text-muted)", textTransform: "uppercase", letterSpacing: 0.4, marginBottom: 8, padding: "0 2px" }}>
+      <div style={{ fontSize: 11.5, fontWeight: 700, color: "var(--ph-text-muted)", textTransform: "uppercase", letterSpacing: 0.4, marginBottom: 8, padding: "0 2px", display: "flex", alignItems: "center", gap: 6 }}>
+        <span style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--ph-accent)", flexShrink: 0 }} />
         {title}
       </div>
-      <div style={{ background: "var(--ph-surface)", border: "1px solid var(--ph-border)", borderRadius: 14, overflow: "hidden" }}>
+      <div style={{ background: "var(--ph-surface)", border: "1px solid var(--ph-border)", borderTop: "2px solid var(--ph-accent-light)", borderRadius: 14, overflow: "hidden" }}>
         {children}
       </div>
     </div>
@@ -3059,7 +3060,9 @@ function FavoritesScreen({ listings, favorites, toggleFav, onOpen }) {
       <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 19, fontWeight: 700, color: "var(--ph-text)", margin: "4px 0 16px" }}>{t.favTitle}</h2>
       {items.length === 0 ? (
         <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--ph-text-muted)" }}>
-          <Heart size={30} color="#D8D2C2" style={{ marginBottom: 10 }} />
+          <div style={{ width: 56, height: 56, borderRadius: "50%", background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+            <Heart size={24} color="var(--ph-accent)" />
+          </div>
           <div style={{ fontSize: 13.5 }}>{t.favEmpty1}<br />{t.favEmpty2}</div>
         </div>
       ) : (
@@ -3710,6 +3713,13 @@ export default function PronaHomeApp() {
           @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
           * { box-sizing: border-box; }
           input::placeholder, textarea::placeholder { color: var(--ph-text-muted); }
+          input, select, textarea { transition: border-color 0.15s, box-shadow 0.15s; }
+          input:focus, select:focus, textarea:focus {
+            outline: none; border-color: var(--ph-accent) !important;
+            box-shadow: 0 0 0 3px var(--ph-accent-light);
+          }
+          .dual-thumb::-webkit-slider-thumb { border-color: var(--ph-accent) !important; }
+          .dual-thumb::-moz-range-thumb { border-color: var(--ph-accent) !important; }
           .spin { animation: spin 0.9s linear infinite; }
           @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
           .dual-thumb {

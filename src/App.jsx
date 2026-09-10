@@ -71,6 +71,8 @@ const STRINGS = {
     setPasswordHint: "Vendos një fjalëkalim për t'u kyçur më shpejt herën tjetër.",
     passwordTooShortError: "Fjalëkalimi duhet të ketë të paktën 6 shkronja/shifra.",
     forgotCodeLink: "Hyr me kod në vend të kësaj", backToStart: "Kthehu",
+    firstNameLabel: "Emri", firstNamePlaceholder: "p.sh. Arben", lastNameLabel: "Mbiemri", lastNamePlaceholder: "p.sh. Leka",
+    dobLabel: "Data e lindjes", countryLabel: "Shteti", cityFreeTextPlaceholder: "p.sh. Prishtinë", phoneLocalPlaceholder: "44 123 456",
     guestPromptMessage: "Për të ruajtur një pronë, kontaktuar agjentin, ose publikuar një shpallje, duhet së pari të regjistrohesh ose të kyçesh.",
     guestPromptRegister: "Regjistrohu tani",
     guestProfileTitle: "Nuk je i kyçur", guestProfileMessage: "Kyçu ose regjistrohu për të parë profilin tënd, për të ruajtur shpalljet e tua dhe më shumë.",
@@ -186,6 +188,8 @@ const STRINGS = {
     setPasswordHint: "Lege ein Passwort fest, um dich nächstes Mal schneller anzumelden.",
     passwordTooShortError: "Das Passwort muss mindestens 6 Zeichen haben.",
     forgotCodeLink: "Stattdessen mit Code anmelden", backToStart: "Zurück",
+    firstNameLabel: "Vorname", firstNamePlaceholder: "z. B. Anna", lastNameLabel: "Nachname", lastNamePlaceholder: "z. B. Müller",
+    dobLabel: "Geburtsdatum", countryLabel: "Land", cityFreeTextPlaceholder: "z. B. Berlin", phoneLocalPlaceholder: "151 12345678",
     guestPromptMessage: "Um eine Immobilie zu speichern, den Makler zu kontaktieren oder eine Anzeige zu veröffentlichen, musst du dich zuerst registrieren oder anmelden.",
     guestPromptRegister: "Jetzt registrieren",
     guestProfileTitle: "Du bist nicht angemeldet", guestProfileMessage: "Melde dich an oder registriere dich, um dein Profil zu sehen, Anzeigen zu speichern und mehr.",
@@ -301,6 +305,8 @@ const STRINGS = {
     setPasswordHint: "Set a password to log in faster next time.",
     passwordTooShortError: "Password must be at least 6 characters.",
     forgotCodeLink: "Sign in with code instead", backToStart: "Back",
+    firstNameLabel: "First name", firstNamePlaceholder: "e.g. John", lastNameLabel: "Last name", lastNamePlaceholder: "e.g. Smith",
+    dobLabel: "Date of birth", countryLabel: "Country", cityFreeTextPlaceholder: "e.g. London", phoneLocalPlaceholder: "7911 123456",
     guestPromptMessage: "To save a property, contact the agent, or publish a listing, you need to register or sign in first.",
     guestPromptRegister: "Register now",
     guestProfileTitle: "You're not signed in", guestProfileMessage: "Sign in or register to see your profile, save listings, and more.",
@@ -449,6 +455,62 @@ const CATEGORIES = (t) => [
   { id: "biznesspecial", label: t.catBiznesSpecial, icon: Wrench },
   { id: "hotel", label: t.catHotel, icon: Hotel },
 ];
+// Converts a 2-letter ISO country code into its flag emoji (native Unicode,
+// no image assets needed) — e.g. "XK" -> 🇽🇰
+function flagEmoji(code) {
+  return code.toUpperCase().replace(/./g, (c) => String.fromCodePoint(127397 + c.charCodeAt(0)));
+}
+// Kosovo/Albania/Montenegro/N. Macedonia first (the app's core markets),
+// then the rest of Europe alphabetically by name.
+const EUROPE_COUNTRIES = [
+  { code: "XK", name: "Kosovë", dial: "+383" },
+  { code: "AL", name: "Shqipëri", dial: "+355" },
+  { code: "ME", name: "Mal i Zi", dial: "+382" },
+  { code: "MK", name: "Maqedonia e Veriut", dial: "+389" },
+  { code: "AD", name: "Andorra", dial: "+376" },
+  { code: "AT", name: "Austri", dial: "+43" },
+  { code: "BY", name: "Bjellorusi", dial: "+375" },
+  { code: "BE", name: "Belgjikë", dial: "+32" },
+  { code: "BA", name: "Bosnjë dhe Hercegovinë", dial: "+387" },
+  { code: "BG", name: "Bullgari", dial: "+359" },
+  { code: "HR", name: "Kroaci", dial: "+385" },
+  { code: "CY", name: "Qipro", dial: "+357" },
+  { code: "CZ", name: "Republika Çeke", dial: "+420" },
+  { code: "DK", name: "Danimarkë", dial: "+45" },
+  { code: "EE", name: "Estoni", dial: "+372" },
+  { code: "FI", name: "Finlandë", dial: "+358" },
+  { code: "FR", name: "Francë", dial: "+33" },
+  { code: "DE", name: "Gjermani", dial: "+49" },
+  { code: "GR", name: "Greqi", dial: "+30" },
+  { code: "HU", name: "Hungari", dial: "+36" },
+  { code: "IS", name: "Islandë", dial: "+354" },
+  { code: "IE", name: "Irlandë", dial: "+353" },
+  { code: "IT", name: "Itali", dial: "+39" },
+  { code: "LV", name: "Letoni", dial: "+371" },
+  { code: "LI", name: "Lihtenshtajn", dial: "+423" },
+  { code: "LT", name: "Lituani", dial: "+370" },
+  { code: "LU", name: "Luksemburg", dial: "+352" },
+  { code: "MT", name: "Maltë", dial: "+356" },
+  { code: "MD", name: "Moldavi", dial: "+373" },
+  { code: "MC", name: "Monako", dial: "+377" },
+  { code: "NL", name: "Holandë", dial: "+31" },
+  { code: "NO", name: "Norvegji", dial: "+47" },
+  { code: "PL", name: "Poloni", dial: "+48" },
+  { code: "PT", name: "Portugali", dial: "+351" },
+  { code: "RO", name: "Rumani", dial: "+40" },
+  { code: "RS", name: "Serbi", dial: "+381" },
+  { code: "SK", name: "Sllovaki", dial: "+421" },
+  { code: "SI", name: "Slloveni", dial: "+386" },
+  { code: "ES", name: "Spanjë", dial: "+34" },
+  { code: "SE", name: "Suedi", dial: "+46" },
+  { code: "CH", name: "Zvicër", dial: "+41" },
+  { code: "TR", name: "Turqi", dial: "+90" },
+  { code: "UA", name: "Ukrainë", dial: "+380" },
+  { code: "GB", name: "Mbretëria e Bashkuar", dial: "+44" },
+  { code: "VA", name: "Vatikan", dial: "+379" },
+  { code: "SM", name: "San Marino", dial: "+378" },
+];
+
 const CITY_GROUPS = [
   { country: "countryKosovo", cities: ["Ferizaj", "Gjakovë", "Gjilan", "Mitrovicë", "Pejë", "Prishtinë", "Prizren"] },
   { country: "countryAlbania", cities: ["Durrës", "Elbasan", "Korçë", "Shkodër", "Tiranë", "Vlorë"] },
@@ -687,6 +749,7 @@ async function loadProfileRemote(userId) {
   return {
     name: r.name || "", email: r.email || "", phone: r.phone || "", avatar: r.avatar || null,
     city: r.city || "", bio: r.bio || "", company: r.company || "", accountType: r.account_type || "individual",
+    country: r.country || "", dateOfBirth: r.date_of_birth || "",
     emailVerified: !!r.email_verified, phoneVerified: !!r.phone_verified, createdAt: r.created_at,
   };
 }
@@ -695,6 +758,7 @@ async function saveProfileRemote(userId, profile) {
     id: userId, name: profile.name || "", email: profile.email || "", phone: profile.phone || "",
     avatar: profile.avatar || null, city: profile.city || "", bio: profile.bio || "", company: profile.company || "",
     account_type: profile.accountType || "individual",
+    country: profile.country || "", date_of_birth: profile.dateOfBirth || null,
     email_verified: !!profile.emailVerified, phone_verified: !!profile.phoneVerified,
   };
   await supabaseFetch("profiles", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=representation" }, body: JSON.stringify([row]) });
@@ -848,10 +912,16 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
   const [step, setStep] = useState("start");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [dob, setDob] = useState("");
+  const [country, setCountry] = useState("XK");
+  const [city, setCity] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const selectedCountry = EUROPE_COUNTRIES.find((c) => c.code === country) || EUROPE_COUNTRIES[0];
 
   const sendCode = async () => {
     if (!email.trim().includes("@")) { setError(t.onboardError); return; }
@@ -883,11 +953,16 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
     }
   };
   const finishSignup = async () => {
-    if (!name.trim()) { setError(t.onboardError); return; }
+    if (!firstName.trim() || !lastName.trim()) { setError(t.onboardError); return; }
     if (password.trim().length < 6) { setError(t.passwordTooShortError); return; }
     setError(""); setSaving(true);
     try {
-      const profile = { name: name.trim(), email: email.trim(), emailVerified: true, accountType: "individual" };
+      const profile = {
+        name: `${firstName.trim()} ${lastName.trim()}`.trim(), email: email.trim(),
+        dateOfBirth: dob || "", country, city: city.trim(),
+        phone: phone.trim() ? `${selectedCountry.dial} ${phone.trim()}` : "",
+        emailVerified: true, accountType: "individual",
+      };
       await saveProfileRemote(currentSession.user.id, profile);
       await setAccountPassword(password.trim());
       await onLoginWithSession(currentSession, { ...profile, createdAt: new Date().toISOString() });
@@ -913,9 +988,9 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
 
   // --- Local fallback path (Supabase not configured yet) ---
   const submitLocal = async () => {
-    if (!name.trim() || !email.trim().includes("@")) { setError(t.onboardError); return; }
+    if (!firstName.trim() || !email.trim().includes("@")) { setError(t.onboardError); return; }
     setError(""); setSaving(true);
-    await onSubmit({ name: name.trim(), email: email.trim() });
+    await onSubmit({ name: firstName.trim(), email: email.trim() });
     setSaving(false);
   };
 
@@ -938,7 +1013,7 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
         <>
           <div style={{ marginBottom: 12 }}>
             <label style={labelStyle}>{t.onboardNameLabel}</label>
-            <input style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} placeholder={t.onboardNamePlaceholder} />
+            <input style={inputStyle} value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder={t.onboardNamePlaceholder} />
           </div>
           <div style={{ marginBottom: 8 }}>
             <label style={labelStyle}>{t.onboardEmailLabel}</label>
@@ -1058,21 +1133,63 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
           </button>
         </>
       ) : (
-        <>
+        <div style={{ maxHeight: "70vh", overflowY: "auto", paddingRight: 2 }}>
           <div style={{ fontSize: 12.5, color: "var(--ph-text-muted)", marginBottom: 12 }}>{t.almostDoneHint}</div>
-          <label style={labelStyle}>{t.onboardNameLabel}</label>
-          <input style={{ ...inputStyle, marginBottom: 12 }} value={name} onChange={(e) => setName(e.target.value)} placeholder={t.onboardNamePlaceholder} />
+
+          <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+            <div style={{ flex: 1 }}>
+              <label style={labelStyle}>{t.firstNameLabel}</label>
+              <input style={inputStyle} value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder={t.firstNamePlaceholder} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={labelStyle}>{t.lastNameLabel}</label>
+              <input style={inputStyle} value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder={t.lastNamePlaceholder} />
+            </div>
+          </div>
+
+          <div style={{ marginBottom: 12 }}>
+            <label style={labelStyle}>{t.dobLabel}</label>
+            <input style={inputStyle} type="date" value={dob} onChange={(e) => setDob(e.target.value)} max={new Date().toISOString().slice(0, 10)} />
+          </div>
+
+          <div style={{ marginBottom: 12 }}>
+            <label style={labelStyle}>{t.countryLabel}</label>
+            <select style={inputStyle} value={country} onChange={(e) => setCountry(e.target.value)}>
+              {EUROPE_COUNTRIES.map((c) => (
+                <option key={c.code} value={c.code}>{flagEmoji(c.code)} {c.name} ({c.dial})</option>
+              ))}
+            </select>
+          </div>
+
+          <div style={{ marginBottom: 12 }}>
+            <label style={labelStyle}>{t.cityFieldLabel}</label>
+            <input style={inputStyle} value={city} onChange={(e) => setCity(e.target.value)} placeholder={t.cityFreeTextPlaceholder} />
+          </div>
+
+          <div style={{ marginBottom: 12 }}>
+            <label style={labelStyle}>{t.phoneLabel}</label>
+            <div style={{ display: "flex", gap: 8 }}>
+              <div style={{
+                display: "flex", alignItems: "center", gap: 5, padding: "0 12px", borderRadius: 12,
+                border: "1px solid var(--ph-border)", background: "var(--ph-surface)", color: "var(--ph-text)", fontSize: 13.5, flexShrink: 0,
+              }}>
+                {flagEmoji(selectedCountry.code)} {selectedCountry.dial}
+              </div>
+              <input style={{ ...inputStyle, flex: 1 }} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t.phoneLocalPlaceholder} />
+            </div>
+          </div>
+
           <label style={labelStyle}>{t.passwordLabel}</label>
           <input style={inputStyle} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t.passwordPlaceholder} />
           <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)", marginTop: 5 }}>{t.setPasswordHint}</div>
           {error && <div style={{ color: "#B0473C", fontSize: 12.5, marginTop: 8 }}>{error}</div>}
           <button
             onClick={finishSignup} disabled={saving}
-            style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, marginTop: 10, cursor: saving ? "default" : "pointer", opacity: saving ? 0.7 : 1 }}
+            style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, marginTop: 12, cursor: saving ? "default" : "pointer", opacity: saving ? 0.7 : 1 }}
           >
             {saving ? t.onboardSubmitting : t.onboardSubmit}
           </button>
-        </>
+        </div>
       )}
       <div style={{ fontSize: 11, color: "var(--ph-text-muted)", textAlign: "center", marginTop: 12 }}>{t.onboardTerms}</div>
     </div>

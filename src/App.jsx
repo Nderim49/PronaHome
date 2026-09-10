@@ -3520,7 +3520,7 @@ export default function PronaHomeApp() {
     } catch (e) {
       console.error(e);
       setFavorites(prevFavorites);
-      setToast(t.saveErrorToast);
+      setToast(`${t.saveErrorToast} (${e.message || "?"})`);
     }
   };
 
@@ -3598,7 +3598,7 @@ export default function PronaHomeApp() {
       setListings(prevListings);
       setFavorites(prevFavorites);
       setMyIds(prevMyIds);
-      setToast(t.saveErrorToast);
+      setToast(`${t.saveErrorToast} (${e.message || "?"})`);
     }
   };
 
@@ -3646,7 +3646,7 @@ export default function PronaHomeApp() {
     } catch (e) {
       console.error(e);
       setProfile(prevProfile);
-      setToast(t.saveErrorToast);
+      setToast(`${t.saveErrorToast} (${e.message || "?"})`);
     }
   };
   const updateSettings = async (next) => {
@@ -3689,7 +3689,7 @@ export default function PronaHomeApp() {
     } catch (e) {
       console.error(e);
       setProfile(prevProfile);
-      setToast(t.saveErrorToast);
+      setToast(`${t.saveErrorToast} (${e.message || "?"})`);
     }
   };
 

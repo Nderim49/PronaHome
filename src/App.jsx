@@ -1599,11 +1599,11 @@ function EditProfileScreen({ profile, onBack, onSave }) {
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", borderBottom: "1px solid var(--ph-border)", background: "var(--ph-surface)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY }}>
         <button onClick={onBack} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
-          <ChevronLeft size={20} color="var(--ph-text)" />
+          <ChevronLeft size={20} color="#fff" />
         </button>
-        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "var(--ph-text)" }}>{t.editTitle}</span>
+        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{t.editTitle}</span>
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: 18 }}>
@@ -1929,11 +1929,11 @@ function AccountScreen({ profile, favorites, myListingIds, listings, onBack, onD
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", borderBottom: "1px solid var(--ph-border)", background: "var(--ph-surface)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY }}>
         <button onClick={onBack} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
-          <ChevronLeft size={20} color="var(--ph-text)" />
+          <ChevronLeft size={20} color="#fff" />
         </button>
-        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "var(--ph-text)" }}>{t.accountScreenTitle}</span>
+        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{t.accountScreenTitle}</span>
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: 18 }}>
@@ -2031,11 +2031,11 @@ function LegalDocScreen({ docKey, onBack }) {
   const doc = LEGAL_DOCS[docKey][lang] || LEGAL_DOCS[docKey].sq;
   return (
     <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 21 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", borderBottom: "1px solid var(--ph-border)", background: "var(--ph-surface)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY }}>
         <button onClick={onBack} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
-          <ChevronLeft size={20} color="var(--ph-text)" />
+          <ChevronLeft size={20} color="#fff" />
         </button>
-        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "var(--ph-text)" }}>{doc.title}</span>
+        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{doc.title}</span>
       </div>
       <div style={{ flex: 1, overflowY: "auto", padding: "18px 18px 30px" }}>
         <div style={{ fontSize: 11, color: "var(--ph-text-muted)", marginBottom: 16 }}>{doc.updated}</div>
@@ -2090,11 +2090,11 @@ function SettingsScreen({ onBack, settings, onChange, onOpenPrivacy, onOpenTerms
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", borderBottom: "1px solid var(--ph-border)", background: "var(--ph-surface)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY }}>
         <button onClick={onBack} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
-          <ChevronLeft size={20} color="var(--ph-text)" />
+          <ChevronLeft size={20} color="#fff" />
         </button>
-        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "var(--ph-text)" }}>{t.settingsRow}</span>
+        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{t.settingsRow}</span>
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: 18 }}>
@@ -2427,11 +2427,11 @@ function NewListingScreen({ onBack, onPublish, agencies }) {
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", borderBottom: "1px solid var(--ph-border)", background: "var(--ph-surface)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY }}>
         <button onClick={onBack} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
-          <ChevronLeft size={20} color="var(--ph-text)" />
+          <ChevronLeft size={20} color="#fff" />
         </button>
-        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "var(--ph-text)" }}>{t.newListingTitle}</span>
+        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{t.newListingTitle}</span>
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: 18, display: "flex", flexDirection: "column", gap: 14 }}>
@@ -2651,10 +2651,10 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 18px", borderBottom: "1px solid var(--ph-border)", background: "var(--ph-surface)" }}>
-        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 19, color: "var(--ph-text)" }}>{t.filterTitle}</span>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 18px", background: NAVY }}>
+        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 19, color: "#fff" }}>{t.filterTitle}</span>
         <button onClick={onBack} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
-          <X size={22} color="var(--ph-text)" />
+          <X size={22} color="#fff" />
         </button>
       </div>
 
@@ -3214,13 +3214,13 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
     const results = listings.filter((l) => l.agency === selected);
     return (
       <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", borderBottom: "1px solid var(--ph-border)", background: "var(--ph-surface)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY }}>
           <button onClick={() => setSelected(null)} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
-            <ChevronLeft size={20} color="var(--ph-text)" />
+            <ChevronLeft size={20} color="#fff" />
           </button>
           <div>
-            <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "var(--ph-text)" }}>{selected}</div>
-            <div style={{ fontSize: 11.5, color: "var(--ph-text-muted)" }}>{t.listingsCount(results.length)}</div>
+            <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{selected}</div>
+            <div style={{ fontSize: 11.5, color: "var(--ph-accent-light)" }}>{t.listingsCount(results.length)}</div>
           </div>
         </div>
         <div style={{ flex: 1, overflowY: "auto", padding: "14px 18px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -3286,11 +3286,11 @@ function MyListingsScreen({ listings, myIds, onBack, onOpen, onDelete }) {
   const items = listings.filter((l) => myIds.has(l.id));
   return (
     <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", borderBottom: "1px solid var(--ph-border)", background: "var(--ph-surface)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY }}>
         <button onClick={onBack} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
-          <ChevronLeft size={20} color="var(--ph-text)" />
+          <ChevronLeft size={20} color="#fff" />
         </button>
-        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "var(--ph-text)" }}>{t.myListingsTitle}</span>
+        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{t.myListingsTitle}</span>
       </div>
       <div style={{ flex: 1, overflowY: "auto", padding: 18 }}>
         {items.length === 0 ? (

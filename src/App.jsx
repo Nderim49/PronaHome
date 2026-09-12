@@ -105,8 +105,10 @@ const STRINGS = {
     catGarazhe: "Garazhë / Vende Parkimi", catZyre: "Zyre", catShitjePakice: "Shitje me Pakicë",
     catHale: "Halle / Prodhimi", catGastronomi: "Gastronomi / Hotel", catBiznesSpecial: "Biznes i Veçantë",
     hotelOwnerBtn: "Hotele & Fjetje", hotelOwnerHint: "Shiko të gjitha hotelet, motelet dhe shtëpitë e pushimit",
+    propertyOwnerHint: "Shfleto shpalljet sipas qytetit — nga privatë ose agjenci",
     hotelScreenTitle: "Hotele & Fjetje", hotelScreenSubtitle: "Zgjidh qytetin dhe vendbanimin për të gjetur fjetjen ideale",
-    agenciesBtn: "Ofertuesit", agenciesHint: "Shpallje nga individë privatë dhe agjenci imobiliare",
+    propertyScreenTitle: "Patundshmëri",
+    agenciesBtn: "Ofertuesit", agenciesHint: "Shpallje nga individë privatë dhe agjenci imobiliare", agentSellerLabel: "Agjenci",
     agenciesScreenTitle: "Ofertuesit", agenciesScreenSubtitle: "Zgjidh ofertuesin për të parë shpalljet e tij",
     providerGroupRealEstate: "Patundshmëri", providerGroupFurniture: "Mobilje & Kuzhina",
     providerGroupCraftsmen: "Zejtarë", providerGroupArchitects: "Arkitektë & Statikë",
@@ -239,8 +241,10 @@ const STRINGS = {
     catGarazhe: "Garage/Stellplatz", catZyre: "Büro", catShitjePakice: "Einzelhandel",
     catHale: "Halle/Produktion", catGastronomi: "Gastronomie/Hotel", catBiznesSpecial: "Spezialgewerbe",
     hotelOwnerBtn: "Hotels & Unterkünfte", hotelOwnerHint: "Alle Hotels, Motels und Ferienhäuser ansehen",
+    propertyOwnerHint: "Anzeigen nach Stadt durchsuchen — von privat oder Makler",
     hotelScreenTitle: "Hotels & Unterkünfte", hotelScreenSubtitle: "Wähle Stadt und Ortschaft, um die passende Unterkunft zu finden",
-    agenciesBtn: "Anbieter", agenciesHint: "Anzeigen von Privatpersonen und Immobilienagenturen",
+    propertyScreenTitle: "Immobilien",
+    agenciesBtn: "Anbieter", agenciesHint: "Anzeigen von Privatpersonen und Immobilienagenturen", agentSellerLabel: "Makler",
     agenciesScreenTitle: "Anbieter", agenciesScreenSubtitle: "Wähle einen Anbieter, um dessen Anzeigen zu sehen",
     providerGroupRealEstate: "Immobilien", providerGroupFurniture: "Möbel & Küchen",
     providerGroupCraftsmen: "Handwerker", providerGroupArchitects: "Architekten & Statiker",
@@ -373,8 +377,10 @@ const STRINGS = {
     catGarazhe: "Garage/Parking Space", catZyre: "Office", catShitjePakice: "Retail",
     catHale: "Warehouse/Production", catGastronomi: "Gastronomy/Hotel", catBiznesSpecial: "Special-Purpose Commercial",
     hotelOwnerBtn: "Hotels & Stays", hotelOwnerHint: "See all hotels, motels and vacation homes",
+    propertyOwnerHint: "Browse listings by city — from private sellers or agencies",
     hotelScreenTitle: "Hotels & Stays", hotelScreenSubtitle: "Choose a city and settlement to find the right stay",
-    agenciesBtn: "Providers", agenciesHint: "Listings from private sellers and real estate agencies",
+    propertyScreenTitle: "Real Estate",
+    agenciesBtn: "Providers", agenciesHint: "Listings from private sellers and real estate agencies", agentSellerLabel: "Agency",
     agenciesScreenTitle: "Providers", agenciesScreenSubtitle: "Choose a provider to see their listings",
     providerGroupRealEstate: "Real Estate", providerGroupFurniture: "Furniture & Kitchens",
     providerGroupCraftsmen: "Tradespeople", providerGroupArchitects: "Architects & Structural Engineers",
@@ -2354,7 +2360,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
   if (BUSINESS_CARD_CATS.includes(listing.cat)) {
     const fullName = `${listing.contactFirstName || ""} ${listing.contactLastName || ""}`.trim();
     return (
-      <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
+      <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 30 }}>
         <div style={{ height: 150, position: "relative", flexShrink: 0, background: CAT_GRADIENT[listing.cat] || CAT_GRADIENT.banesa, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <Icon size={52} color="rgba(255,255,255,0.9)" strokeWidth={1.4} />
           <button
@@ -2433,7 +2439,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
   }
 
   return (
-    <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
+    <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 30 }}>
       <div style={{ height: 220, position: "relative", flexShrink: 0, background: CAT_GRADIENT[listing.cat] || CAT_GRADIENT.banesa }}>
         {gallery.length > 0 ? (
           <div
@@ -3120,7 +3126,7 @@ function TabBar({ active, setActive, favCount, notifCount }) {
 // ---------------------------------------------------------------------------
 // Search / home screen
 // ---------------------------------------------------------------------------
-function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpenFilters, onOpenHotelScreen, onOpenAgenciesScreen, filters, onQuickFilter }) {
+function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpenFilters, onOpenHotelScreen, onOpenAgenciesScreen, onOpenPropertyScreen, filters, onQuickFilter }) {
   const { t } = useLang();
   const categories = CATEGORIES(t).filter((c) => !NON_PROPERTY_CATS.includes(c.id));
   const [query, setQuery] = useState("");
@@ -3266,6 +3272,25 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
 
       <div style={{ padding: "10px 18px 0" }}>
         <button
+          onClick={onOpenPropertyScreen}
+          style={{
+            width: "100%", display: "flex", alignItems: "center", gap: 10, textAlign: "left",
+            background: `linear-gradient(135deg, ${NAVY} 0%, #4A6FA5 140%)`, border: "none", borderRadius: 14,
+            padding: "12px 14px", cursor: "pointer",
+          }}
+        >
+          <div style={{ width: 34, height: 34, borderRadius: 10, background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <Building2 size={17} color="#fff" />
+          </div>
+          <div>
+            <div style={{ color: "#fff", fontSize: 13, fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>{t.propertyScreenTitle}</div>
+            <div style={{ color: "rgba(255,255,255,0.85)", fontSize: 11 }}>{t.propertyOwnerHint}</div>
+          </div>
+        </button>
+      </div>
+
+      <div style={{ padding: "10px 18px 0" }}>
+        <button
           onClick={onOpenHotelScreen}
           style={{
             width: "100%", display: "flex", alignItems: "center", gap: 10, textAlign: "left",
@@ -3401,6 +3426,89 @@ function NotificationsScreen({ notifications, onMarkRead, profile }) {
 
 // Dedicated screen for the "Hotele & Fjetje" button: its own city/settlement
 // pickers and a results grid restricted to the hotel/accommodation category only.
+// Dedicated real-estate browsing screen: pick city/village up top like the
+// main search, then choose Privat (individual sellers) or Makler (agencies)
+// to narrow things down further, with results listed below.
+function PropertyByOwnerScreen({ listings, favorites, toggleFav, onOpen, onBack }) {
+  const { t } = useLang();
+  const [city, setCity] = useState("");
+  const [area, setArea] = useState("");
+  const [owner, setOwner] = useState("private");
+
+  const results = useMemo(() => {
+    return listings.filter((l) => {
+      if (NON_PROPERTY_CATS.includes(l.cat)) return false;
+      if (owner === "private" && l.agency !== "Privat") return false;
+      if (owner === "agency" && l.agency === "Privat") return false;
+      if (city && l.city !== city) return false;
+      if (area && l.area !== area) return false;
+      return true;
+    });
+  }, [listings, owner, city, area]);
+
+  return (
+    <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
+      <div style={{ background: NAVY, padding: "16px 18px 18px", borderBottomLeftRadius: 22, borderBottomRightRadius: 22 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+          <button onClick={onBack} style={{ border: "none", background: "rgba(255,255,255,0.16)", borderRadius: "50%", width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+            <ChevronLeft size={18} color="#fff" />
+          </button>
+          <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 17, color: "#fff" }}>{t.propertyScreenTitle}</span>
+        </div>
+        <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+          <select
+            style={{ ...inputStyle, flex: 1, background: "#fff" }} value={city}
+            onChange={(e) => { setCity(e.target.value); setArea(""); }}
+          >
+            <option value="">{t.allCities}</option>
+            {CITY_GROUPS.map((g) => (
+              <optgroup key={g.country} label={t[g.country]}>
+                {g.cities.map((c) => <option key={c} value={c}>{c}</option>)}
+              </optgroup>
+            ))}
+          </select>
+          {SETTLEMENTS_BY_CITY[city] && (
+            <select style={{ ...inputStyle, flex: 1, background: "#fff" }} value={area} onChange={(e) => setArea(e.target.value)}>
+              <option value="">{t.anySettlement}</option>
+              {SETTLEMENTS_BY_CITY[city].map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+          )}
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          {[{ id: "private", label: t.privateSeller }, { id: "agency", label: t.agentSellerLabel }].map((o) => {
+            const active = owner === o.id;
+            return (
+              <button
+                key={o.id} onClick={() => setOwner(o.id)}
+                style={{
+                  flex: 1, padding: "9px 0", borderRadius: 10, cursor: "pointer", fontSize: 12.5, fontWeight: 600, border: "none",
+                  background: active ? "#fff" : "rgba(255,255,255,0.16)", color: active ? NAVY : "#fff",
+                }}
+              >
+                {o.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div style={{ padding: "12px 18px 4px", fontSize: 12.5, color: "var(--ph-text-muted)", fontWeight: 600 }}>
+        {t.listingsCount(results.length)}
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", padding: "6px 18px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        {results.map((l) => (
+          <ListingCard key={l.id} listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
+        ))}
+        {results.length === 0 && (
+          <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
+            {t.noResults}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function HotelScreen({ listings, favorites, toggleFav, onOpen, onBack }) {
   const { t } = useLang();
   const [city, setCity] = useState("");
@@ -3758,6 +3866,7 @@ export default function PronaHomeApp() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [showFilters, setShowFilters] = useState(false);
   const [showHotelScreen, setShowHotelScreen] = useState(false);
+  const [showPropertyScreen, setShowPropertyScreen] = useState(false);
   const [showAgenciesScreen, setShowAgenciesScreen] = useState(false);
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [loading, setLoading] = useState(true);
@@ -4147,6 +4256,7 @@ export default function PronaHomeApp() {
                   listings={listings} favorites={favorites} toggleFav={toggleFav} onOpen={openListingDetail}
                   onAddNew={() => requireAuth(() => setShowNewListing(true))} onOpenFilters={() => setShowFilters(true)}
                   onOpenHotelScreen={() => setShowHotelScreen(true)}
+                  onOpenPropertyScreen={() => setShowPropertyScreen(true)}
                   onOpenAgenciesScreen={() => setShowAgenciesScreen(true)}
                   filters={filters}
                   onQuickFilter={(partial) => setFilters((f) => ({ ...f, ...partial }))}
@@ -4203,6 +4313,12 @@ export default function PronaHomeApp() {
                 <HotelScreen
                   listings={listings} favorites={favorites} toggleFav={toggleFav}
                   onOpen={openListingDetail} onBack={() => setShowHotelScreen(false)}
+                />
+              )}
+              {showPropertyScreen && (
+                <PropertyByOwnerScreen
+                  listings={listings} favorites={favorites} toggleFav={toggleFav}
+                  onOpen={openListingDetail} onBack={() => setShowPropertyScreen(false)}
                 />
               )}
               {showAgenciesScreen && (

@@ -101,12 +101,16 @@ const STRINGS = {
     locationBtn: "Vendndodhja", chooseLocation: "Zgjidh qytetin & vendbanimin", anyLocation: "Çdo vendndodhje", clearLocation: "Fshi vendndodhjen", applyLocation: "Zbato",
     catAll: "Të gjitha", catShitje: "Blerje & Shitje", catQera: "Qera & Qiradhënie",
     catBanesa: "Banesa", catShtepi: "Shtëpi", catLokale: "Lokale Afariste", catTruall: "Truall", catHotel: "Hotele & Fjetje",
+    catMobilje: "Mobilje", catKuzhina: "Kuzhina", catZejtar: "Zejtar", catArkitekt: "Arkitekt", catStatike: "Statikë",
     catGarazhe: "Garazhë / Vende Parkimi", catZyre: "Zyre", catShitjePakice: "Shitje me Pakicë",
     catHale: "Halle / Prodhimi", catGastronomi: "Gastronomi / Hotel", catBiznesSpecial: "Biznes i Veçantë",
     hotelOwnerBtn: "Hotele & Fjetje", hotelOwnerHint: "Shiko të gjitha hotelet, motelet dhe shtëpitë e pushimit",
     hotelScreenTitle: "Hotele & Fjetje", hotelScreenSubtitle: "Zgjidh qytetin dhe vendbanimin për të gjetur fjetjen ideale",
     agenciesBtn: "Ofertuesit", agenciesHint: "Shpallje nga individë privatë dhe agjenci imobiliare",
     agenciesScreenTitle: "Ofertuesit", agenciesScreenSubtitle: "Zgjidh ofertuesin për të parë shpalljet e tij",
+    providerGroupRealEstate: "Patundshmëri", providerGroupFurniture: "Mobilje & Kuzhina",
+    providerGroupCraftsmen: "Zejtarë", providerGroupArchitects: "Arkitektë & Statikë",
+    noProvidersYet: "Ende pa ofertues aktivë në këtë kategori.",
     privateSeller: "Privat", listingsCount: (n) => `${n} shpallje`, backToAgencies: "Kthehu te ofertuesit",
     perNight: "/ natë",
     allCities: "Të gjitha qytetet",
@@ -181,6 +185,7 @@ const STRINGS = {
     requiredError: "Plotëso të paktën titullin, çmimin, sipërfaqen dhe qytetin.",
     publishBtn: "Publiko shpalljen", publishing: "Duke publikuar...",
     contactAgent: "Kontakto agjentin", descriptionLabel: "Përshkrimi", featuresLabel: "Karakteristikat",
+    contactInfoLabel: "Të dhënat e kontaktit",
     areaStat: "Sipërfaqja", roomsStat: "Dhoma", floorStat: "Kati",
     yourListing: "Shpallja jote", genericProperty: "Pronë",
     loadingText: "Duke ngarkuar...",
@@ -230,12 +235,16 @@ const STRINGS = {
     locationBtn: "Standort", chooseLocation: "Stadt & Ortschaft wählen", anyLocation: "Beliebiger Standort", clearLocation: "Standort löschen", applyLocation: "Übernehmen",
     catAll: "Alle", catShitje: "Kauf & Verkauf", catQera: "Miete & Vermietung",
     catBanesa: "Wohnungen", catShtepi: "Häuser", catLokale: "Gewerbeflächen", catTruall: "Grundstücke", catHotel: "Hotels & Unterkünfte",
+    catMobilje: "Möbel", catKuzhina: "Küchen", catZejtar: "Handwerker", catArkitekt: "Architekt", catStatike: "Statiker",
     catGarazhe: "Garage/Stellplatz", catZyre: "Büro", catShitjePakice: "Einzelhandel",
     catHale: "Halle/Produktion", catGastronomi: "Gastronomie/Hotel", catBiznesSpecial: "Spezialgewerbe",
     hotelOwnerBtn: "Hotels & Unterkünfte", hotelOwnerHint: "Alle Hotels, Motels und Ferienhäuser ansehen",
     hotelScreenTitle: "Hotels & Unterkünfte", hotelScreenSubtitle: "Wähle Stadt und Ortschaft, um die passende Unterkunft zu finden",
     agenciesBtn: "Anbieter", agenciesHint: "Anzeigen von Privatpersonen und Immobilienagenturen",
     agenciesScreenTitle: "Anbieter", agenciesScreenSubtitle: "Wähle einen Anbieter, um dessen Anzeigen zu sehen",
+    providerGroupRealEstate: "Immobilien", providerGroupFurniture: "Möbel & Küchen",
+    providerGroupCraftsmen: "Handwerker", providerGroupArchitects: "Architekten & Statiker",
+    noProvidersYet: "Noch keine aktiven Anbieter in dieser Kategorie.",
     privateSeller: "Privat", listingsCount: (n) => `${n} Anzeigen`, backToAgencies: "Zurück zu den Anbietern",
     perNight: "/ Nacht",
     allCities: "Alle Städte",
@@ -310,6 +319,7 @@ const STRINGS = {
     requiredError: "Fülle mindestens Titel, Preis, Fläche und Stadt aus.",
     publishBtn: "Anzeige veröffentlichen", publishing: "Wird veröffentlicht...",
     contactAgent: "Makler kontaktieren", descriptionLabel: "Beschreibung", featuresLabel: "Merkmale",
+    contactInfoLabel: "Kontaktdaten",
     areaStat: "Fläche", roomsStat: "Zimmer", floorStat: "Etage",
     yourListing: "Deine Anzeige", genericProperty: "Immobilie",
     loadingText: "Wird geladen...",
@@ -359,12 +369,16 @@ const STRINGS = {
     locationBtn: "Location", chooseLocation: "Choose city & settlement", anyLocation: "Any location", clearLocation: "Clear location", applyLocation: "Apply",
     catAll: "All", catShitje: "Buy & Sell", catQera: "Rent & Renting",
     catBanesa: "Apartments", catShtepi: "Houses", catLokale: "Business Premises", catTruall: "Land", catHotel: "Hotels & Stays",
+    catMobilje: "Furniture", catKuzhina: "Kitchens", catZejtar: "Tradesperson", catArkitekt: "Architect", catStatike: "Structural Engineer",
     catGarazhe: "Garage/Parking Space", catZyre: "Office", catShitjePakice: "Retail",
     catHale: "Warehouse/Production", catGastronomi: "Gastronomy/Hotel", catBiznesSpecial: "Special-Purpose Commercial",
     hotelOwnerBtn: "Hotels & Stays", hotelOwnerHint: "See all hotels, motels and vacation homes",
     hotelScreenTitle: "Hotels & Stays", hotelScreenSubtitle: "Choose a city and settlement to find the right stay",
     agenciesBtn: "Providers", agenciesHint: "Listings from private sellers and real estate agencies",
     agenciesScreenTitle: "Providers", agenciesScreenSubtitle: "Choose a provider to see their listings",
+    providerGroupRealEstate: "Real Estate", providerGroupFurniture: "Furniture & Kitchens",
+    providerGroupCraftsmen: "Tradespeople", providerGroupArchitects: "Architects & Structural Engineers",
+    noProvidersYet: "No active providers in this category yet.",
     privateSeller: "Private", listingsCount: (n) => `${n} listings`, backToAgencies: "Back to providers",
     perNight: "/ night",
     allCities: "All cities",
@@ -439,6 +453,7 @@ const STRINGS = {
     requiredError: "Fill in at least the title, price, area and city.",
     publishBtn: "Publish listing", publishing: "Publishing...",
     contactAgent: "Contact agent", descriptionLabel: "Description", featuresLabel: "Features",
+    contactInfoLabel: "Contact details",
     areaStat: "Area", roomsStat: "Rooms", floorStat: "Floor",
     yourListing: "Your listing", genericProperty: "Property",
     loadingText: "Loading...",
@@ -490,7 +505,26 @@ const CATEGORIES = (t) => [
   { id: "gastronomi", label: t.catGastronomi, icon: UtensilsCrossed },
   { id: "biznesspecial", label: t.catBiznesSpecial, icon: Wrench },
   { id: "hotel", label: t.catHotel, icon: Hotel },
+  { id: "mobilje", label: t.catMobilje, icon: BedDouble },
+  { id: "kuzhina", label: t.catKuzhina, icon: UtensilsCrossed },
+  { id: "zejtar", label: t.catZejtar, icon: Wrench },
+  { id: "arkitekt", label: t.catArkitekt, icon: Landmark },
+  { id: "statike", label: t.catStatike, icon: Building },
 ];
+// Categories that are NOT regular real-estate property listings — excluded
+// from the main property search/filters, and routed into their own
+// dedicated group on the Anbieter (Providers) page instead.
+const NON_PROPERTY_CATS = ["hotel", "mobilje", "kuzhina", "zejtar", "arkitekt", "statike"];
+// These providers are marketed as a simple contact/business-card profile
+// instead of a full property-style listing form.
+const BUSINESS_CARD_CATS = ["mobilje", "kuzhina", "zejtar", "arkitekt", "statike"];
+// Which Anbieter-page tab a listing's category belongs to.
+function providerGroupOfCat(cat) {
+  if (cat === "mobilje" || cat === "kuzhina") return "furniture";
+  if (cat === "zejtar") return "craftsmen";
+  if (cat === "arkitekt" || cat === "statike") return "architects";
+  return "real_estate";
+}
 // Converts a 2-letter ISO country code into its flag emoji (native Unicode,
 // no image assets needed) — e.g. "XK" -> 🇽🇰
 function flagEmoji(code) {
@@ -868,6 +902,7 @@ const ALL_SETTLEMENTS = [
 const CAT_ICON = {
   banesa: Building2, shtepi: HomeIcon, lokale: Warehouse, truall: Trees, qera: KeyRound, shitje: KeyRound, hotel: Hotel,
   garazhe: Car, zyre: Building, shitjepakice: Store, hale: Factory, gastronomi: UtensilsCrossed, biznesspecial: Wrench,
+  mobilje: BedDouble, kuzhina: UtensilsCrossed, zejtar: Wrench, arkitekt: Landmark, statike: Building,
 };
 const CAT_GRADIENT = {
   banesa: `linear-gradient(135deg, ${NAVY} 0%, #2C4270 100%)`,
@@ -883,6 +918,11 @@ const CAT_GRADIENT = {
   hale: `linear-gradient(135deg, #3D4247 0%, #6B7278 130%)`,
   gastronomi: `linear-gradient(135deg, #7A2E2E 0%, ${"var(--ph-accent)"} 150%)`,
   biznesspecial: `linear-gradient(135deg, #2E5C5C 0%, #4F8F8F 140%)`,
+  mobilje: `linear-gradient(135deg, #6B4A2E 0%, #B08554 140%)`,
+  kuzhina: `linear-gradient(135deg, #4A5A2E 0%, #8CA05C 140%)`,
+  zejtar: `linear-gradient(135deg, #4A4238 0%, #8A7A5E 140%)`,
+  arkitekt: `linear-gradient(135deg, #2E3A4A 0%, #5C7290 140%)`,
+  statike: `linear-gradient(135deg, #3A3A3A 0%, #737373 140%)`,
 };
 
 // NOTE: property titles, descriptions, cities and feature tags stay as entered
@@ -2224,6 +2264,7 @@ function ListingCard({ listing, isFav, onToggleFav, onOpen }) {
   const Icon = CAT_ICON[listing.cat] || Building2;
   const thumb = (listing.images && listing.images[0]) || listing.image;
   const photoCount = listing.images ? listing.images.length : (listing.image ? 1 : 0);
+  const isCard = BUSINESS_CARD_CATS.includes(listing.cat);
   return (
     <div
       onClick={() => onOpen(listing)}
@@ -2234,12 +2275,14 @@ function ListingCard({ listing, isFav, onToggleFav, onOpen }) {
         background: thumb ? `url(${thumb}) center/cover no-repeat` : (CAT_GRADIENT[listing.cat] || CAT_GRADIENT.banesa),
       }}>
         {!thumb && <Icon size={40} color="rgba(255,255,255,0.85)" style={{ position: "absolute", bottom: 12, left: 14 }} strokeWidth={1.6} />}
-        <span style={{
-          position: "absolute", top: 10, left: 10, background: "rgba(15,23,41,0.55)", color: "#fff",
-          fontSize: 11, fontWeight: 600, padding: "4px 9px", borderRadius: 999, letterSpacing: 0.2,
-        }}>
-          {listing.type === "Qera" ? t.badgeRent : t.badgeSale}
-        </span>
+        {!isCard && (
+          <span style={{
+            position: "absolute", top: 10, left: 10, background: "rgba(15,23,41,0.55)", color: "#fff",
+            fontSize: 11, fontWeight: 600, padding: "4px 9px", borderRadius: 999, letterSpacing: 0.2,
+          }}>
+            {listing.type === "Qera" ? t.badgeRent : t.badgeSale}
+          </span>
+        )}
         {photoCount > 1 && (
           <span style={{
             position: "absolute", bottom: 10, right: 10, background: "rgba(15,23,41,0.6)", color: "#fff",
@@ -2260,20 +2303,35 @@ function ListingCard({ listing, isFav, onToggleFav, onOpen }) {
         </button>
       </div>
       <div style={{ padding: "12px 14px 14px" }}>
-        <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 15.5, color: "var(--ph-text)", marginBottom: 3 }}>
-          {formatPrice(listing, t)}
-        </div>
-        <div style={{ fontSize: 13.5, color: "var(--ph-text)", fontWeight: 500, marginBottom: 6, lineHeight: 1.3 }}>
-          {listing.title}
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--ph-text-muted)", fontSize: 12, marginBottom: 8 }}>
-          <MapPin size={12} />
-          <span>{listing.area}, {listing.city}</span>
-        </div>
-        <div style={{ display: "flex", gap: 12, fontSize: 12, color: "var(--ph-text-muted)", borderTop: "1px solid var(--ph-border-soft)", paddingTop: 8 }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 4 }}><Maximize2 size={12} /> {listing.m2} m²</span>
-          {listing.rooms > 0 && <span style={{ display: "flex", alignItems: "center", gap: 4 }}><BedDouble size={12} /> {listing.rooms} {t.roomsUnit}</span>}
-        </div>
+        {isCard ? (
+          <>
+            <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 14.5, color: "var(--ph-text)", marginBottom: 6, lineHeight: 1.3 }}>
+              {listing.title}
+            </div>
+            {listing.contactPhone && (
+              <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--ph-accent)", fontSize: 12.5, fontWeight: 600 }}>
+                <Phone size={12} /> {listing.contactPhone}
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 15.5, color: "var(--ph-text)", marginBottom: 3 }}>
+              {formatPrice(listing, t)}
+            </div>
+            <div style={{ fontSize: 13.5, color: "var(--ph-text)", fontWeight: 500, marginBottom: 6, lineHeight: 1.3 }}>
+              {listing.title}
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--ph-text-muted)", fontSize: 12, marginBottom: 8 }}>
+              <MapPin size={12} />
+              <span>{listing.area}, {listing.city}</span>
+            </div>
+            <div style={{ display: "flex", gap: 12, fontSize: 12, color: "var(--ph-text-muted)", borderTop: "1px solid var(--ph-border-soft)", paddingTop: 8 }}>
+              <span style={{ display: "flex", alignItems: "center", gap: 4 }}><Maximize2 size={12} /> {listing.m2} m²</span>
+              {listing.rooms > 0 && <span style={{ display: "flex", alignItems: "center", gap: 4 }}><BedDouble size={12} /> {listing.rooms} {t.roomsUnit}</span>}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
@@ -2292,6 +2350,88 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
     const w = e.currentTarget.clientWidth;
     if (w) setPhotoIdx(Math.round(e.currentTarget.scrollLeft / w));
   };
+
+  if (BUSINESS_CARD_CATS.includes(listing.cat)) {
+    const fullName = `${listing.contactFirstName || ""} ${listing.contactLastName || ""}`.trim();
+    return (
+      <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
+        <div style={{ height: 150, position: "relative", flexShrink: 0, background: CAT_GRADIENT[listing.cat] || CAT_GRADIENT.banesa, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Icon size={52} color="rgba(255,255,255,0.9)" strokeWidth={1.4} />
+          <button
+            onClick={onBack}
+            style={{ position: "absolute", top: 14, left: 14, width: 34, height: 34, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.92)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+          >
+            <ChevronLeft size={19} color={NAVY} />
+          </button>
+          <div style={{ position: "absolute", top: 14, right: 14, display: "flex", gap: 8 }}>
+            {isMine && (
+              <button onClick={() => onDelete(listing.id)} style={{ width: 34, height: 34, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.92)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                <Trash2 size={15} color="#B0473C" />
+              </button>
+            )}
+            <button onClick={() => onToggleFav(listing.id)} style={{ width: 34, height: 34, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.92)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+              <Heart size={16} color={isFav ? "var(--ph-accent)" : "var(--ph-text-muted)"} fill={isFav ? "var(--ph-accent)" : "none"} />
+            </button>
+          </div>
+        </div>
+
+        <div style={{ flex: 1, overflowY: "auto", padding: "18px 18px 100px" }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: NAVY, background: "#EFE6D2", padding: "4px 10px", borderRadius: 999, letterSpacing: 0.3 }}>
+            {(categories.find((c) => c.id === listing.cat) || {}).label}
+          </span>
+          <h1 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 21, fontWeight: 700, color: "var(--ph-text)", margin: "12px 0 4px", lineHeight: 1.25 }}>
+            {listing.title}
+          </h1>
+          {fullName && listing.title !== fullName && (
+            <div style={{ color: "var(--ph-text-muted)", fontSize: 13.5, marginBottom: 14 }}>{fullName}</div>
+          )}
+
+          {listing.created_at && (
+            <div style={{ fontSize: 11.5, color: "var(--ph-text-muted)", marginBottom: 18 }}>{t.postedOn(formatShortDate(listing.created_at, lang))}</div>
+          )}
+
+          <SettingsSection title={t.contactInfoLabel}>
+            <div style={{ padding: 4 }}>
+              {listing.contactPhone && (
+                <a href={`tel:${listing.contactPhone}`} style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 14px", textDecoration: "none", borderBottom: "1px solid var(--ph-border)" }}>
+                  <div style={{ width: 34, height: 34, borderRadius: 10, background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <Phone size={15} color="var(--ph-accent)" />
+                  </div>
+                  <span style={{ fontSize: 13.5, color: "var(--ph-text)", fontWeight: 500 }}>{listing.contactPhone}</span>
+                </a>
+              )}
+              {listing.contactEmail && (
+                <a href={`mailto:${listing.contactEmail}`} style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 14px", textDecoration: "none", borderBottom: listing.address ? "1px solid var(--ph-border)" : "none" }}>
+                  <div style={{ width: 34, height: 34, borderRadius: 10, background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <Mail size={15} color="var(--ph-accent)" />
+                  </div>
+                  <span style={{ fontSize: 13.5, color: "var(--ph-text)", fontWeight: 500 }}>{listing.contactEmail}</span>
+                </a>
+              )}
+              {listing.address && (
+                <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 14px" }}>
+                  <div style={{ width: 34, height: 34, borderRadius: 10, background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <MapPin size={15} color="var(--ph-accent)" />
+                  </div>
+                  <span style={{ fontSize: 13.5, color: "var(--ph-text)" }}>{listing.address}{listing.addressNumber ? ` ${listing.addressNumber}` : ""}</span>
+                </div>
+              )}
+            </div>
+          </SettingsSection>
+        </div>
+
+        <div style={{ padding: "12px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "var(--ph-surface)", borderTop: "1px solid var(--ph-border)" }}>
+          <button
+            onClick={() => listing.contactPhone && (window.location.href = `tel:${listing.contactPhone}`)}
+            style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "14px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
+          >
+            <Phone size={16} /> {t.contactAgent}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
       <div style={{ height: 220, position: "relative", flexShrink: 0, background: CAT_GRADIENT[listing.cat] || CAT_GRADIENT.banesa }}>
@@ -2457,14 +2597,24 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
     price: editingListing.price != null ? String(editingListing.price) : "", m2: editingListing.m2 != null ? String(editingListing.m2) : "",
     rooms: editingListing.rooms != null ? String(editingListing.rooms) : "", floor: editingListing.floor === "-" ? "" : (editingListing.floor || ""),
     desc: editingListing.desc || "", tags: (editingListing.tags || []).join(", "), agency: editingListing.agency || "Privat",
-  } : { title: "", cat: "banesa", type: "Shitje", city: CITIES_LIST[0], area: "", address: "", addressNumber: "", price: "", m2: "", rooms: "", floor: "", desc: "", tags: "", agency: "Privat" });
+    contactFirstName: editingListing.contactFirstName || "", contactLastName: editingListing.contactLastName || "",
+    contactPhone: editingListing.contactPhone || "", contactEmail: editingListing.contactEmail || "",
+  } : {
+    title: "", cat: "banesa", type: "Shitje", city: CITIES_LIST[0], area: "", address: "", addressNumber: "",
+    price: "", m2: "", rooms: "", floor: "", desc: "", tags: "", agency: "Privat",
+    contactFirstName: "", contactLastName: "", contactPhone: "", contactEmail: "",
+  });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [images, setImages] = useState(editingListing ? (editingListing.images || (editingListing.image ? [editingListing.image] : [])) : []);
   const [imageBusy, setImageBusy] = useState(false);
   const MAX_IMAGES = 10;
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
-  const canSubmit = form.title.trim() && form.price && form.m2 && form.city;
+  const isBusinessCard = BUSINESS_CARD_CATS.includes(form.cat);
+  const NO_M2_CATS = ["mobilje", "zejtar", "arkitekt", "statike"];
+  const canSubmit = isBusinessCard
+    ? form.contactFirstName.trim() && form.contactLastName.trim() && (form.contactPhone.trim() || form.contactEmail.trim())
+    : form.title.trim() && form.price && form.city && (NO_M2_CATS.includes(form.cat) || form.m2);
 
   const handleImagePick = async (e) => {
     const files = Array.from(e.target.files || []).slice(0, MAX_IMAGES - images.length);
@@ -2487,7 +2637,17 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
     if (!canSubmit) { setError(t.requiredError); return; }
     setError("");
     setSaving(true);
-    const newListing = {
+    const fullName = `${form.contactFirstName.trim()} ${form.contactLastName.trim()}`.trim();
+    const newListing = isBusinessCard ? {
+      id: isEditing ? editingListing.id : `local-${Date.now()}`,
+      title: form.agency.trim() && form.agency.trim() !== "Privat" ? form.agency.trim() : fullName,
+      cat: form.cat, type: form.type, city: "", area: "-",
+      address: form.address.trim(), addressNumber: form.addressNumber.trim(),
+      price: 0, m2: 0, rooms: 0, floor: "-", desc: "", tags: [],
+      images: [], image: null, agency: form.agency.trim() || "Privat",
+      contactFirstName: form.contactFirstName.trim(), contactLastName: form.contactLastName.trim(),
+      contactPhone: form.contactPhone.trim(), contactEmail: form.contactEmail.trim(),
+    } : {
       id: isEditing ? editingListing.id : `local-${Date.now()}`,
       title: form.title.trim(), cat: form.cat, type: form.type, city: form.city,
       area: form.area.trim() || "-", address: form.address.trim(), addressNumber: form.addressNumber.trim(), price: Number(form.price), m2: Number(form.m2),
@@ -2515,6 +2675,50 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: 18, display: "flex", flexDirection: "column", gap: 14 }}>
+        <div>
+          <label style={labelStyle}>{t.categoryLabel}</label>
+          <select style={inputStyle} value={form.cat} onChange={set("cat")}>
+            {categories.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+          </select>
+        </div>
+
+        {isBusinessCard ? (
+        <>
+          <div style={{ display: "flex", gap: 10 }}>
+            <div style={{ flex: 1 }}>
+              <label style={labelStyle}>{t.firstNameLabel}</label>
+              <input style={inputStyle} value={form.contactFirstName} onChange={set("contactFirstName")} placeholder={t.firstNamePlaceholder} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={labelStyle}>{t.lastNameLabel}</label>
+              <input style={inputStyle} value={form.contactLastName} onChange={set("contactLastName")} placeholder={t.lastNamePlaceholder} />
+            </div>
+          </div>
+          <div>
+            <label style={labelStyle}>{t.companyLabel}</label>
+            <input style={inputStyle} value={form.agency === "Privat" ? "" : form.agency} onChange={set("agency")} placeholder={t.companyOptionalPlaceholder} />
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <div style={{ flex: 2 }}>
+              <label style={labelStyle}>{t.homeAddressLabel}</label>
+              <GeoTypeahead value={form.address} onChange={(v) => setForm((f) => ({ ...f, address: v }))} placeholder={t.homeAddressPlaceholder} kind="address" />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={labelStyle}>{t.houseNumberLabel}</label>
+              <input style={inputStyle} value={form.addressNumber} onChange={set("addressNumber")} placeholder={t.houseNumberPlaceholder} />
+            </div>
+          </div>
+          <div>
+            <label style={labelStyle}>{t.phoneLabel}</label>
+            <input style={inputStyle} type="tel" value={form.contactPhone} onChange={set("contactPhone")} placeholder={t.phonePlaceholder} />
+          </div>
+          <div>
+            <label style={labelStyle}>{t.onboardEmailLabel}</label>
+            <input style={inputStyle} type="email" value={form.contactEmail} onChange={set("contactEmail")} placeholder={t.onboardEmailPlaceholder} />
+          </div>
+        </>
+        ) : (
+        <>
         <div>
           <label style={labelStyle}>{t.photoLabel} {images.length > 0 && `(${images.length}/${MAX_IMAGES})`}</label>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
@@ -2563,12 +2767,6 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
           <input style={inputStyle} value={form.title} onChange={set("title")} placeholder={t.titlePlaceholder} />
         </div>
         <div style={{ display: "flex", gap: 10 }}>
-          <div style={{ flex: 1 }}>
-            <label style={labelStyle}>{t.categoryLabel}</label>
-            <select style={inputStyle} value={form.cat} onChange={set("cat")}>
-              {categories.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
-            </select>
-          </div>
           <div style={{ flex: 1 }}>
             <label style={labelStyle}>{t.typeLabel}</label>
             <select style={inputStyle} value={form.type} onChange={set("type")}>
@@ -2625,6 +2823,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
             <input style={inputStyle} type="number" min="1" value={form.m2} onChange={set("m2")} placeholder={t.areaM2Placeholder} />
           </div>
         </div>
+        {!NON_PROPERTY_CATS.includes(form.cat) || form.cat === "hotel" ? (
         <div style={{ display: "flex", gap: 10 }}>
           <div style={{ flex: 1 }}>
             <label style={labelStyle}>{t.roomsFieldLabel}</label>
@@ -2649,6 +2848,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
             </select>
           </div>
         </div>
+        ) : null}
         <div>
           <label style={labelStyle}>{t.descLabel}</label>
           <textarea style={{ ...inputStyle, minHeight: 80, resize: "vertical" }} value={form.desc} onChange={set("desc")} placeholder={t.descPlaceholder} />
@@ -2668,6 +2868,8 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
           </datalist>
           <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)", marginTop: 5 }}>{t.agencyFieldHint}</div>
         </div>
+        </>
+        )}
         {error && <div style={{ color: "#B0473C", fontSize: 12.5 }}>{error}</div>}
       </div>
 
@@ -2716,7 +2918,7 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
   const { t } = useLang();
   const [local, setLocal] = useState(filters);
   const set = (k) => (e) => setLocal((f) => ({ ...f, [k]: e.target.value }));
-  const propertyTypes = CATEGORIES(t).filter((c) => c.id !== "all" && c.id !== "shitje" && c.id !== "qera" && c.id !== "hotel");
+  const propertyTypes = CATEGORIES(t).filter((c) => c.id !== "all" && c.id !== "shitje" && c.id !== "qera" && !NON_PROPERTY_CATS.includes(c.id));
   const dealTabs = [{ id: "shitje", label: t.typeSale }, { id: "qera", label: t.typeRent }];
   const sortOptions = [
     { id: "newest", label: t.sortNewest }, { id: "price_asc", label: t.sortPriceAsc },
@@ -2920,7 +3122,7 @@ function TabBar({ active, setActive, favCount, notifCount }) {
 // ---------------------------------------------------------------------------
 function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpenFilters, onOpenHotelScreen, onOpenAgenciesScreen, filters, onQuickFilter }) {
   const { t } = useLang();
-  const categories = CATEGORIES(t).filter((c) => c.id !== "hotel");
+  const categories = CATEGORIES(t).filter((c) => !NON_PROPERTY_CATS.includes(c.id));
   const [query, setQuery] = useState("");
   const [showSug, setShowSug] = useState(false);
 
@@ -2946,7 +3148,7 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     let list = listings.filter((l) => {
-      if (l.cat === "hotel") return false;
+      if (NON_PROPERTY_CATS.includes(l.cat)) return false;
       const matchesQuery = !q || l.title.toLowerCase().includes(q) || l.city.toLowerCase().includes(q) || l.area.toLowerCase().includes(q);
       return matchesFilters(l, filters) && matchesQuery;
     });
@@ -3290,23 +3492,29 @@ function HotelScreen({ listings, favorites, toggleFav, onOpen, onBack }) {
 function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBack }) {
   const { t } = useLang();
   const [selected, setSelected] = useState(null);
+  const [group, setGroup] = useState("real_estate");
 
-  // "Privat" always pinned first; newly auto-registered providers are appended
-  // after the originally researched agencies, in the order they were discovered.
-  const orderedAgencies = useMemo(() => {
-    const rest = agencies.filter((a) => a !== "Privat");
-    return agencies.includes("Privat") ? ["Privat", ...rest] : [...rest];
-  }, [agencies]);
-
+  // Counts per provider, split by which Anbieter-page group their listings belong to.
   const counts = useMemo(() => {
     const c = {};
-    for (const a of orderedAgencies) c[a] = 0;
-    for (const l of listings) if (c[l.agency] !== undefined) c[l.agency] += 1;
+    for (const l of listings) {
+      if (!c[l.agency]) c[l.agency] = { real_estate: 0, furniture: 0, craftsmen: 0, architects: 0 };
+      c[l.agency][providerGroupOfCat(l.cat)] += 1;
+    }
     return c;
-  }, [listings, orderedAgencies]);
+  }, [listings]);
+
+  // Only providers with at least one active listing in the selected group show
+  // up — an empty directory entry isn't useful to anyone. "Privat" is pinned
+  // first when present.
+  const orderedAgencies = useMemo(() => {
+    const active = agencies.filter((a) => (counts[a]?.[group] || 0) > 0);
+    const rest = active.filter((a) => a !== "Privat");
+    return active.includes("Privat") ? ["Privat", ...rest] : rest;
+  }, [agencies, counts, group]);
 
   if (selected) {
-    const results = listings.filter((l) => l.agency === selected);
+    const results = listings.filter((l) => l.agency === selected && providerGroupOfCat(l.cat) === group);
     return (
       <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY }}>
@@ -3342,10 +3550,34 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
           <Briefcase size={20} color="#fff" />
           <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 17, color: "#fff" }}>{t.agenciesScreenTitle}</span>
         </div>
-        <div style={{ color: "rgba(255,255,255,0.9)", fontSize: 12.5 }}>{t.agenciesScreenSubtitle}</div>
+        <div style={{ color: "rgba(255,255,255,0.9)", fontSize: 12.5, marginBottom: 14 }}>{t.agenciesScreenSubtitle}</div>
+        <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 2 }}>
+          {[
+            { id: "real_estate", label: t.providerGroupRealEstate },
+            { id: "furniture", label: t.providerGroupFurniture },
+            { id: "craftsmen", label: t.providerGroupCraftsmen },
+            { id: "architects", label: t.providerGroupArchitects },
+          ].map((g) => {
+            const active = group === g.id;
+            return (
+              <button
+                key={g.id} onClick={() => { setGroup(g.id); setSelected(null); }}
+                style={{
+                  flexShrink: 0, padding: "9px 14px", borderRadius: 10, cursor: "pointer", fontSize: 12.5, fontWeight: 600, border: "none", whiteSpace: "nowrap",
+                  background: active ? "#fff" : "rgba(255,255,255,0.16)", color: active ? "#2C4270" : "#fff",
+                }}
+              >
+                {g.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: "16px 18px 24px", display: "flex", flexDirection: "column", gap: 10 }}>
+        {orderedAgencies.length === 0 && (
+          <div style={{ textAlign: "center", padding: "40px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>{t.noProvidersYet}</div>
+        )}
         {orderedAgencies.map((a) => {
           const isPrivate = a === "Privat";
           return (
@@ -3366,8 +3598,9 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 13.5, fontWeight: 700, color: "var(--ph-text)" }}>{isPrivate ? t.privateSeller : a}</div>
-                <div style={{ fontSize: 11.5, color: "var(--ph-text-muted)" }}>{t.listingsCount(counts[a] || 0)}</div>
+                <div style={{ fontSize: 11.5, color: "var(--ph-text-muted)" }}>{t.listingsCount(counts[a]?.[group] || 0)}</div>
               </div>
+              <ChevronLeft size={16} color="var(--ph-text-muted)" style={{ transform: "rotate(180deg)" }} />
             </button>
           );
         })}

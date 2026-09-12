@@ -236,7 +236,7 @@ const STRINGS = {
     cityFieldLabel: "Stadt", bioLabel: "Kurzvorstellung", bioPlaceholder: "Schreib ein paar Worte über dich oder deine Arbeit...",
     myAccountRow: "Mein Konto",
     heroTitle1: "Finde deine", heroTitle2: "nächste Immobilie.",
-    searchPlaceholder: "Stadt, Viertel, Stichwort...", publish: "Veröffentlichen",
+    searchPlaceholder: "Stadt, Viertel, Stichwort...", publish: "Inserat",
     resultsFound: (n) => `${n} Immobilien gefunden`,
     resultsInCity: (n, city) => `${n} Immobilien in ${city}`,
     filtersLabel: (n) => `Filter (${n})`,
@@ -2753,7 +2753,26 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
         <SettingsSection title={t.categoryLabel}>
           <div style={{ padding: 14 }}>
             <select style={inputStyle} value={form.cat} onChange={set("cat")}>
-              {categories.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+              <optgroup label={t.providerGroupRealEstate}>
+                {categories.filter((c) => !NON_PROPERTY_CATS.includes(c.id) || c.id === "hotel").map((c) => (
+                  <option key={c.id} value={c.id}>{c.label}</option>
+                ))}
+              </optgroup>
+              <optgroup label={t.providerGroupFurniture}>
+                {categories.filter((c) => providerGroupOfCat(c.id) === "furniture").map((c) => (
+                  <option key={c.id} value={c.id}>{c.label}</option>
+                ))}
+              </optgroup>
+              <optgroup label={t.providerGroupCraftsmen}>
+                {categories.filter((c) => providerGroupOfCat(c.id) === "craftsmen").map((c) => (
+                  <option key={c.id} value={c.id}>{c.label}</option>
+                ))}
+              </optgroup>
+              <optgroup label={t.providerGroupArchitects}>
+                {categories.filter((c) => providerGroupOfCat(c.id) === "architects").map((c) => (
+                  <option key={c.id} value={c.id}>{c.label}</option>
+                ))}
+              </optgroup>
             </select>
           </div>
         </SettingsSection>
@@ -3340,11 +3359,11 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
               Prona<span style={{ color: "var(--ph-accent-light)" }}>Home</span>
             </span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
             <LanguageSwitcher variant="dark" />
             <button
               onClick={() => onAddNew()}
-              style={{ display: "flex", alignItems: "center", gap: 5, background: "var(--ph-accent)", border: "none", borderRadius: 999, padding: "7px 12px", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+              style={{ display: "flex", alignItems: "center", gap: 5, flexShrink: 0, whiteSpace: "nowrap", background: "var(--ph-accent)", border: "none", borderRadius: 999, padding: "7px 11px", color: "#fff", fontSize: 11.5, fontWeight: 600, cursor: "pointer" }}
             >
               <Plus size={13} /> {t.publish}
             </button>
@@ -3473,7 +3492,7 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
           }}
         >
           <div style={{ width: 34, height: 34, borderRadius: 10, background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <Briefcase size={17} color="#fff" />
+            <Users size={17} color="#fff" />
           </div>
           <div>
             <div style={{ color: "#fff", fontSize: 13, fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>{t.agenciesBtn}</div>
@@ -3765,10 +3784,23 @@ function HotelScreen({ listings, favorites, toggleFav, onOpen, onBack }) {
 function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBack }) {
   const { t } = useLang();
   const [group, setGroup] = useState("furniture");
+  const [city, setCity] = useState("");
+  const [area, setArea] = useState("");
+
+  const GROUPS = [
+    { id: "furniture", label: t.providerGroupFurniture, icon: BedDouble, gradient: "linear-gradient(135deg, #6B4A2E 0%, #B08554 140%)" },
+    { id: "craftsmen", label: t.providerGroupCraftsmen, icon: Wrench, gradient: "linear-gradient(135deg, #4A4238 0%, #8A7A5E 140%)" },
+    { id: "architects", label: t.providerGroupArchitects, icon: Landmark, gradient: "linear-gradient(135deg, #2E3A4A 0%, #5C7290 140%)" },
+  ];
 
   const results = useMemo(() => {
-    return listings.filter((l) => providerGroupOfCat(l.cat) === group);
-  }, [listings, group]);
+    return listings.filter((l) => {
+      if (providerGroupOfCat(l.cat) !== group) return false;
+      if (city && l.city !== city) return false;
+      if (area && l.area !== area) return false;
+      return true;
+    });
+  }, [listings, group, city, area]);
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
@@ -3777,31 +3809,51 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
           <button onClick={onBack} style={{ border: "none", background: "rgba(255,255,255,0.22)", borderRadius: "50%", width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
             <ChevronLeft size={18} color="#fff" />
           </button>
-          <Briefcase size={20} color="#fff" />
+          <Users size={20} color="#fff" />
           <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 17, color: "#fff" }}>{t.agenciesScreenTitle}</span>
         </div>
         <div style={{ color: "rgba(255,255,255,0.9)", fontSize: 12.5, marginBottom: 14 }}>{t.agenciesScreenSubtitle}</div>
-        <div style={{ display: "flex", gap: 8, minWidth: 0 }}>
-          {[
-            { id: "furniture", label: t.providerGroupFurniture },
-            { id: "craftsmen", label: t.providerGroupCraftsmen },
-            { id: "architects", label: t.providerGroupArchitects },
-          ].map((g) => {
-            const active = group === g.id;
-            return (
-              <button
-                key={g.id} onClick={() => setGroup(g.id)}
-                style={{
-                  flex: 1, minWidth: 0, padding: "9px 4px", borderRadius: 10, cursor: "pointer", fontSize: 11.5, fontWeight: 600,
-                  border: "none", lineHeight: 1.25, textAlign: "center",
-                  background: active ? "#fff" : "rgba(255,255,255,0.16)", color: active ? "#2C4270" : "#fff",
-                }}
-              >
-                {g.label}
-              </button>
-            );
-          })}
+        <div style={{ display: "flex", gap: 8 }}>
+          <select
+            style={{ ...inputStyle, flex: 1, background: "#fff" }} value={city}
+            onChange={(e) => { setCity(e.target.value); setArea(""); }}
+          >
+            <option value="">{t.allCities}</option>
+            {CITY_GROUPS.map((g) => (
+              <optgroup key={g.country} label={t[g.country]}>
+                {g.cities.map((c) => <option key={c} value={c}>{c}</option>)}
+              </optgroup>
+            ))}
+          </select>
+          {SETTLEMENTS_BY_CITY[city] && (
+            <select style={{ ...inputStyle, flex: 1, background: "#fff" }} value={area} onChange={(e) => setArea(e.target.value)}>
+              <option value="">{t.anySettlement}</option>
+              {SETTLEMENTS_BY_CITY[city].map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+          )}
         </div>
+      </div>
+
+      <div style={{ padding: "12px 18px 4px", display: "flex", flexDirection: "column", gap: 10 }}>
+        {GROUPS.map((g) => {
+          const GIcon = g.icon;
+          const active = group === g.id;
+          return (
+            <button
+              key={g.id} onClick={() => setGroup(g.id)}
+              style={{
+                display: "flex", alignItems: "center", gap: 14, textAlign: "left", cursor: "pointer",
+                borderRadius: 16, padding: "13px 16px", background: g.gradient,
+                border: active ? "2.5px solid var(--ph-accent)" : "2.5px solid transparent",
+              }}
+            >
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <GIcon size={17} color="#fff" />
+              </div>
+              <span style={{ color: "#fff", fontSize: 13.5, fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>{g.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       <div style={{ padding: "12px 18px 4px", fontSize: 12.5, color: "var(--ph-text-muted)", fontWeight: 600 }}>
@@ -3814,31 +3866,8 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
           </div>
         ))}
         {results.length === 0 && (
-          <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 10, paddingTop: 6 }}>
-            <div style={{ textAlign: "center", color: "var(--ph-text-muted)", fontSize: 13, marginBottom: 4 }}>
-              {t.noProvidersYet}
-            </div>
-            {[
-              { id: "furniture", label: t.providerGroupFurniture, icon: BedDouble, gradient: "linear-gradient(135deg, #6B4A2E 0%, #B08554 140%)" },
-              { id: "craftsmen", label: t.providerGroupCraftsmen, icon: Wrench, gradient: "linear-gradient(135deg, #4A4238 0%, #8A7A5E 140%)" },
-              { id: "architects", label: t.providerGroupArchitects, icon: Landmark, gradient: "linear-gradient(135deg, #2E3A4A 0%, #5C7290 140%)" },
-            ].map((g) => {
-              const GIcon = g.icon;
-              return (
-                <button
-                  key={g.id} onClick={() => setGroup(g.id)}
-                  style={{
-                    display: "flex", alignItems: "center", gap: 14, textAlign: "left", border: "none", cursor: "pointer",
-                    borderRadius: 16, padding: "16px 18px", background: g.gradient,
-                  }}
-                >
-                  <div style={{ width: 42, height: 42, borderRadius: 12, background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <GIcon size={20} color="#fff" />
-                  </div>
-                  <span style={{ color: "#fff", fontSize: 14, fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>{g.label}</span>
-                </button>
-              );
-            })}
+          <div style={{ width: "100%", textAlign: "center", padding: "30px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
+            {t.noProvidersYet}
           </div>
         )}
       </div>

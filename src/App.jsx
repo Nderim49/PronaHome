@@ -109,7 +109,7 @@ const STRINGS = {
     hotelScreenTitle: "Hotele & Fjetje", hotelScreenSubtitle: "Zgjidh qytetin dhe vendbanimin për të gjetur fjetjen ideale",
     propertyScreenTitle: "Patundshmëri",
     agenciesBtn: "Ofertuesit", agenciesHint: "Shpallje nga individë privatë dhe agjenci imobiliare", agentSellerLabel: "Agjenci",
-    agenciesScreenTitle: "Ofertuesit", agenciesScreenSubtitle: "Zgjidh ofertuesin për të parë shpalljet e tij",
+    agenciesScreenTitle: "Ofertuesit", agenciesScreenSubtitle: "Mobilje, kuzhina, zejtarë dhe arkitektë",
     providerGroupRealEstate: "Patundshmëri", providerGroupFurniture: "Mobilje & Kuzhina",
     providerGroupCraftsmen: "Zejtarë", providerGroupArchitects: "Arkitektë & Statikë",
     noProvidersYet: "Ende pa ofertues aktivë në këtë kategori.",
@@ -169,6 +169,7 @@ const STRINGS = {
     newListingTitle: "Shpall një pronë", editListingTitle: "Ndrysho shpalljen",
     photoLabel: "Fotografia kryesore (opsionale)", photoPreparing: "Duke përgatitur...",
     photoTapToUpload: "Shtyp për të ngarkuar foto", photoChange: "Ndrysho fotografinë",
+    businessPhotoLabel: "Foto (opsionale)", businessPhotoHint: "Logo ose një foto që promovon biznesin tënd",
     photoAddMore: "Shto më shumë", coverPhotoLabel: "Kryesore",
     photoHint: "Fotografia ruhet bashkë me shpalljen dhe u shfaqet të gjithë përdoruesve.",
     titleLabel: "Titulli i shpalljes", titlePlaceholder: "p.sh. Banesë 2+1 në qendër",
@@ -245,7 +246,7 @@ const STRINGS = {
     hotelScreenTitle: "Hotels & Unterkünfte", hotelScreenSubtitle: "Wähle Stadt und Ortschaft, um die passende Unterkunft zu finden",
     propertyScreenTitle: "Immobilien",
     agenciesBtn: "Anbieter", agenciesHint: "Anzeigen von Privatpersonen und Immobilienagenturen", agentSellerLabel: "Makler",
-    agenciesScreenTitle: "Anbieter", agenciesScreenSubtitle: "Wähle einen Anbieter, um dessen Anzeigen zu sehen",
+    agenciesScreenTitle: "Anbieter", agenciesScreenSubtitle: "Möbel, Küchen, Handwerker und Architekten",
     providerGroupRealEstate: "Immobilien", providerGroupFurniture: "Möbel & Küchen",
     providerGroupCraftsmen: "Handwerker", providerGroupArchitects: "Architekten & Statiker",
     noProvidersYet: "Noch keine aktiven Anbieter in dieser Kategorie.",
@@ -305,6 +306,7 @@ const STRINGS = {
     newListingTitle: "Eine Immobilie veröffentlichen", editListingTitle: "Anzeige bearbeiten",
     photoLabel: "Hauptfoto (optional)", photoPreparing: "Wird vorbereitet...",
     photoTapToUpload: "Tippen, um Fotos hochzuladen", photoChange: "Foto ändern",
+    businessPhotoLabel: "Foto (optional)", businessPhotoHint: "Logo oder ein Foto, das für dein Geschäft wirbt",
     photoAddMore: "Weitere hinzufügen", coverPhotoLabel: "Titelbild",
     photoHint: "Das Foto wird zusammen mit der Anzeige gespeichert und allen Nutzern angezeigt.",
     titleLabel: "Titel der Anzeige", titlePlaceholder: "z. B. Wohnung 2+1 im Zentrum",
@@ -381,7 +383,7 @@ const STRINGS = {
     hotelScreenTitle: "Hotels & Stays", hotelScreenSubtitle: "Choose a city and settlement to find the right stay",
     propertyScreenTitle: "Real Estate",
     agenciesBtn: "Providers", agenciesHint: "Listings from private sellers and real estate agencies", agentSellerLabel: "Agency",
-    agenciesScreenTitle: "Providers", agenciesScreenSubtitle: "Choose a provider to see their listings",
+    agenciesScreenTitle: "Providers", agenciesScreenSubtitle: "Furniture, kitchens, tradespeople and architects",
     providerGroupRealEstate: "Real Estate", providerGroupFurniture: "Furniture & Kitchens",
     providerGroupCraftsmen: "Tradespeople", providerGroupArchitects: "Architects & Structural Engineers",
     noProvidersYet: "No active providers in this category yet.",
@@ -441,6 +443,7 @@ const STRINGS = {
     newListingTitle: "Publish a property", editListingTitle: "Edit listing",
     photoLabel: "Main photo (optional)", photoPreparing: "Preparing...",
     photoTapToUpload: "Tap to upload photos", photoChange: "Change photo",
+    businessPhotoLabel: "Photo (optional)", businessPhotoHint: "A logo or photo advertising your business",
     photoAddMore: "Add more", coverPhotoLabel: "Cover",
     photoHint: "The photo is saved with the listing and shown to all users.",
     titleLabel: "Listing title", titlePlaceholder: "e.g. 2+1 apartment in the center",
@@ -2359,10 +2362,14 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
 
   if (BUSINESS_CARD_CATS.includes(listing.cat)) {
     const fullName = `${listing.contactFirstName || ""} ${listing.contactLastName || ""}`.trim();
+    const businessPhoto = (listing.images && listing.images[0]) || listing.image;
     return (
       <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 30 }}>
-        <div style={{ height: 150, position: "relative", flexShrink: 0, background: CAT_GRADIENT[listing.cat] || CAT_GRADIENT.banesa, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <Icon size={52} color="rgba(255,255,255,0.9)" strokeWidth={1.4} />
+        <div style={{
+          height: businessPhoto ? 200 : 150, position: "relative", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center",
+          background: businessPhoto ? `url(${businessPhoto}) center/cover no-repeat` : (CAT_GRADIENT[listing.cat] || CAT_GRADIENT.banesa),
+        }}>
+          {!businessPhoto && <Icon size={52} color="rgba(255,255,255,0.9)" strokeWidth={1.4} />}
           <button
             onClick={onBack}
             style={{ position: "absolute", top: 14, left: 14, width: 34, height: 34, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.92)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
@@ -2400,27 +2407,34 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             <div style={{ padding: 4 }}>
               {listing.contactPhone && (
                 <a href={`tel:${listing.contactPhone}`} style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 14px", textDecoration: "none", borderBottom: "1px solid var(--ph-border)" }}>
-                  <div style={{ width: 34, height: 34, borderRadius: 10, background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <Phone size={15} color="var(--ph-accent)" />
+                  <div style={{ width: 34, height: 34, borderRadius: 10, background: "var(--ph-accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <Phone size={15} color="#fff" />
                   </div>
-                  <span style={{ fontSize: 13.5, color: "var(--ph-text)", fontWeight: 500 }}>{listing.contactPhone}</span>
+                  <span style={{ fontSize: 13.5, color: "var(--ph-accent)", fontWeight: 700, flex: 1 }}>{listing.contactPhone}</span>
+                  <ChevronLeft size={15} color="var(--ph-accent)" style={{ transform: "rotate(180deg)" }} />
                 </a>
               )}
               {listing.contactEmail && (
                 <a href={`mailto:${listing.contactEmail}`} style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 14px", textDecoration: "none", borderBottom: listing.address ? "1px solid var(--ph-border)" : "none" }}>
-                  <div style={{ width: 34, height: 34, borderRadius: 10, background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <Mail size={15} color="var(--ph-accent)" />
+                  <div style={{ width: 34, height: 34, borderRadius: 10, background: "var(--ph-accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <Mail size={15} color="#fff" />
                   </div>
-                  <span style={{ fontSize: 13.5, color: "var(--ph-text)", fontWeight: 500 }}>{listing.contactEmail}</span>
+                  <span style={{ fontSize: 13.5, color: "var(--ph-accent)", fontWeight: 700, flex: 1, wordBreak: "break-all" }}>{listing.contactEmail}</span>
+                  <ChevronLeft size={15} color="var(--ph-accent)" style={{ transform: "rotate(180deg)", flexShrink: 0 }} />
                 </a>
               )}
               {listing.address && (
-                <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 14px" }}>
-                  <div style={{ width: 34, height: 34, borderRadius: 10, background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <MapPin size={15} color="var(--ph-accent)" />
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${listing.address} ${listing.addressNumber || ""} ${listing.city || ""}`.trim())}`}
+                  target="_blank" rel="noopener noreferrer"
+                  style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 14px", textDecoration: "none" }}
+                >
+                  <div style={{ width: 34, height: 34, borderRadius: 10, background: "var(--ph-accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <MapPin size={15} color="#fff" />
                   </div>
-                  <span style={{ fontSize: 13.5, color: "var(--ph-text)" }}>{listing.address}{listing.addressNumber ? ` ${listing.addressNumber}` : ""}</span>
-                </div>
+                  <span style={{ fontSize: 13.5, color: "var(--ph-accent)", fontWeight: 700, flex: 1 }}>{listing.address}{listing.addressNumber ? ` ${listing.addressNumber}` : ""}</span>
+                  <ChevronLeft size={15} color="var(--ph-accent)" style={{ transform: "rotate(180deg)", flexShrink: 0 }} />
+                </a>
               )}
             </div>
           </SettingsSection>
@@ -2515,9 +2529,13 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           <MapPin size={13} /> {listing.area}, {listing.city}
         </div>
         {listing.address && (
-          <div style={{ color: "var(--ph-text-muted)", fontSize: 12, marginBottom: 14, paddingLeft: 17 }}>
-            {listing.address}{listing.addressNumber ? ` ${listing.addressNumber}` : ""}
-          </div>
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${listing.address} ${listing.addressNumber || ""} ${listing.city || ""}`.trim())}`}
+            target="_blank" rel="noopener noreferrer"
+            style={{ display: "block", color: "var(--ph-accent)", fontWeight: 600, fontSize: 12, marginBottom: 14, paddingLeft: 17, textDecoration: "none" }}
+          >
+            {listing.address}{listing.addressNumber ? ` ${listing.addressNumber}` : ""} ›
+          </a>
         )}
 
         <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14, flexWrap: "wrap" }}>
@@ -2604,11 +2622,11 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
     rooms: editingListing.rooms != null ? String(editingListing.rooms) : "", floor: editingListing.floor === "-" ? "" : (editingListing.floor || ""),
     desc: editingListing.desc || "", tags: (editingListing.tags || []).join(", "), agency: editingListing.agency || "Privat",
     contactFirstName: editingListing.contactFirstName || "", contactLastName: editingListing.contactLastName || "",
-    contactPhone: editingListing.contactPhone || "", contactEmail: editingListing.contactEmail || "",
+    contactPhone: editingListing.contactPhone || "", contactEmail: editingListing.contactEmail || "", contactCountry: editingListing.contactCountry || "XK",
   } : {
     title: "", cat: "banesa", type: "Shitje", city: CITIES_LIST[0], area: "", address: "", addressNumber: "",
     price: "", m2: "", rooms: "", floor: "", desc: "", tags: "", agency: "Privat",
-    contactFirstName: "", contactLastName: "", contactPhone: "", contactEmail: "",
+    contactFirstName: "", contactLastName: "", contactPhone: "", contactEmail: "", contactCountry: "XK",
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -2617,19 +2635,20 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
   const MAX_IMAGES = 10;
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const isBusinessCard = BUSINESS_CARD_CATS.includes(form.cat);
+  const selectedContactCountry = WORLD_COUNTRIES.find((c) => c.code === form.contactCountry) || WORLD_COUNTRIES[0];
   const NO_M2_CATS = ["mobilje", "zejtar", "arkitekt", "statike"];
   const canSubmit = isBusinessCard
     ? form.contactFirstName.trim() && form.contactLastName.trim() && (form.contactPhone.trim() || form.contactEmail.trim())
     : form.title.trim() && form.price && form.city && (NO_M2_CATS.includes(form.cat) || form.m2);
 
   const handleImagePick = async (e) => {
-    const files = Array.from(e.target.files || []).slice(0, MAX_IMAGES - images.length);
+    const files = Array.from(e.target.files || []).slice(0, isBusinessCard ? 1 : MAX_IMAGES - images.length);
     if (!files.length) return;
     setImageBusy(true);
     setError("");
     try {
       const dataUrls = await Promise.all(files.map((f) => resizeImageFile(f)));
-      setImages((prev) => [...prev, ...dataUrls].slice(0, MAX_IMAGES));
+      setImages((prev) => (isBusinessCard ? dataUrls : [...prev, ...dataUrls].slice(0, MAX_IMAGES)));
     } catch (err) {
       setError(err.message || t.requiredError);
     } finally {
@@ -2650,9 +2669,9 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
       cat: form.cat, type: form.type, city: "", area: "-",
       address: form.address.trim(), addressNumber: form.addressNumber.trim(),
       price: 0, m2: 0, rooms: 0, floor: "-", desc: "", tags: [],
-      images: [], image: null, agency: form.agency.trim() || "Privat",
+      images, image: images[0] || null, agency: form.agency.trim() || "Privat",
       contactFirstName: form.contactFirstName.trim(), contactLastName: form.contactLastName.trim(),
-      contactPhone: form.contactPhone.trim(), contactEmail: form.contactEmail.trim(),
+      contactPhone: form.contactPhone.trim() ? `${selectedContactCountry.dial} ${form.contactPhone.trim()}` : "", contactEmail: form.contactEmail.trim(),
     } : {
       id: isEditing ? editingListing.id : `local-${Date.now()}`,
       title: form.title.trim(), cat: form.cat, type: form.type, city: form.city,
@@ -2690,6 +2709,39 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
 
         {isBusinessCard ? (
         <>
+          <div>
+            <label style={labelStyle}>{t.businessPhotoLabel}</label>
+            {images.length > 0 ? (
+              <div style={{ position: "relative", width: 110, aspectRatio: "1", borderRadius: 12, overflow: "hidden" }}>
+                <img src={images[0]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                <button
+                  onClick={() => setImages([])}
+                  style={{ position: "absolute", top: 4, right: 4, width: 20, height: 20, borderRadius: "50%", border: "none", background: "rgba(15,23,41,0.75)", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            ) : (
+              <label
+                htmlFor="prona-image-input"
+                style={{
+                  width: 110, aspectRatio: "1", borderRadius: 12, border: "1.5px dashed #D8CFB8", background: "#FBF9F3",
+                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, cursor: "pointer",
+                }}
+              >
+                {imageBusy ? (
+                  <Loader2 size={16} color={"var(--ph-accent)"} className="spin" />
+                ) : (
+                  <>
+                    <Camera size={18} color="#B7ADA0" />
+                    <span style={{ fontSize: 9.5, color: "var(--ph-text-muted)", textAlign: "center", padding: "0 4px" }}>{t.photoTapToUpload}</span>
+                  </>
+                )}
+              </label>
+            )}
+            <input id="prona-image-input" type="file" accept="image/*" onChange={handleImagePick} style={{ display: "none" }} />
+            <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)", marginTop: 8 }}>{t.businessPhotoHint}</div>
+          </div>
           <div style={{ display: "flex", gap: 10 }}>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>{t.firstNameLabel}</label>
@@ -2715,8 +2767,20 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
             </div>
           </div>
           <div>
+            <label style={labelStyle}>{t.countryLabel}</label>
+            <div style={{ marginBottom: 8 }}>
+              <CountryTypeahead value={form.contactCountry} onChange={(v) => setForm((f) => ({ ...f, contactCountry: v }))} placeholder={t.countryLabel} />
+            </div>
             <label style={labelStyle}>{t.phoneLabel}</label>
-            <input style={inputStyle} type="tel" value={form.contactPhone} onChange={set("contactPhone")} placeholder={t.phonePlaceholder} />
+            <div style={{ display: "flex", gap: 8 }}>
+              <div style={{
+                display: "flex", alignItems: "center", gap: 5, padding: "0 12px", borderRadius: 12,
+                border: "1px solid var(--ph-border)", background: "var(--ph-surface)", color: "var(--ph-text)", fontSize: 13.5, flexShrink: 0,
+              }}>
+                {flagEmoji(selectedContactCountry.code)} {selectedContactCountry.dial}
+              </div>
+              <input style={{ ...inputStyle, flex: 1 }} type="tel" value={form.contactPhone} onChange={set("contactPhone")} placeholder={t.phoneLocalPlaceholder} />
+            </div>
           </div>
           <div>
             <label style={labelStyle}>{t.onboardEmailLabel}</label>
@@ -3599,58 +3663,15 @@ function HotelScreen({ listings, favorites, toggleFav, onOpen, onBack }) {
 // provider's own listings on selection.
 function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBack }) {
   const { t } = useLang();
-  const [selected, setSelected] = useState(null);
-  const [group, setGroup] = useState("real_estate");
+  const [group, setGroup] = useState("furniture");
 
-  // Counts per provider, split by which Anbieter-page group their listings belong to.
-  const counts = useMemo(() => {
-    const c = {};
-    for (const l of listings) {
-      if (!c[l.agency]) c[l.agency] = { real_estate: 0, furniture: 0, craftsmen: 0, architects: 0 };
-      c[l.agency][providerGroupOfCat(l.cat)] += 1;
-    }
-    return c;
-  }, [listings]);
-
-  // Only providers with at least one active listing in the selected group show
-  // up — an empty directory entry isn't useful to anyone. "Privat" is pinned
-  // first when present.
-  const orderedAgencies = useMemo(() => {
-    const active = agencies.filter((a) => (counts[a]?.[group] || 0) > 0);
-    const rest = active.filter((a) => a !== "Privat");
-    return active.includes("Privat") ? ["Privat", ...rest] : rest;
-  }, [agencies, counts, group]);
-
-  if (selected) {
-    const results = listings.filter((l) => l.agency === selected && providerGroupOfCat(l.cat) === group);
-    return (
-      <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY }}>
-          <button onClick={() => setSelected(null)} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
-            <ChevronLeft size={20} color="#fff" />
-          </button>
-          <div>
-            <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{selected}</div>
-            <div style={{ fontSize: 11.5, color: "var(--ph-accent-light)" }}>{t.listingsCount(results.length)}</div>
-          </div>
-        </div>
-        <div style={{ flex: 1, overflowY: "auto", padding: "14px 18px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-          {results.map((l) => (
-            <ListingCard key={l.id} listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
-          ))}
-          {results.length === 0 && (
-            <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
-              {t.noResults}
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
+  const results = useMemo(() => {
+    return listings.filter((l) => providerGroupOfCat(l.cat) === group);
+  }, [listings, group]);
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
-      <div style={{ background: "linear-gradient(135deg, #2C4270 0%, #4A6FA5 140%)", padding: "16px 18px 20px", borderBottomLeftRadius: 22, borderBottomRightRadius: 22 }}>
+      <div style={{ background: "linear-gradient(135deg, #2C4270 0%, #4A6FA5 140%)", padding: "16px 18px 18px", borderBottomLeftRadius: 22, borderBottomRightRadius: 22 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
           <button onClick={onBack} style={{ border: "none", background: "rgba(255,255,255,0.22)", borderRadius: "50%", width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
             <ChevronLeft size={18} color="#fff" />
@@ -3659,9 +3680,8 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
           <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 17, color: "#fff" }}>{t.agenciesScreenTitle}</span>
         </div>
         <div style={{ color: "rgba(255,255,255,0.9)", fontSize: 12.5, marginBottom: 14 }}>{t.agenciesScreenSubtitle}</div>
-        <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 2 }}>
+        <div style={{ display: "flex", gap: 8 }}>
           {[
-            { id: "real_estate", label: t.providerGroupRealEstate },
             { id: "furniture", label: t.providerGroupFurniture },
             { id: "craftsmen", label: t.providerGroupCraftsmen },
             { id: "architects", label: t.providerGroupArchitects },
@@ -3669,9 +3689,9 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
             const active = group === g.id;
             return (
               <button
-                key={g.id} onClick={() => { setGroup(g.id); setSelected(null); }}
+                key={g.id} onClick={() => setGroup(g.id)}
                 style={{
-                  flexShrink: 0, padding: "9px 14px", borderRadius: 10, cursor: "pointer", fontSize: 12.5, fontWeight: 600, border: "none", whiteSpace: "nowrap",
+                  flex: 1, padding: "9px 4px", borderRadius: 10, cursor: "pointer", fontSize: 12, fontWeight: 600, border: "none", whiteSpace: "nowrap",
                   background: active ? "#fff" : "rgba(255,255,255,0.16)", color: active ? "#2C4270" : "#fff",
                 }}
               >
@@ -3682,36 +3702,18 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "16px 18px 24px", display: "flex", flexDirection: "column", gap: 10 }}>
-        {orderedAgencies.length === 0 && (
-          <div style={{ textAlign: "center", padding: "40px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>{t.noProvidersYet}</div>
+      <div style={{ padding: "12px 18px 4px", fontSize: 12.5, color: "var(--ph-text-muted)", fontWeight: 600 }}>
+        {t.listingsCount(results.length)}
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", padding: "6px 18px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        {results.map((l) => (
+          <ListingCard key={l.id} listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
+        ))}
+        {results.length === 0 && (
+          <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
+            {t.noProvidersYet}
+          </div>
         )}
-        {orderedAgencies.map((a) => {
-          const isPrivate = a === "Privat";
-          return (
-            <button
-              key={a}
-              onClick={() => setSelected(a)}
-              style={{
-                display: "flex", alignItems: "center", gap: 12, background: "var(--ph-surface)",
-                border: isPrivate ? `1.5px solid ${"var(--ph-accent)"}` : "1px solid var(--ph-border)", borderRadius: 14,
-                padding: "12px 14px", cursor: "pointer", textAlign: "left",
-              }}
-            >
-              <div style={{
-                width: 38, height: 38, borderRadius: 10, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center",
-                background: isPrivate ? "#EFE6D2" : "#EEF1F7",
-              }}>
-                {isPrivate ? <Users size={17} color={"var(--ph-accent)"} /> : <Briefcase size={16} color="#4A6FA5" />}
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13.5, fontWeight: 700, color: "var(--ph-text)" }}>{isPrivate ? t.privateSeller : a}</div>
-                <div style={{ fontSize: 11.5, color: "var(--ph-text-muted)" }}>{t.listingsCount(counts[a]?.[group] || 0)}</div>
-              </div>
-              <ChevronLeft size={16} color="var(--ph-text-muted)" style={{ transform: "rotate(180deg)" }} />
-            </button>
-          );
-        })}
       </div>
     </div>
   );

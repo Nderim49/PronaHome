@@ -70,6 +70,8 @@ const STRINGS = {
     passwordLabel: "Fjalëkalimi", passwordPlaceholder: "Të paktën 6 shkronja/shifra",
     setPasswordHint: "Vendos një fjalëkalim për t'u kyçur më shpejt herën tjetër.",
     passwordTooShortError: "Fjalëkalimi duhet të ketë të paktën 6 shkronja/shifra.",
+    companyRequiredError: "Shkruaj emrin e kompanisë ose zgjidh 'Individ'.",
+    companyLockedHint: "E kyçur gjatë regjistrimit. Mund ta ndryshosh më vonë te 'Ndrysho profilin', duke kaluar në 'Agjenci'.",
     forgotCodeLink: "Hyr me kod në vend të kësaj", backToStart: "Kthehu",
     firstNameLabel: "Emri", firstNamePlaceholder: "p.sh. Arben", lastNameLabel: "Mbiemri", lastNamePlaceholder: "p.sh. Leka",
     dobLabel: "Data e lindjes", countryLabel: "Shteti", cityFreeTextPlaceholder: "p.sh. Prishtinë", phoneLocalPlaceholder: "44 123 456",
@@ -170,6 +172,8 @@ const STRINGS = {
     photoLabel: "Fotografia kryesore (opsionale)", photoPreparing: "Duke përgatitur...",
     photoTapToUpload: "Shtyp për të ngarkuar foto", photoChange: "Ndrysho fotografinë",
     businessPhotoLabel: "Foto (opsionale)", businessPhotoHint: "Logo ose një foto që promovon biznesin tënd",
+    businessBioLabel: "Rreth meje / biznesit tim (opsionale)", businessBioPlaceholder: "Prezantohu shkurt — përvoja, shërbimet, pse të zgjedhin ty...",
+    readMoreLabel: "Lexo më shumë",
     photoAddMore: "Shto më shumë", coverPhotoLabel: "Kryesore",
     photoHint: "Fotografia ruhet bashkë me shpalljen dhe u shfaqet të gjithë përdoruesve.",
     titleLabel: "Titulli i shpalljes", titlePlaceholder: "p.sh. Banesë 2+1 në qendër",
@@ -180,15 +184,17 @@ const STRINGS = {
     roomsFieldLabel: "Dhoma", roomsPlaceholder: "p.sh. 3",
     floorLabel: "Kati", floorPlaceholder: "p.sh. 3/6",
     groundFloorLabel: "Përdhesë", basementLabel: "Bodrum", atticLabel: "Papafingo / Mansardë",
-    floorNotApplicableLabel: "Nuk aplikohet (shtëpi/garazhë/truall)", chooseOption: "Zgjidh",
+    floorNotApplicableLabel: "Shtëpi", chooseOption: "Zgjidh",
     descLabel: "Përshkrimi", descPlaceholder: "Përshkruaj pronën shkurtimisht...",
     tagsLabel: "Karakteristikat (ndaj me presje)", tagsPlaceholder: "p.sh. Parking, Ashensor, Ballkon",
     agencyFieldLabel: "Ofertuesi", agencyFieldPlaceholder: "Privat, ose emri i agjencisë tënde",
     agencyFieldHint: "Lëre 'Privat' nëse shet/jep me qira si individ. Nëse shkruan një emër të ri agjencie, ai do të shfaqet automatikisht te 'Ofertuesit'.",
+    agencyFieldLockedHint: "Vetëm llogaritë e regjistruara si 'Agjenci' mund të shpallin nën një emër tjetër. Ndrysho këtë te 'Ndrysho profilin'.",
     requiredError: "Plotëso të paktën titullin, çmimin, sipërfaqen dhe qytetin.",
     publishBtn: "Publiko shpalljen", publishing: "Duke publikuar...",
     contactAgent: "Kontakto agjentin", descriptionLabel: "Përshkrimi", featuresLabel: "Karakteristikat",
-    contactInfoLabel: "Të dhënat e kontaktit",
+    sectionPriceSize: "Çmimi & Madhësia", sectionProviderInfo: "Ofertuesi",
+    contactInfoLabel: "Të dhënat e kontaktit", callBtn: "Telefono", emailBtn: "Shkruaj Email",
     areaStat: "Sipërfaqja", roomsStat: "Dhoma", floorStat: "Kati",
     yourListing: "Shpallja jote", genericProperty: "Pronë",
     loadingText: "Duke ngarkuar...",
@@ -207,6 +213,8 @@ const STRINGS = {
     passwordLabel: "Passwort", passwordPlaceholder: "Mindestens 6 Zeichen",
     setPasswordHint: "Lege ein Passwort fest, um dich nächstes Mal schneller anzumelden.",
     passwordTooShortError: "Das Passwort muss mindestens 6 Zeichen haben.",
+    companyRequiredError: "Gib den Firmennamen ein oder wähle 'Privatperson'.",
+    companyLockedHint: "Bei der Registrierung gesperrt. Später unter 'Profil bearbeiten' auf 'Agentur' umstellbar.",
     forgotCodeLink: "Stattdessen mit Code anmelden", backToStart: "Zurück",
     firstNameLabel: "Vorname", firstNamePlaceholder: "z. B. Anna", lastNameLabel: "Nachname", lastNamePlaceholder: "z. B. Müller",
     dobLabel: "Geburtsdatum", countryLabel: "Land", cityFreeTextPlaceholder: "z. B. Berlin", phoneLocalPlaceholder: "151 12345678",
@@ -307,6 +315,8 @@ const STRINGS = {
     photoLabel: "Hauptfoto (optional)", photoPreparing: "Wird vorbereitet...",
     photoTapToUpload: "Tippen, um Fotos hochzuladen", photoChange: "Foto ändern",
     businessPhotoLabel: "Foto (optional)", businessPhotoHint: "Logo oder ein Foto, das für dein Geschäft wirbt",
+    businessBioLabel: "Über mich / mein Geschäft (optional)", businessBioPlaceholder: "Stell dich kurz vor — Erfahrung, Leistungen, warum man dich wählen sollte...",
+    readMoreLabel: "Mehr lesen",
     photoAddMore: "Weitere hinzufügen", coverPhotoLabel: "Titelbild",
     photoHint: "Das Foto wird zusammen mit der Anzeige gespeichert und allen Nutzern angezeigt.",
     titleLabel: "Titel der Anzeige", titlePlaceholder: "z. B. Wohnung 2+1 im Zentrum",
@@ -317,15 +327,17 @@ const STRINGS = {
     roomsFieldLabel: "Zimmer", roomsPlaceholder: "z. B. 3",
     floorLabel: "Etage", floorPlaceholder: "z. B. 3/6",
     groundFloorLabel: "Erdgeschoss", basementLabel: "Keller", atticLabel: "Dachgeschoss",
-    floorNotApplicableLabel: "Nicht zutreffend (Haus/Garage/Grundstück)", chooseOption: "Auswählen",
+    floorNotApplicableLabel: "Haus", chooseOption: "Auswählen",
     descLabel: "Beschreibung", descPlaceholder: "Beschreibe die Immobilie kurz...",
     tagsLabel: "Merkmale (durch Komma getrennt)", tagsPlaceholder: "z. B. Parkplatz, Aufzug, Balkon",
     agencyFieldLabel: "Anbieter", agencyFieldPlaceholder: "Privat, oder der Name deiner Agentur",
     agencyFieldHint: "Lass 'Privat' stehen, wenn du als Privatperson anbietest. Gibst du einen neuen Agenturnamen ein, erscheint er automatisch unter 'Anbieter'.",
+    agencyFieldLockedHint: "Nur Konten mit Kontotyp 'Agentur' können unter einem anderen Namen inserieren. Umstellbar unter 'Profil bearbeiten'.",
     requiredError: "Fülle mindestens Titel, Preis, Fläche und Stadt aus.",
     publishBtn: "Anzeige veröffentlichen", publishing: "Wird veröffentlicht...",
     contactAgent: "Makler kontaktieren", descriptionLabel: "Beschreibung", featuresLabel: "Merkmale",
-    contactInfoLabel: "Kontaktdaten",
+    sectionPriceSize: "Preis & Größe", sectionProviderInfo: "Anbieter",
+    contactInfoLabel: "Kontaktdaten", callBtn: "Anrufen", emailBtn: "Mail schreiben",
     areaStat: "Fläche", roomsStat: "Zimmer", floorStat: "Etage",
     yourListing: "Deine Anzeige", genericProperty: "Immobilie",
     loadingText: "Wird geladen...",
@@ -344,6 +356,8 @@ const STRINGS = {
     passwordLabel: "Password", passwordPlaceholder: "At least 6 characters",
     setPasswordHint: "Set a password to log in faster next time.",
     passwordTooShortError: "Password must be at least 6 characters.",
+    companyRequiredError: "Enter the company name or choose 'Individual'.",
+    companyLockedHint: "Locked during registration. You can switch to 'Agency' later under 'Edit profile'.",
     forgotCodeLink: "Sign in with code instead", backToStart: "Back",
     firstNameLabel: "First name", firstNamePlaceholder: "e.g. John", lastNameLabel: "Last name", lastNamePlaceholder: "e.g. Smith",
     dobLabel: "Date of birth", countryLabel: "Country", cityFreeTextPlaceholder: "e.g. London", phoneLocalPlaceholder: "7911 123456",
@@ -444,6 +458,8 @@ const STRINGS = {
     photoLabel: "Main photo (optional)", photoPreparing: "Preparing...",
     photoTapToUpload: "Tap to upload photos", photoChange: "Change photo",
     businessPhotoLabel: "Photo (optional)", businessPhotoHint: "A logo or photo advertising your business",
+    businessBioLabel: "About me / my business (optional)", businessBioPlaceholder: "Introduce yourself briefly — experience, services, why choose you...",
+    readMoreLabel: "Read more",
     photoAddMore: "Add more", coverPhotoLabel: "Cover",
     photoHint: "The photo is saved with the listing and shown to all users.",
     titleLabel: "Listing title", titlePlaceholder: "e.g. 2+1 apartment in the center",
@@ -454,15 +470,17 @@ const STRINGS = {
     roomsFieldLabel: "Rooms", roomsPlaceholder: "e.g. 3",
     floorLabel: "Floor", floorPlaceholder: "e.g. 3/6",
     groundFloorLabel: "Ground floor", basementLabel: "Basement", atticLabel: "Attic / Loft",
-    floorNotApplicableLabel: "Not applicable (house/garage/land)", chooseOption: "Choose",
+    floorNotApplicableLabel: "House", chooseOption: "Choose",
     descLabel: "Description", descPlaceholder: "Briefly describe the property...",
     tagsLabel: "Features (comma-separated)", tagsPlaceholder: "e.g. Parking, Elevator, Balcony",
     agencyFieldLabel: "Provider", agencyFieldPlaceholder: "Private, or your agency's name",
     agencyFieldHint: "Leave 'Private' if you're listing as an individual. Enter a new agency name and it will automatically appear under 'Providers'.",
+    agencyFieldLockedHint: "Only accounts registered as 'Agency' can list under a different name. Switch this under 'Edit profile'.",
     requiredError: "Fill in at least the title, price, area and city.",
     publishBtn: "Publish listing", publishing: "Publishing...",
     contactAgent: "Contact agent", descriptionLabel: "Description", featuresLabel: "Features",
-    contactInfoLabel: "Contact details",
+    sectionPriceSize: "Price & Size", sectionProviderInfo: "Provider",
+    contactInfoLabel: "Contact details", callBtn: "Call", emailBtn: "Send email",
     areaStat: "Area", roomsStat: "Rooms", floorStat: "Floor",
     yourListing: "Your listing", genericProperty: "Property",
     loadingText: "Loading...",
@@ -1307,6 +1325,7 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
   const [code, setCode] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [accountType, setAccountType] = useState("individual");
   const [company, setCompany] = useState("");
   const [dob, setDob] = useState("");
   const [country, setCountry] = useState("XK");
@@ -1350,14 +1369,15 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
   };
   const finishSignup = async () => {
     if (!firstName.trim() || !lastName.trim()) { setError(t.onboardError); return; }
+    if (accountType === "agency" && !company.trim()) { setError(t.companyRequiredError); return; }
     if (password.trim().length < 6) { setError(t.passwordTooShortError); return; }
     setError(""); setSaving(true);
     try {
       const profile = {
         name: `${firstName.trim()} ${lastName.trim()}`.trim(), email: email.trim(),
-        company: company.trim(), dateOfBirth: dob || "", country, city: city.trim(), homeAddress: homeAddress.trim(), homeAddressNumber: homeAddressNumber.trim(),
+        company: accountType === "agency" ? company.trim() : "", dateOfBirth: dob || "", country, city: city.trim(), homeAddress: homeAddress.trim(), homeAddressNumber: homeAddressNumber.trim(),
         phone: phone.trim() ? `${selectedCountry.dial} ${phone.trim()}` : "",
-        emailVerified: true, accountType: company.trim() ? "agency" : "individual",
+        emailVerified: true, accountType,
       };
       await saveProfileRemote(currentSession.user.id, profile);
       await setAccountPassword(password.trim());
@@ -1544,9 +1564,32 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
           </div>
 
           <div style={{ marginBottom: 12 }}>
-            <label style={labelStyle}>{t.companyLabel}</label>
-            <input style={inputStyle} value={company} onChange={(e) => setCompany(e.target.value)} placeholder={t.companyOptionalPlaceholder} />
+            <label style={labelStyle}>{t.sectionAccountType}</label>
+            <div style={{ display: "flex", gap: 8 }}>
+              {[{ id: "individual", label: t.accountTypeIndividual }, { id: "agency", label: t.accountTypeAgency }].map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => { setAccountType(opt.id); if (opt.id === "individual") setCompany(""); }}
+                  style={{
+                    flex: 1, padding: "10px 0", borderRadius: 10, cursor: "pointer", fontSize: 12.5, fontWeight: 600,
+                    border: accountType === opt.id ? "none" : "1px solid var(--ph-border)",
+                    background: accountType === opt.id ? "var(--ph-accent)" : "transparent",
+                    color: accountType === opt.id ? "#fff" : "var(--ph-text)",
+                  }}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
           </div>
+
+          {accountType === "agency" && (
+            <div style={{ marginBottom: 12 }}>
+              <label style={labelStyle}>{t.companyLabel}</label>
+              <input style={inputStyle} value={company} onChange={(e) => setCompany(e.target.value)} placeholder={t.companyPlaceholder} />
+            </div>
+          )}
+
 
           <div style={{ marginBottom: 12 }}>
             <label style={labelStyle}>{t.dobLabel}</label>
@@ -1692,7 +1735,7 @@ function EditProfileScreen({ profile, onBack, onSave }) {
       await onSave({
         ...profile,
         name: `${firstName.trim()} ${lastName.trim()}`.trim(), email: email.trim(), phone: phone.trim(),
-        accountType, company: company.trim(), dateOfBirth: dob, country, city: city.trim(), homeAddress: homeAddress.trim(), homeAddressNumber: homeAddressNumber.trim(), bio: bio.trim(),
+        accountType, company: accountType === "agency" ? company.trim() : "", dateOfBirth: dob, country, city: city.trim(), homeAddress: homeAddress.trim(), homeAddressNumber: homeAddressNumber.trim(), bio: bio.trim(),
       });
       setSaving(false);
       setSaved(true);
@@ -2355,6 +2398,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
   const categories = CATEGORIES(t);
   const gallery = (listing.images && listing.images.length ? listing.images : (listing.image ? [listing.image] : []));
   const [photoIdx, setPhotoIdx] = useState(0);
+  const [showBio, setShowBio] = useState(false);
   const onGalleryScroll = (e) => {
     const w = e.currentTarget.clientWidth;
     if (w) setPhotoIdx(Math.round(e.currentTarget.scrollLeft / w));
@@ -2377,11 +2421,6 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             <ChevronLeft size={19} color={NAVY} />
           </button>
           <div style={{ position: "absolute", top: 14, right: 14, display: "flex", gap: 8 }}>
-            {isMine && (
-              <button onClick={() => onDelete(listing.id)} style={{ width: 34, height: 34, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.92)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                <Trash2 size={15} color="#B0473C" />
-              </button>
-            )}
             <button onClick={() => onToggleFav(listing.id)} style={{ width: 34, height: 34, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.92)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
               <Heart size={16} color={isFav ? "var(--ph-accent)" : "var(--ph-text-muted)"} fill={isFav ? "var(--ph-accent)" : "none"} />
             </button>
@@ -2396,57 +2435,72 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             {listing.title}
           </h1>
           {fullName && listing.title !== fullName && (
-            <div style={{ color: "var(--ph-text-muted)", fontSize: 13.5, marginBottom: 14 }}>{fullName}</div>
+            <div style={{ color: "var(--ph-text-muted)", fontSize: 13.5, marginBottom: 6 }}>{fullName}</div>
+          )}
+          {listing.address && (
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${listing.address} ${listing.addressNumber || ""} ${listing.city || ""}`.trim())}`}
+              target="_blank" rel="noopener noreferrer"
+              style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--ph-text-muted)", fontSize: 13, marginBottom: 6, textDecoration: "none" }}
+            >
+              <MapPin size={13} /> {listing.address}{listing.addressNumber ? ` ${listing.addressNumber}` : ""}
+            </a>
           )}
 
           {listing.created_at && (
             <div style={{ fontSize: 11.5, color: "var(--ph-text-muted)", marginBottom: 18 }}>{t.postedOn(formatShortDate(listing.created_at, lang))}</div>
           )}
 
-          <SettingsSection title={t.contactInfoLabel}>
-            <div style={{ padding: 4 }}>
-              {listing.contactPhone && (
-                <a href={`tel:${listing.contactPhone}`} style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 14px", textDecoration: "none", borderBottom: "1px solid var(--ph-border)" }}>
-                  <div style={{ width: 34, height: 34, borderRadius: 10, background: "var(--ph-accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <Phone size={15} color="#fff" />
-                  </div>
-                  <span style={{ fontSize: 13.5, color: "var(--ph-accent)", fontWeight: 700, flex: 1 }}>{listing.contactPhone}</span>
-                  <ChevronLeft size={15} color="var(--ph-accent)" style={{ transform: "rotate(180deg)" }} />
-                </a>
-              )}
-              {listing.contactEmail && (
-                <a href={`mailto:${listing.contactEmail}`} style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 14px", textDecoration: "none", borderBottom: listing.address ? "1px solid var(--ph-border)" : "none" }}>
-                  <div style={{ width: 34, height: 34, borderRadius: 10, background: "var(--ph-accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <Mail size={15} color="#fff" />
-                  </div>
-                  <span style={{ fontSize: 13.5, color: "var(--ph-accent)", fontWeight: 700, flex: 1, wordBreak: "break-all" }}>{listing.contactEmail}</span>
-                  <ChevronLeft size={15} color="var(--ph-accent)" style={{ transform: "rotate(180deg)", flexShrink: 0 }} />
-                </a>
-              )}
-              {listing.address && (
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${listing.address} ${listing.addressNumber || ""} ${listing.city || ""}`.trim())}`}
-                  target="_blank" rel="noopener noreferrer"
-                  style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 14px", textDecoration: "none" }}
-                >
-                  <div style={{ width: 34, height: 34, borderRadius: 10, background: "var(--ph-accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <MapPin size={15} color="#fff" />
-                  </div>
-                  <span style={{ fontSize: 13.5, color: "var(--ph-accent)", fontWeight: 700, flex: 1 }}>{listing.address}{listing.addressNumber ? ` ${listing.addressNumber}` : ""}</span>
-                  <ChevronLeft size={15} color="var(--ph-accent)" style={{ transform: "rotate(180deg)", flexShrink: 0 }} />
-                </a>
-              )}
-            </div>
-          </SettingsSection>
+          {listing.desc && (
+            <button
+              onClick={() => setShowBio(true)}
+              style={{
+                width: "100%", textAlign: "left", background: "var(--ph-surface)", border: "1px solid var(--ph-border)",
+                borderRadius: 14, padding: 14, cursor: "pointer", display: "flex", flexDirection: "column", gap: 8,
+              }}
+            >
+              <div style={{ fontSize: 11.5, fontWeight: 700, color: "var(--ph-text-muted)", textTransform: "uppercase", letterSpacing: 0.4 }}>
+                {t.businessBioLabel}
+              </div>
+              <div style={{ fontSize: 13, color: "var(--ph-text)", lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                {listing.desc}
+              </div>
+              <div style={{ fontSize: 12, color: "var(--ph-accent)", fontWeight: 600 }}>{t.readMoreLabel} ›</div>
+            </button>
+          )}
         </div>
 
-        <div style={{ padding: "12px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "var(--ph-surface)", borderTop: "1px solid var(--ph-border)" }}>
-          <button
-            onClick={() => listing.contactPhone && (window.location.href = `tel:${listing.contactPhone}`)}
-            style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "14px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
-          >
-            <Phone size={16} /> {t.contactAgent}
-          </button>
+        {showBio && (
+          <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 40 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY }}>
+              <button onClick={() => setShowBio(false)} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
+                <ChevronLeft size={20} color="#fff" />
+              </button>
+              <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{listing.title}</span>
+            </div>
+            <div style={{ flex: 1, overflowY: "auto", padding: 20 }}>
+              <div style={{ fontSize: 14.5, color: "var(--ph-text)", lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{listing.desc}</div>
+            </div>
+          </div>
+        )}
+
+        <div style={{ padding: "12px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "var(--ph-surface)", borderTop: "1px solid var(--ph-border)", display: "flex", flexDirection: "column", gap: 8 }}>
+          {listing.contactPhone && (
+            <button
+              onClick={() => (window.location.href = `tel:${listing.contactPhone}`)}
+              style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "14px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
+            >
+              <Phone size={16} /> {t.callBtn}
+            </button>
+          )}
+          {listing.contactEmail && (
+            <button
+              onClick={() => (window.location.href = `mailto:${listing.contactEmail}`)}
+              style={{ width: "100%", background: listing.contactPhone ? "var(--ph-accent-light)" : NAVY, color: listing.contactPhone ? "var(--ph-text)" : "#fff", border: "none", borderRadius: 12, padding: "14px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
+            >
+              <Mail size={16} /> {t.emailBtn}
+            </button>
+          )}
         </div>
       </div>
     );
@@ -2495,14 +2549,6 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           <ChevronLeft size={19} color={NAVY} />
         </button>
         <div style={{ position: "absolute", top: 14, right: 14, display: "flex", gap: 8 }}>
-          {isMine && (
-            <button
-              onClick={() => onDelete(listing.id)}
-              style={{ width: 34, height: 34, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.92)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
-            >
-              <Trash2 size={15} color="#B0473C" />
-            </button>
-          )}
           <button
             onClick={() => onToggleFav(listing.id)}
             style={{ width: 34, height: 34, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.92)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
@@ -2610,7 +2656,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
 // ---------------------------------------------------------------------------
 // New listing form
 // ---------------------------------------------------------------------------
-function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
+function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile }) {
   const { t } = useLang();
   const isEditing = !!editingListing;
   const categories = CATEGORIES(t).filter((c) => c.id !== "all" && c.id !== "shitje" && c.id !== "qera");
@@ -2629,12 +2675,14 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
     contactFirstName: "", contactLastName: "", contactPhone: "", contactEmail: "", contactCountry: "XK",
   });
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
   const [images, setImages] = useState(editingListing ? (editingListing.images || (editingListing.image ? [editingListing.image] : [])) : []);
   const [imageBusy, setImageBusy] = useState(false);
   const MAX_IMAGES = 10;
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const isBusinessCard = BUSINESS_CARD_CATS.includes(form.cat);
+  const isAgencyAccount = profile?.accountType === "agency";
   const selectedContactCountry = WORLD_COUNTRIES.find((c) => c.code === form.contactCountry) || WORLD_COUNTRIES[0];
   const NO_M2_CATS = ["mobilje", "zejtar", "arkitekt", "statike"];
   const canSubmit = isBusinessCard
@@ -2668,7 +2716,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
       title: form.agency.trim() && form.agency.trim() !== "Privat" ? form.agency.trim() : fullName,
       cat: form.cat, type: form.type, city: "", area: "-",
       address: form.address.trim(), addressNumber: form.addressNumber.trim(),
-      price: 0, m2: 0, rooms: 0, floor: "-", desc: "", tags: [],
+      price: 0, m2: 0, rooms: 0, floor: "-", desc: form.desc.trim(), tags: [],
       images, image: images[0] || null, agency: form.agency.trim() || "Privat",
       contactFirstName: form.contactFirstName.trim(), contactLastName: form.contactLastName.trim(),
       contactPhone: form.contactPhone.trim() ? `${selectedContactCountry.dial} ${form.contactPhone.trim()}` : "", contactEmail: form.contactEmail.trim(),
@@ -2678,14 +2726,16 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
       area: form.area.trim() || "-", address: form.address.trim(), addressNumber: form.addressNumber.trim(), price: Number(form.price), m2: Number(form.m2),
       rooms: Number(form.rooms) || 0, floor: form.floor.trim() || "-",
       desc: form.desc.trim() || "", tags: form.tags.split(",").map((x) => x.trim()).filter(Boolean),
-      images, image: images[0] || null, agency: form.agency.trim() || "Privat",
+      images, image: images[0] || null, agency: isAgencyAccount ? (form.agency.trim() || "Privat") : "Privat",
     };
     if (isEditing) newListing.owner_id = editingListing.owner_id;
     try {
       await onPublish(newListing, isEditing);
+      setSaving(false);
+      setSaved(true);
+      setTimeout(onBack, 900);
     } catch (e) {
       setError(e.message || t.requiredError);
-    } finally {
       setSaving(false);
     }
   };
@@ -2699,245 +2749,285 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
         <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{isEditing ? t.editListingTitle : t.newListingTitle}</span>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: 18, display: "flex", flexDirection: "column", gap: 14 }}>
-        <div>
-          <label style={labelStyle}>{t.categoryLabel}</label>
-          <select style={inputStyle} value={form.cat} onChange={set("cat")}>
-            {categories.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
-          </select>
-        </div>
+      <div style={{ flex: 1, overflowY: "auto", padding: 18, display: "flex", flexDirection: "column" }}>
+        <SettingsSection title={t.categoryLabel}>
+          <div style={{ padding: 14 }}>
+            <select style={inputStyle} value={form.cat} onChange={set("cat")}>
+              {categories.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+            </select>
+          </div>
+        </SettingsSection>
 
         {isBusinessCard ? (
         <>
-          <div>
-            <label style={labelStyle}>{t.businessPhotoLabel}</label>
-            {images.length > 0 ? (
-              <div style={{ position: "relative", width: 110, aspectRatio: "1", borderRadius: 12, overflow: "hidden" }}>
-                <img src={images[0]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                <button
-                  onClick={() => setImages([])}
-                  style={{ position: "absolute", top: 4, right: 4, width: 20, height: 20, borderRadius: "50%", border: "none", background: "rgba(15,23,41,0.75)", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+          <SettingsSection title={t.businessPhotoLabel}>
+            <div style={{ padding: 14 }}>
+              {images.length > 0 ? (
+                <div style={{ position: "relative", width: 110, aspectRatio: "1", borderRadius: 12, overflow: "hidden" }}>
+                  <img src={images[0]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  <button
+                    onClick={() => setImages([])}
+                    style={{ position: "absolute", top: 4, right: 4, width: 20, height: 20, borderRadius: "50%", border: "none", background: "rgba(15,23,41,0.75)", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              ) : (
+                <label
+                  htmlFor="prona-image-input"
+                  style={{
+                    width: 110, aspectRatio: "1", borderRadius: 12, border: "1.5px dashed #D8CFB8", background: "#FBF9F3",
+                    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, cursor: "pointer",
+                  }}
                 >
-                  <X size={12} />
-                </button>
+                  {imageBusy ? (
+                    <Loader2 size={16} color={"var(--ph-accent)"} className="spin" />
+                  ) : (
+                    <>
+                      <Camera size={18} color="#B7ADA0" />
+                      <span style={{ fontSize: 9.5, color: "var(--ph-text-muted)", textAlign: "center", padding: "0 4px" }}>{t.photoTapToUpload}</span>
+                    </>
+                  )}
+                </label>
+              )}
+              <input id="prona-image-input" type="file" accept="image/*" onChange={handleImagePick} style={{ display: "none" }} />
+              <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)", marginTop: 8 }}>{t.businessPhotoHint}</div>
+            </div>
+          </SettingsSection>
+
+          <SettingsSection title={t.sectionBasicInfo}>
+            <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ display: "flex", gap: 10 }}>
+                <div style={{ flex: 1 }}>
+                  <label style={labelStyle}>{t.firstNameLabel}</label>
+                  <input style={inputStyle} value={form.contactFirstName} onChange={set("contactFirstName")} placeholder={t.firstNamePlaceholder} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={labelStyle}>{t.lastNameLabel}</label>
+                  <input style={inputStyle} value={form.contactLastName} onChange={set("contactLastName")} placeholder={t.lastNamePlaceholder} />
+                </div>
               </div>
-            ) : (
-              <label
-                htmlFor="prona-image-input"
-                style={{
-                  width: 110, aspectRatio: "1", borderRadius: 12, border: "1.5px dashed #D8CFB8", background: "#FBF9F3",
-                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, cursor: "pointer",
-                }}
-              >
-                {imageBusy ? (
-                  <Loader2 size={16} color={"var(--ph-accent)"} className="spin" />
-                ) : (
-                  <>
-                    <Camera size={18} color="#B7ADA0" />
-                    <span style={{ fontSize: 9.5, color: "var(--ph-text-muted)", textAlign: "center", padding: "0 4px" }}>{t.photoTapToUpload}</span>
-                  </>
-                )}
-              </label>
-            )}
-            <input id="prona-image-input" type="file" accept="image/*" onChange={handleImagePick} style={{ display: "none" }} />
-            <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)", marginTop: 8 }}>{t.businessPhotoHint}</div>
-          </div>
-          <div style={{ display: "flex", gap: 10 }}>
-            <div style={{ flex: 1 }}>
-              <label style={labelStyle}>{t.firstNameLabel}</label>
-              <input style={inputStyle} value={form.contactFirstName} onChange={set("contactFirstName")} placeholder={t.firstNamePlaceholder} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <label style={labelStyle}>{t.lastNameLabel}</label>
-              <input style={inputStyle} value={form.contactLastName} onChange={set("contactLastName")} placeholder={t.lastNamePlaceholder} />
-            </div>
-          </div>
-          <div>
-            <label style={labelStyle}>{t.companyLabel}</label>
-            <input style={inputStyle} value={form.agency === "Privat" ? "" : form.agency} onChange={set("agency")} placeholder={t.companyOptionalPlaceholder} />
-          </div>
-          <div style={{ display: "flex", gap: 8 }}>
-            <div style={{ flex: 2 }}>
-              <label style={labelStyle}>{t.homeAddressLabel}</label>
-              <GeoTypeahead value={form.address} onChange={(v) => setForm((f) => ({ ...f, address: v }))} placeholder={t.homeAddressPlaceholder} kind="address" />
-            </div>
-            <div style={{ flex: 1 }}>
-              <label style={labelStyle}>{t.houseNumberLabel}</label>
-              <input style={inputStyle} value={form.addressNumber} onChange={set("addressNumber")} placeholder={t.houseNumberPlaceholder} />
-            </div>
-          </div>
-          <div>
-            <label style={labelStyle}>{t.countryLabel}</label>
-            <div style={{ marginBottom: 8 }}>
-              <CountryTypeahead value={form.contactCountry} onChange={(v) => setForm((f) => ({ ...f, contactCountry: v }))} placeholder={t.countryLabel} />
-            </div>
-            <label style={labelStyle}>{t.phoneLabel}</label>
-            <div style={{ display: "flex", gap: 8 }}>
-              <div style={{
-                display: "flex", alignItems: "center", gap: 5, padding: "0 12px", borderRadius: 12,
-                border: "1px solid var(--ph-border)", background: "var(--ph-surface)", color: "var(--ph-text)", fontSize: 13.5, flexShrink: 0,
-              }}>
-                {flagEmoji(selectedContactCountry.code)} {selectedContactCountry.dial}
+              <div>
+                <label style={labelStyle}>{t.companyLabel}</label>
+                <input style={inputStyle} value={form.agency === "Privat" ? "" : form.agency} onChange={set("agency")} placeholder={t.companyOptionalPlaceholder} />
               </div>
-              <input style={{ ...inputStyle, flex: 1 }} type="tel" value={form.contactPhone} onChange={set("contactPhone")} placeholder={t.phoneLocalPlaceholder} />
             </div>
-          </div>
-          <div>
-            <label style={labelStyle}>{t.onboardEmailLabel}</label>
-            <input style={inputStyle} type="email" value={form.contactEmail} onChange={set("contactEmail")} placeholder={t.onboardEmailPlaceholder} />
-          </div>
+          </SettingsSection>
+
+          <SettingsSection title={t.homeAddressLabel}>
+            <div style={{ padding: 14 }}>
+              <div style={{ display: "flex", gap: 8 }}>
+                <div style={{ flex: 2 }}>
+                  <GeoTypeahead value={form.address} onChange={(v) => setForm((f) => ({ ...f, address: v }))} placeholder={t.homeAddressPlaceholder} kind="address" />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <input style={inputStyle} value={form.addressNumber} onChange={set("addressNumber")} placeholder={t.houseNumberPlaceholder} />
+                </div>
+              </div>
+            </div>
+          </SettingsSection>
+
+          <SettingsSection title={t.contactInfoLabel}>
+            <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
+              <div>
+                <label style={labelStyle}>{t.countryLabel}</label>
+                <div style={{ marginBottom: 8 }}>
+                  <CountryTypeahead value={form.contactCountry} onChange={(v) => setForm((f) => ({ ...f, contactCountry: v }))} placeholder={t.countryLabel} />
+                </div>
+                <label style={labelStyle}>{t.phoneLabel}</label>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <div style={{
+                    display: "flex", alignItems: "center", gap: 5, padding: "0 12px", borderRadius: 12,
+                    border: "1px solid var(--ph-border)", background: "var(--ph-surface)", color: "var(--ph-text)", fontSize: 13.5, flexShrink: 0,
+                  }}>
+                    {flagEmoji(selectedContactCountry.code)} {selectedContactCountry.dial}
+                  </div>
+                  <input style={{ ...inputStyle, flex: 1 }} type="tel" value={form.contactPhone} onChange={set("contactPhone")} placeholder={t.phoneLocalPlaceholder} />
+                </div>
+              </div>
+              <div>
+                <label style={labelStyle}>{t.onboardEmailLabel}</label>
+                <input style={inputStyle} type="email" value={form.contactEmail} onChange={set("contactEmail")} placeholder={t.onboardEmailPlaceholder} />
+              </div>
+            </div>
+          </SettingsSection>
+
+          <SettingsSection title={t.businessBioLabel}>
+            <div style={{ padding: 14 }}>
+              <textarea style={{ ...inputStyle, minHeight: 90, resize: "vertical" }} value={form.desc} onChange={set("desc")} placeholder={t.businessBioPlaceholder} />
+            </div>
+          </SettingsSection>
         </>
         ) : (
         <>
-        <div>
-          <label style={labelStyle}>{t.photoLabel} {images.length > 0 && `(${images.length}/${MAX_IMAGES})`}</label>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
-            {images.map((img, idx) => (
-              <div key={idx} style={{ position: "relative", aspectRatio: "1", borderRadius: 10, overflow: "hidden" }}>
-                <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                {idx === 0 && (
-                  <span style={{ position: "absolute", bottom: 4, left: 4, background: "rgba(15,23,41,0.7)", color: "#fff", fontSize: 9, padding: "2px 6px", borderRadius: 999 }}>
-                    {t.coverPhotoLabel}
-                  </span>
-                )}
-                <button
-                  onClick={() => removeImage(idx)}
-                  style={{ position: "absolute", top: 4, right: 4, width: 20, height: 20, borderRadius: "50%", border: "none", background: "rgba(15,23,41,0.75)", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
-                >
-                  <X size={12} />
-                </button>
+          <SettingsSection title={t.photoLabel}>
+            <div style={{ padding: 14 }}>
+              <div style={{ marginBottom: 4 }}>
+                {images.length > 0 && <span style={{ fontSize: 11, color: "var(--ph-text-muted)" }}>{images.length}/{MAX_IMAGES}</span>}
               </div>
-            ))}
-            {images.length < MAX_IMAGES && (
-              <label
-                htmlFor="prona-image-input"
-                style={{
-                  aspectRatio: "1", borderRadius: 10, border: "1.5px dashed #D8CFB8", background: "#FBF9F3",
-                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, cursor: "pointer",
-                }}
-              >
-                {imageBusy ? (
-                  <Loader2 size={16} color={"var(--ph-accent)"} className="spin" />
-                ) : (
-                  <>
-                    <Camera size={16} color="#B7ADA0" />
-                    <span style={{ fontSize: 9.5, color: "var(--ph-text-muted)", textAlign: "center", padding: "0 4px" }}>
-                      {images.length === 0 ? t.photoTapToUpload : t.photoAddMore}
-                    </span>
-                  </>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+                {images.map((img, idx) => (
+                  <div key={idx} style={{ position: "relative", aspectRatio: "1", borderRadius: 10, overflow: "hidden" }}>
+                    <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                    {idx === 0 && (
+                      <span style={{ position: "absolute", bottom: 4, left: 4, background: "rgba(15,23,41,0.7)", color: "#fff", fontSize: 9, padding: "2px 6px", borderRadius: 999 }}>
+                        {t.coverPhotoLabel}
+                      </span>
+                    )}
+                    <button
+                      onClick={() => removeImage(idx)}
+                      style={{ position: "absolute", top: 4, right: 4, width: 20, height: 20, borderRadius: "50%", border: "none", background: "rgba(15,23,41,0.75)", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+                {images.length < MAX_IMAGES && (
+                  <label
+                    htmlFor="prona-image-input"
+                    style={{
+                      aspectRatio: "1", borderRadius: 10, border: "1.5px dashed #D8CFB8", background: "#FBF9F3",
+                      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, cursor: "pointer",
+                    }}
+                  >
+                    {imageBusy ? (
+                      <Loader2 size={16} color={"var(--ph-accent)"} className="spin" />
+                    ) : (
+                      <>
+                        <Camera size={16} color="#B7ADA0" />
+                        <span style={{ fontSize: 9.5, color: "var(--ph-text-muted)", textAlign: "center", padding: "0 4px" }}>
+                          {images.length === 0 ? t.photoTapToUpload : t.photoAddMore}
+                        </span>
+                      </>
+                    )}
+                  </label>
                 )}
-              </label>
-            )}
-          </div>
-          <input id="prona-image-input" type="file" accept="image/*" multiple onChange={handleImagePick} style={{ display: "none" }} />
-          <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)", marginTop: 8 }}>{t.photoHint}</div>
-        </div>
-        <div>
-          <label style={labelStyle}>{t.titleLabel}</label>
-          <input style={inputStyle} value={form.title} onChange={set("title")} placeholder={t.titlePlaceholder} />
-        </div>
-        <div style={{ display: "flex", gap: 10 }}>
-          <div style={{ flex: 1 }}>
-            <label style={labelStyle}>{t.typeLabel}</label>
-            <select style={inputStyle} value={form.type} onChange={set("type")}>
-              <option value="Shitje">{t.typeSale}</option>
-              <option value="Qera">{t.typeRent}</option>
-            </select>
-          </div>
-        </div>
-        <div style={{ display: "flex", gap: 10 }}>
-          <div style={{ flex: 1 }}>
-            <label style={labelStyle}>{t.cityLabel}</label>
-            <select
-              style={inputStyle} value={form.city}
-              onChange={(e) => setForm((f) => ({ ...f, city: e.target.value, area: "" }))}
-            >
-              {CITY_GROUPS.map((g) => (
-                <optgroup key={g.country} label={t[g.country]}>
-                  {g.cities.map((c, i) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
-          </div>
-          <div style={{ flex: 1 }}>
-            <label style={labelStyle}>{t.areaLabel}</label>
-            {SETTLEMENTS_BY_CITY[form.city] ? (
-              <select style={inputStyle} value={form.area} onChange={set("area")}>
-                <option value="">{t.cityCenterLabel}</option>
-                {SETTLEMENTS_BY_CITY[form.city].map((s) => <option key={s} value={s}>{s}</option>)}
-              </select>
-            ) : (
-              <input style={inputStyle} value={form.area} onChange={set("area")} placeholder={t.areaPlaceholder} />
-            )}
-          </div>
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <div style={{ flex: 2 }}>
-            <label style={labelStyle}>{t.listingAddressLabel}</label>
-            <GeoTypeahead value={form.address} onChange={(v) => setForm((f) => ({ ...f, address: v }))} placeholder={t.listingAddressPlaceholder} kind="address" />
-          </div>
-          <div style={{ flex: 1 }}>
-            <label style={labelStyle}>{t.houseNumberLabel}</label>
-            <input style={inputStyle} value={form.addressNumber} onChange={set("addressNumber")} placeholder={t.houseNumberPlaceholder} />
-          </div>
-        </div>
-        <div style={{ display: "flex", gap: 10 }}>
-          <div style={{ flex: 1 }}>
-            <label style={labelStyle}>{t.priceEurLabel}</label>
-            <input style={inputStyle} type="number" value={form.price} onChange={set("price")} placeholder={t.pricePlaceholder} />
-          </div>
-          <div style={{ flex: 1 }}>
-            <label style={labelStyle}>{t.areaM2Label}</label>
-            <input style={inputStyle} type="number" min="1" value={form.m2} onChange={set("m2")} placeholder={t.areaM2Placeholder} />
-          </div>
-        </div>
-        {!NON_PROPERTY_CATS.includes(form.cat) || form.cat === "hotel" ? (
-        <div style={{ display: "flex", gap: 10 }}>
-          <div style={{ flex: 1 }}>
-            <label style={labelStyle}>{t.roomsFieldLabel}</label>
-            <select style={inputStyle} value={form.rooms} onChange={set("rooms")}>
-              <option value="">{t.chooseOption}</option>
-              {Array.from({ length: 99 }, (_, i) => i + 1).map((n) => (
-                <option key={n} value={n}>{n}</option>
-              ))}
-            </select>
-          </div>
-          <div style={{ flex: 1 }}>
-            <label style={labelStyle}>{t.floorLabel}</label>
-            <select style={inputStyle} value={form.floor} onChange={set("floor")}>
-              <option value="">{t.chooseOption}</option>
-              <option value={t.floorNotApplicableLabel}>{t.floorNotApplicableLabel}</option>
-              <option value={t.basementLabel}>{t.basementLabel}</option>
-              <option value={t.groundFloorLabel}>{t.groundFloorLabel}</option>
-              {Array.from({ length: 20 }, (_, i) => i + 1).map((n) => (
-                <option key={n} value={`${n}`}>{n}</option>
-              ))}
-              <option value={t.atticLabel}>{t.atticLabel}</option>
-            </select>
-          </div>
-        </div>
-        ) : null}
-        <div>
-          <label style={labelStyle}>{t.descLabel}</label>
-          <textarea style={{ ...inputStyle, minHeight: 80, resize: "vertical" }} value={form.desc} onChange={set("desc")} placeholder={t.descPlaceholder} />
-        </div>
-        <div>
-          <label style={labelStyle}>{t.tagsLabel}</label>
-          <input style={inputStyle} value={form.tags} onChange={set("tags")} placeholder={t.tagsPlaceholder} />
-        </div>
-        <div>
-          <label style={labelStyle}>{t.agencyFieldLabel}</label>
-          <input
-            style={inputStyle} value={form.agency} onChange={set("agency")}
-            placeholder={t.agencyFieldPlaceholder} list="prona-agency-suggestions"
-          />
-          <datalist id="prona-agency-suggestions">
-            {(agencies || []).map((a) => <option key={a} value={a} />)}
-          </datalist>
-          <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)", marginTop: 5 }}>{t.agencyFieldHint}</div>
-        </div>
+              </div>
+              <input id="prona-image-input" type="file" accept="image/*" multiple onChange={handleImagePick} style={{ display: "none" }} />
+              <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)", marginTop: 8 }}>{t.photoHint}</div>
+            </div>
+          </SettingsSection>
+
+          <SettingsSection title={t.sectionBasicInfo}>
+            <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
+              <div>
+                <label style={labelStyle}>{t.titleLabel}</label>
+                <input style={inputStyle} value={form.title} onChange={set("title")} placeholder={t.titlePlaceholder} />
+              </div>
+              <div>
+                <label style={labelStyle}>{t.typeLabel}</label>
+                <select style={inputStyle} value={form.type} onChange={set("type")}>
+                  <option value="Shitje">{t.typeSale}</option>
+                  <option value="Qera">{t.typeRent}</option>
+                </select>
+              </div>
+              <div style={{ display: "flex", gap: 10 }}>
+                <div style={{ flex: 1 }}>
+                  <label style={labelStyle}>{t.cityLabel}</label>
+                  <select
+                    style={inputStyle} value={form.city}
+                    onChange={(e) => setForm((f) => ({ ...f, city: e.target.value, area: "" }))}
+                  >
+                    {CITY_GROUPS.map((g) => (
+                      <optgroup key={g.country} label={t[g.country]}>
+                        {g.cities.map((c) => (
+                          <option key={c} value={c}>{c}</option>
+                        ))}
+                      </optgroup>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={labelStyle}>{t.areaLabel}</label>
+                  {SETTLEMENTS_BY_CITY[form.city] ? (
+                    <select style={inputStyle} value={form.area} onChange={set("area")}>
+                      <option value="">{t.cityCenterLabel}</option>
+                      {SETTLEMENTS_BY_CITY[form.city].map((s) => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  ) : (
+                    <input style={inputStyle} value={form.area} onChange={set("area")} placeholder={t.areaPlaceholder} />
+                  )}
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <div style={{ flex: 2 }}>
+                  <label style={labelStyle}>{t.listingAddressLabel}</label>
+                  <GeoTypeahead value={form.address} onChange={(v) => setForm((f) => ({ ...f, address: v }))} placeholder={t.listingAddressPlaceholder} kind="address" />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={labelStyle}>{t.houseNumberLabel}</label>
+                  <input style={inputStyle} value={form.addressNumber} onChange={set("addressNumber")} placeholder={t.houseNumberPlaceholder} />
+                </div>
+              </div>
+            </div>
+          </SettingsSection>
+
+          <SettingsSection title={t.sectionPriceSize}>
+            <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ display: "flex", gap: 10 }}>
+                <div style={{ flex: 1 }}>
+                  <label style={labelStyle}>{t.priceEurLabel}</label>
+                  <input style={inputStyle} type="number" value={form.price} onChange={set("price")} placeholder={t.pricePlaceholder} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={labelStyle}>{t.areaM2Label}</label>
+                  <input style={inputStyle} type="number" min="1" value={form.m2} onChange={set("m2")} placeholder={t.areaM2Placeholder} />
+                </div>
+              </div>
+              {(!NON_PROPERTY_CATS.includes(form.cat) || form.cat === "hotel") && (
+                <div style={{ display: "flex", gap: 10 }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={labelStyle}>{t.roomsFieldLabel}</label>
+                    <select style={inputStyle} value={form.rooms} onChange={set("rooms")}>
+                      <option value="">{t.chooseOption}</option>
+                      {Array.from({ length: 99 }, (_, i) => i + 1).map((n) => (
+                        <option key={n} value={n}>{n}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={labelStyle}>{t.floorLabel}</label>
+                    <select style={inputStyle} value={form.floor} onChange={set("floor")}>
+                      <option value="">{t.chooseOption}</option>
+                      <option value={t.floorNotApplicableLabel}>{t.floorNotApplicableLabel}</option>
+                      <option value={t.basementLabel}>{t.basementLabel}</option>
+                      <option value={t.groundFloorLabel}>{t.groundFloorLabel}</option>
+                      {Array.from({ length: 20 }, (_, i) => i + 1).map((n) => (
+                        <option key={n} value={`${n}`}>{n}</option>
+                      ))}
+                      <option value={t.atticLabel}>{t.atticLabel}</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+            </div>
+          </SettingsSection>
+
+          <SettingsSection title={t.descriptionLabel}>
+            <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
+              <textarea style={{ ...inputStyle, minHeight: 80, resize: "vertical" }} value={form.desc} onChange={set("desc")} placeholder={t.descPlaceholder} />
+              <div>
+                <label style={labelStyle}>{t.tagsLabel}</label>
+                <input style={inputStyle} value={form.tags} onChange={set("tags")} placeholder={t.tagsPlaceholder} />
+              </div>
+            </div>
+          </SettingsSection>
+
+          <SettingsSection title={t.sectionProviderInfo}>
+            <div style={{ padding: 14 }}>
+              <input
+                style={isAgencyAccount ? inputStyle : { ...inputStyle, opacity: 0.5, background: "var(--ph-border-soft)" }}
+                value={isAgencyAccount ? form.agency : "Privat"} onChange={set("agency")} disabled={!isAgencyAccount}
+                placeholder={t.agencyFieldPlaceholder} list="prona-agency-suggestions"
+              />
+              <datalist id="prona-agency-suggestions">
+                {(agencies || []).map((a) => <option key={a} value={a} />)}
+              </datalist>
+              <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)", marginTop: 8 }}>
+                {isAgencyAccount ? t.agencyFieldHint : t.agencyFieldLockedHint}
+              </div>
+            </div>
+          </SettingsSection>
         </>
         )}
         {error && <div style={{ color: "#B0473C", fontSize: 12.5 }}>{error}</div>}
@@ -2945,14 +3035,15 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
 
       <div style={{ padding: "12px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "var(--ph-surface)", borderTop: "1px solid var(--ph-border)" }}>
         <button
-          onClick={submit} disabled={saving}
+          onClick={submit} disabled={saving || saved}
           style={{
-            width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0",
+            width: "100%", background: saved ? "#2F7A56" : NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0",
             fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, display: "flex", alignItems: "center",
-            justifyContent: "center", gap: 8, cursor: saving ? "default" : "pointer", opacity: saving ? 0.7 : 1,
+            justifyContent: "center", gap: 8, cursor: (saving || saved) ? "default" : "pointer", opacity: saving ? 0.7 : 1,
+            transition: "background 0.15s",
           }}
         >
-          {saving ? <><Loader2 size={16} className="spin" /> {isEditing ? t.saving : t.publishing}</> : (isEditing ? t.saveChanges : t.publishBtn)}
+          {saved ? t.savedConfirmation : saving ? <><Loader2 size={16} className="spin" /> {isEditing ? t.saving : t.publishing}</> : (isEditing ? t.saveChanges : t.publishBtn)}
         </button>
       </div>
     </div>
@@ -3690,7 +3781,7 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
           <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 17, color: "#fff" }}>{t.agenciesScreenTitle}</span>
         </div>
         <div style={{ color: "rgba(255,255,255,0.9)", fontSize: 12.5, marginBottom: 14 }}>{t.agenciesScreenSubtitle}</div>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 8, minWidth: 0 }}>
           {[
             { id: "furniture", label: t.providerGroupFurniture },
             { id: "craftsmen", label: t.providerGroupCraftsmen },
@@ -3701,7 +3792,8 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
               <button
                 key={g.id} onClick={() => setGroup(g.id)}
                 style={{
-                  flex: 1, padding: "9px 4px", borderRadius: 10, cursor: "pointer", fontSize: 12, fontWeight: 600, border: "none", whiteSpace: "nowrap",
+                  flex: 1, minWidth: 0, padding: "9px 4px", borderRadius: 10, cursor: "pointer", fontSize: 11.5, fontWeight: 600,
+                  border: "none", lineHeight: 1.25, textAlign: "center",
                   background: active ? "#fff" : "rgba(255,255,255,0.16)", color: active ? "#2C4270" : "#fff",
                 }}
               >
@@ -3722,8 +3814,31 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
           </div>
         ))}
         {results.length === 0 && (
-          <div style={{ width: "100%", textAlign: "center", padding: "40px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
-            {t.noProvidersYet}
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 10, paddingTop: 6 }}>
+            <div style={{ textAlign: "center", color: "var(--ph-text-muted)", fontSize: 13, marginBottom: 4 }}>
+              {t.noProvidersYet}
+            </div>
+            {[
+              { id: "furniture", label: t.providerGroupFurniture, icon: BedDouble, gradient: "linear-gradient(135deg, #6B4A2E 0%, #B08554 140%)" },
+              { id: "craftsmen", label: t.providerGroupCraftsmen, icon: Wrench, gradient: "linear-gradient(135deg, #4A4238 0%, #8A7A5E 140%)" },
+              { id: "architects", label: t.providerGroupArchitects, icon: Landmark, gradient: "linear-gradient(135deg, #2E3A4A 0%, #5C7290 140%)" },
+            ].map((g) => {
+              const GIcon = g.icon;
+              return (
+                <button
+                  key={g.id} onClick={() => setGroup(g.id)}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 14, textAlign: "left", border: "none", cursor: "pointer",
+                    borderRadius: 16, padding: "16px 18px", background: g.gradient,
+                  }}
+                >
+                  <div style={{ width: 42, height: 42, borderRadius: 12, background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <GIcon size={20} color="#fff" />
+                  </div>
+                  <span style={{ color: "#fff", fontSize: 14, fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>{g.label}</span>
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
@@ -4043,8 +4158,6 @@ export default function PronaHomeApp() {
       if (!SUPABASE_CONFIGURED && !isEditing) saves.push(savePersonal("my-listings", Array.from(nextMine)));
       if (!existingMatch) saves.push(saveSharedAgencies(nextAgencies), addAgencyRemote(resolvedAgency));
       await Promise.all(saves);
-      setShowNewListing(false);
-      setEditingListing(null);
       if (!isEditing) setTab("kerko");
     } catch (e) {
       console.error(e);
@@ -4196,7 +4309,7 @@ export default function PronaHomeApp() {
     <LangContext.Provider value={{ lang, t, setLang }}>
       <div style={{
         minHeight: "100vh", width: "100%", background: "#E7E2D6", display: "flex", alignItems: "center", justifyContent: "center",
-        padding: "24px 10px", fontFamily: "'Inter', sans-serif",
+        padding: "24px 10px", fontFamily: "'Inter', sans-serif", overflowX: "hidden",
         "--ph-accent": activeAccent.color, "--ph-accent-light": activeAccent.light,
         "--ph-bg": palette.bg, "--ph-surface": palette.surface, "--ph-text": palette.text,
         "--ph-text-muted": palette.textMuted, "--ph-border": palette.border, "--ph-border-soft": palette.borderSoft,
@@ -4300,7 +4413,7 @@ export default function PronaHomeApp() {
                   onContactAgent={() => requireAuth(() => {})}
                 />
               )}
-              {showNewListing && <NewListingScreen onBack={() => { setShowNewListing(false); setEditingListing(null); }} onPublish={publishListing} agencies={agencies} editingListing={editingListing} />}
+              {showNewListing && <NewListingScreen onBack={() => { setShowNewListing(false); setEditingListing(null); }} onPublish={publishListing} agencies={agencies} editingListing={editingListing} profile={profile} />}
               {showMyListings && (
                 <MyListingsScreen listings={listings} myIds={myIds} onBack={() => setShowMyListings(false)} onOpen={(l) => { setShowMyListings(false); openListingDetail(l); }} onDelete={deleteListing} onEdit={(l) => { setShowMyListings(false); setEditingListing(l); setShowNewListing(true); }} />
               )}

@@ -105,11 +105,11 @@ const STRINGS = {
     catGarazhe: "Garazhë / Vende Parkimi", catZyre: "Zyre", catShitjePakice: "Shitje me Pakicë",
     catHale: "Halle / Prodhimi", catGastronomi: "Gastronomi / Hotel", catBiznesSpecial: "Biznes i Veçantë",
     hotelOwnerBtn: "Hotele & Fjetje", hotelOwnerHint: "Shiko të gjitha hotelet, motelet dhe shtëpitë e pushimit",
-    propertyOwnerHint: "Shfleto shpalljet sipas qytetit — nga privatë ose agjenci",
+    propertyOwnerHint: "Shpallje nga individë privatë dhe agjenci imobiliare",
     hotelScreenTitle: "Hotele & Fjetje", hotelScreenSubtitle: "Zgjidh qytetin dhe vendbanimin për të gjetur fjetjen ideale",
     propertyScreenTitle: "Patundshmëri",
-    agenciesBtn: "Ofertuesit", agenciesHint: "Shpallje nga individë privatë dhe agjenci imobiliare", agentSellerLabel: "Agjenci",
-    agenciesScreenTitle: "Ofertuesit", agenciesScreenSubtitle: "Mobilje, kuzhina, zejtarë dhe arkitektë",
+    agenciesBtn: "Profesionistët", agenciesHint: "Shfleto shpalljet sipas qytetit — nga privatë ose agjenci", agentSellerLabel: "Agjenci",
+    agenciesScreenTitle: "Profesionistët", agenciesScreenSubtitle: "Gjej ekspertin e duhur për shtëpinë tënde",
     providerGroupRealEstate: "Patundshmëri", providerGroupFurniture: "Mobilje & Kuzhina",
     providerGroupCraftsmen: "Zejtarë", providerGroupArchitects: "Arkitektë & Statikë",
     noProvidersYet: "Ende pa ofertues aktivë në këtë kategori.",
@@ -242,11 +242,11 @@ const STRINGS = {
     catGarazhe: "Garage/Stellplatz", catZyre: "Büro", catShitjePakice: "Einzelhandel",
     catHale: "Halle/Produktion", catGastronomi: "Gastronomie/Hotel", catBiznesSpecial: "Spezialgewerbe",
     hotelOwnerBtn: "Hotels & Unterkünfte", hotelOwnerHint: "Alle Hotels, Motels und Ferienhäuser ansehen",
-    propertyOwnerHint: "Anzeigen nach Stadt durchsuchen — von privat oder Makler",
+    propertyOwnerHint: "Anzeigen von Privatpersonen und Immobilienagenturen",
     hotelScreenTitle: "Hotels & Unterkünfte", hotelScreenSubtitle: "Wähle Stadt und Ortschaft, um die passende Unterkunft zu finden",
     propertyScreenTitle: "Immobilien",
-    agenciesBtn: "Anbieter", agenciesHint: "Anzeigen von Privatpersonen und Immobilienagenturen", agentSellerLabel: "Makler",
-    agenciesScreenTitle: "Anbieter", agenciesScreenSubtitle: "Möbel, Küchen, Handwerker und Architekten",
+    agenciesBtn: "Fachleute", agenciesHint: "Anzeigen nach Stadt durchsuchen — von privat oder Makler", agentSellerLabel: "Makler",
+    agenciesScreenTitle: "Fachleute", agenciesScreenSubtitle: "Finde die passenden Experten für dein Zuhause",
     providerGroupRealEstate: "Immobilien", providerGroupFurniture: "Möbel & Küchen",
     providerGroupCraftsmen: "Handwerker", providerGroupArchitects: "Architekten & Statiker",
     noProvidersYet: "Noch keine aktiven Anbieter in dieser Kategorie.",
@@ -379,11 +379,11 @@ const STRINGS = {
     catGarazhe: "Garage/Parking Space", catZyre: "Office", catShitjePakice: "Retail",
     catHale: "Warehouse/Production", catGastronomi: "Gastronomy/Hotel", catBiznesSpecial: "Special-Purpose Commercial",
     hotelOwnerBtn: "Hotels & Stays", hotelOwnerHint: "See all hotels, motels and vacation homes",
-    propertyOwnerHint: "Browse listings by city — from private sellers or agencies",
+    propertyOwnerHint: "Listings from private sellers and real estate agencies",
     hotelScreenTitle: "Hotels & Stays", hotelScreenSubtitle: "Choose a city and settlement to find the right stay",
     propertyScreenTitle: "Real Estate",
-    agenciesBtn: "Providers", agenciesHint: "Listings from private sellers and real estate agencies", agentSellerLabel: "Agency",
-    agenciesScreenTitle: "Providers", agenciesScreenSubtitle: "Furniture, kitchens, tradespeople and architects",
+    agenciesBtn: "Professionals", agenciesHint: "Browse listings by city — from private sellers or agencies", agentSellerLabel: "Agency",
+    agenciesScreenTitle: "Professionals", agenciesScreenSubtitle: "Find the right expert for your home",
     providerGroupRealEstate: "Real Estate", providerGroupFurniture: "Furniture & Kitchens",
     providerGroupCraftsmen: "Tradespeople", providerGroupArchitects: "Architects & Structural Engineers",
     noProvidersYet: "No active providers in this category yet.",
@@ -2280,7 +2280,7 @@ function ListingCard({ listing, isFav, onToggleFav, onOpen }) {
       style={{ background: "var(--ph-surface)", borderRadius: 16, overflow: "hidden", border: "1px solid var(--ph-border)", cursor: "pointer", display: "flex", flexDirection: "column" }}
     >
       <div style={{
-        position: "relative", height: 132,
+        position: "relative", height: 132, flexShrink: 0,
         background: thumb ? `url(${thumb}) center/cover no-repeat` : (CAT_GRADIENT[listing.cat] || CAT_GRADIENT.banesa),
       }}>
         {!thumb && <Icon size={40} color="rgba(255,255,255,0.85)" style={{ position: "absolute", bottom: 12, left: 14 }} strokeWidth={1.6} />}
@@ -3402,7 +3402,7 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
         )}
       </div>
 
-      <div style={{ padding: "8px 18px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+      <div style={{ padding: "8px 18px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, alignItems: "start" }}>
         {filtered.map((l) => (
           <ListingCard key={l.id} listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
         ))}
@@ -3440,7 +3440,7 @@ function FavoritesScreen({ listings, favorites, toggleFav, onOpen }) {
           <div style={{ fontSize: 13.5 }}>{t.favEmpty1}<br />{t.favEmpty2}</div>
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, alignItems: "start" }}>
           {items.map((l) => <ListingCard key={l.id} listing={l} isFav onToggleFav={toggleFav} onOpen={onOpen} />)}
         </div>
       )}
@@ -3559,7 +3559,7 @@ function PropertyByOwnerScreen({ listings, favorites, toggleFav, onOpen, onBack 
       <div style={{ padding: "12px 18px 4px", fontSize: 12.5, color: "var(--ph-text-muted)", fontWeight: 600 }}>
         {t.listingsCount(results.length)}
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: "6px 18px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "6px 18px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, alignItems: "start" }}>
         {results.map((l) => (
           <ListingCard key={l.id} listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
         ))}
@@ -3644,7 +3644,7 @@ function HotelScreen({ listings, favorites, toggleFav, onOpen, onBack }) {
         </span>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "8px 18px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "8px 18px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, alignItems: "start" }}>
         {results.map((l) => (
           <ListingCard key={l.id} listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
         ))}
@@ -3705,7 +3705,7 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
       <div style={{ padding: "12px 18px 4px", fontSize: 12.5, color: "var(--ph-text-muted)", fontWeight: 600 }}>
         {t.listingsCount(results.length)}
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: "6px 18px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "6px 18px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, alignItems: "start" }}>
         {results.map((l) => (
           <ListingCard key={l.id} listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
         ))}

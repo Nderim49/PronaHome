@@ -3402,12 +3402,14 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
         )}
       </div>
 
-      <div style={{ padding: "8px 18px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, alignItems: "start" }}>
+      <div style={{ padding: "8px 18px 24px", display: "flex", flexWrap: "wrap", gap: 12 }}>
         {filtered.map((l) => (
-          <ListingCard key={l.id} listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
+          <div key={l.id} style={{ width: "calc(50% - 6px)" }}>
+            <ListingCard listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
+          </div>
         ))}
         {filtered.length === 0 && (
-          <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
+          <div style={{ width: "100%", textAlign: "center", padding: "40px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
             {t.noResults}<br />{t.noResultsHint}
             {filters.city && (filters.area || query) && (
               <div style={{ marginTop: 14 }}>
@@ -3440,8 +3442,12 @@ function FavoritesScreen({ listings, favorites, toggleFav, onOpen }) {
           <div style={{ fontSize: 13.5 }}>{t.favEmpty1}<br />{t.favEmpty2}</div>
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, alignItems: "start" }}>
-          {items.map((l) => <ListingCard key={l.id} listing={l} isFav onToggleFav={toggleFav} onOpen={onOpen} />)}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+          {items.map((l) => (
+            <div key={l.id} style={{ width: "calc(50% - 6px)" }}>
+              <ListingCard listing={l} isFav onToggleFav={toggleFav} onOpen={onOpen} />
+            </div>
+          ))}
         </div>
       )}
     </div>
@@ -3559,12 +3565,14 @@ function PropertyByOwnerScreen({ listings, favorites, toggleFav, onOpen, onBack 
       <div style={{ padding: "12px 18px 4px", fontSize: 12.5, color: "var(--ph-text-muted)", fontWeight: 600 }}>
         {t.listingsCount(results.length)}
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: "6px 18px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, alignItems: "start" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "6px 18px 24px", display: "flex", flexWrap: "wrap", gap: 12 }}>
         {results.map((l) => (
-          <ListingCard key={l.id} listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
+          <div key={l.id} style={{ width: "calc(50% - 6px)" }}>
+            <ListingCard listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
+          </div>
         ))}
         {results.length === 0 && (
-          <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
+          <div style={{ width: "100%", textAlign: "center", padding: "40px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
             {t.noResults}
           </div>
         )}
@@ -3644,12 +3652,14 @@ function HotelScreen({ listings, favorites, toggleFav, onOpen, onBack }) {
         </span>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "8px 18px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, alignItems: "start" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "8px 18px 24px", display: "flex", flexWrap: "wrap", gap: 12 }}>
         {results.map((l) => (
-          <ListingCard key={l.id} listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
+          <div key={l.id} style={{ width: "calc(50% - 6px)" }}>
+            <ListingCard listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
+          </div>
         ))}
         {results.length === 0 && (
-          <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
+          <div style={{ width: "100%", textAlign: "center", padding: "40px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
             {t.noResults}<br />{t.noResultsHint}
           </div>
         )}
@@ -3705,12 +3715,14 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
       <div style={{ padding: "12px 18px 4px", fontSize: 12.5, color: "var(--ph-text-muted)", fontWeight: 600 }}>
         {t.listingsCount(results.length)}
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: "6px 18px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, alignItems: "start" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "6px 18px 24px", display: "flex", flexWrap: "wrap", gap: 12 }}>
         {results.map((l) => (
-          <ListingCard key={l.id} listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
+          <div key={l.id} style={{ width: "calc(50% - 6px)" }}>
+            <ListingCard listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
+          </div>
         ))}
         {results.length === 0 && (
-          <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
+          <div style={{ width: "100%", textAlign: "center", padding: "40px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
             {t.noProvidersYet}
           </div>
         )}

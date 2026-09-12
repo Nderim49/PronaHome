@@ -1343,7 +1343,7 @@ function BrandMark({ size = 28 }) {
 
 const inputStyle = {
   width: "100%", border: "1px solid #E4DDCB", borderRadius: 10, padding: "10px 12px",
-  fontSize: 13.5, fontFamily: "'Inter', sans-serif", color: "var(--ph-text)", background: "var(--ph-surface)", outline: "none",
+  fontSize: 16, fontFamily: "'Inter', sans-serif", color: "var(--ph-text)", background: "var(--ph-surface)", outline: "none",
 };
 const labelStyle = { fontSize: 12, fontWeight: 600, color: "var(--ph-text-muted)", marginBottom: 5, display: "block" };
 
@@ -3480,7 +3480,7 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
                 onFocus={() => setShowSug(true)}
                 onBlur={() => setTimeout(() => setShowSug(false), 120)}
                 placeholder={t.searchPlaceholder}
-                style={{ border: "none", outline: "none", fontSize: 13.5, flex: 1, color: "var(--ph-text)", fontFamily: "'Inter', sans-serif" }}
+                style={{ border: "none", outline: "none", fontSize: 16, flex: 1, color: "var(--ph-text)", fontFamily: "'Inter', sans-serif" }}
               />
             </div>
             <button
@@ -3547,7 +3547,7 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
           style={{
             width: "100%", display: "flex", alignItems: "center", gap: 10, textAlign: "left",
             background: `linear-gradient(135deg, ${NAVY} 0%, #4A6FA5 140%)`, border: "none", borderRadius: 14,
-            padding: "12px 14px", cursor: "pointer",
+            padding: "12px 14px", cursor: "pointer", minHeight: 66,
           }}
         >
           <div style={{ width: 34, height: 34, borderRadius: 10, background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -3566,7 +3566,7 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
           style={{
             width: "100%", display: "flex", alignItems: "center", gap: 10, textAlign: "left",
             background: "linear-gradient(135deg, #7A4A9E 0%, #C6963E 140%)", border: "none", borderRadius: 14,
-            padding: "12px 14px", cursor: "pointer",
+            padding: "12px 14px", cursor: "pointer", minHeight: 66,
           }}
         >
           <div style={{ width: 34, height: 34, borderRadius: 10, background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -3585,7 +3585,7 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
           style={{
             width: "100%", display: "flex", alignItems: "center", gap: 10, textAlign: "left",
             background: "linear-gradient(135deg, #2C4270 0%, #4A6FA5 140%)", border: "none", borderRadius: 14,
-            padding: "12px 14px", cursor: "pointer",
+            padding: "12px 14px", cursor: "pointer", minHeight: 66,
           }}
         >
           <div style={{ width: 34, height: 34, borderRadius: 10, background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>

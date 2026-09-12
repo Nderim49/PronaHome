@@ -2434,6 +2434,9 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
   const categories = CATEGORIES(t);
   const gallery = (listing.images && listing.images.length ? listing.images : (listing.image ? [listing.image] : []));
   const [photoIdx, setPhotoIdx] = useState(0);
+  const [showLightbox, setShowLightbox] = useState(false);
+  const [showBizLightbox, setShowBizLightbox] = useState(false);
+  const [lightboxIdx, setLightboxIdx] = useState(0);
   const [showBio, setShowBio] = useState(false);
   const onGalleryScroll = (e) => {
     const w = e.currentTarget.clientWidth;
@@ -2445,9 +2448,12 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
     const businessPhoto = (listing.images && listing.images[0]) || listing.image;
     return (
       <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 30 }}>
-        <div style={{
+        <div
+          onClick={() => businessPhoto && setShowBizLightbox(true)}
+          style={{
           height: businessPhoto ? 200 : 150, position: "relative", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center",
           background: businessPhoto ? `url(${businessPhoto}) center/cover no-repeat` : (CAT_GRADIENT[listing.cat] || CAT_GRADIENT.banesa),
+          cursor: businessPhoto ? "pointer" : "default",
         }}>
           {!businessPhoto && <Icon size={52} color="rgba(255,255,255,0.9)" strokeWidth={1.4} />}
           <button
@@ -2546,6 +2552,18 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             </button>
           )}
         </div>
+
+        {showBizLightbox && (
+          <div style={{ position: "absolute", inset: 0, background: "#000", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <img src={businessPhoto} alt="" style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
+            <button
+              onClick={() => setShowBizLightbox(false)}
+              style={{ position: "absolute", top: 14, right: 14, width: 34, height: 34, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+            >
+              <X size={19} color="#fff" />
+            </button>
+          </div>
+        )}
       </div>
     );
   }
@@ -2560,8 +2578,8 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           >
             {gallery.map((src, i) => (
               <img
-                key={i} src={src} alt=""
-                style={{ width: "100%", height: "100%", objectFit: "cover", flexShrink: 0, scrollSnapAlign: "start" }}
+                key={i} src={src} alt="" onClick={() => { setLightboxIdx(i); setShowLightbox(true); }}
+                style={{ width: "100%", height: "100%", objectFit: "cover", flexShrink: 0, scrollSnapAlign: "start", cursor: "pointer" }}
               />
             ))}
           </div>
@@ -2683,24 +2701,51 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
         </div>
       </div>
 
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "linear-gradient(180deg, rgba(246,242,234,0) 0%, #F6F2EA 22%)", display: "flex", flexDirection: "column", gap: 8 }}>
-        <button
-          onClick={onContactAgent}
-          style={{
-          width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0",
-          fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer",
-        }}>
-          <Phone size={16} /> {t.contactAgent}
-        </button>
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "linear-gradient(180deg, rgba(246,242,234,0) 0%, #F6F2EA 22%)" }}>
         {!isMine && listing.owner_id && (
           <button
-            onClick={onMessageOwner}
-            style={{ width: "100%", background: "var(--ph-surface)", color: "var(--ph-accent)", border: "1.5px solid var(--ph-accent)", borderRadius: 12, padding: "12px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
-          >
-            <Send size={15} /> {t.messageBtn}
+            onClick={onContactAgent}
+            style={{
+            width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0",
+            fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer",
+          }}>
+            <Send size={16} /> {t.contactAgent}
           </button>
         )}
       </div>
+
+      {showLightbox && (
+        <div style={{ position: "absolute", inset: 0, background: "#000", zIndex: 50, display: "flex", flexDirection: "column" }}>
+          <div
+            onScroll={(e) => {
+              const w = e.currentTarget.clientWidth;
+              if (w) setLightboxIdx(Math.round(e.currentTarget.scrollLeft / w));
+            }}
+            ref={(el) => { if (el) el.scrollLeft = lightboxIdx * el.clientWidth; }}
+            style={{ flex: 1, display: "flex", overflowX: "auto", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}
+          >
+            {gallery.map((src, i) => (
+              <div key={i} style={{ width: "100%", flexShrink: 0, scrollSnapAlign: "start", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <img src={src} alt="" style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
+              </div>
+            ))}
+          </div>
+          {gallery.length > 1 && (
+            <span style={{
+              position: "absolute", top: 14, left: "50%", transform: "translateX(-50%)", background: "rgba(255,255,255,0.15)", color: "#fff",
+              fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 999,
+            }}>
+              {lightboxIdx + 1}/{gallery.length}
+            </span>
+          )}
+          <button
+            onClick={() => setShowLightbox(false)}
+            style={{ position: "absolute", top: 14, right: 14, width: 34, height: 34, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+          >
+            <X size={19} color="#fff" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -4680,7 +4725,14 @@ export default function PronaHomeApp() {
                 <DetailScreen
                   listing={openListing} isFav={favorites.has(openListing.id)} onToggleFav={toggleFav}
                   onBack={() => setOpenListing(null)} isMine={myIds.has(openListing.id)} onDelete={deleteListing}
-                  onContactAgent={() => requireAuth(() => {})}
+                  onContactAgent={() => requireAuth(() => {
+                    if (!openListing.owner_id || openListing.owner_id === userId) return;
+                    const otherName = openListing.contactFirstName
+                      ? `${openListing.contactFirstName} ${openListing.contactLastName || ""}`.trim()
+                      : (openListing.agency && openListing.agency !== "Privat" ? openListing.agency : t.someoneLabel);
+                    setOpenListing(null);
+                    openThreadWith(openListing.owner_id, otherName, openListing.title);
+                  })}
                   onMessageOwner={() => requireAuth(() => {
                     if (!openListing.owner_id || openListing.owner_id === userId) return;
                     const otherName = openListing.contactFirstName

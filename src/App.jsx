@@ -3,7 +3,7 @@ import {
   Search, Heart, Bell, User, MapPin, ChevronLeft, SlidersHorizontal,
   BedDouble, Maximize2, Phone, Building2, Home as HomeIcon, KeyRound,
   Warehouse, Trees, Landmark, X, Check, Plus, Trash2, Loader2, Mail, LogOut, Pencil,
-  Camera, Globe, Hotel, Briefcase, Users, Car, Building, Store, Factory, UtensilsCrossed, Wrench, Download, Eye
+  Camera, Globe, Hotel, Briefcase, Users, Car, Building, Store, Factory, UtensilsCrossed, Wrench, Download, Eye, Send
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -139,6 +139,9 @@ const STRINGS = {
     notifEmpty: "Ende pa njoftime. Kur dikush ruan një nga shpalljet e tua, do ta shohësh këtu.",
     notifFavoriteTitle: (name) => `${name} ruajti shpalljen tënde`,
     someoneLabel: "Dikush",
+    messagesTitle: "Mesazhet", messagesEmpty: "Ende pa mesazhe. Kur dikush të dërgon një mesazh, do ta shohësh këtu.",
+    messagesRow: "Mesazhet", messageBtn: "Dërgo mesazh", chatStartHint: "Fillo bisedën me një mesazh.",
+    chatInputPlaceholder: "Shkruaj një mesazh...",
     n1Title: "Çmim i ri!", n1Body: "Banesë 3+1 e re në ndërtim në Pejë ka ulje çmimi -5%.",
     n2Title: "Shpallje e re në kërkimin tënd", n2Body: "3 prona të reja u shtuan për 'Banesa në Prishtinë'.",
     n3Title: "Agjenti të është përgjigjur", n3Body: "Ke një mesazh të ri për vilën në Durrës.",
@@ -282,6 +285,9 @@ const STRINGS = {
     notifEmpty: "Noch keine Mitteilungen. Sobald jemand eine deiner Anzeigen speichert, erscheint das hier.",
     notifFavoriteTitle: (name) => `${name} hat deine Anzeige gespeichert`,
     someoneLabel: "Jemand",
+    messagesTitle: "Nachrichten", messagesEmpty: "Noch keine Nachrichten. Sobald dir jemand schreibt, erscheint es hier.",
+    messagesRow: "Nachrichten", messageBtn: "Nachricht senden", chatStartHint: "Starte das Gespräch mit einer Nachricht.",
+    chatInputPlaceholder: "Nachricht schreiben...",
     n1Title: "Neuer Preis!", n1Body: "Neubauwohnung 3+1 in Peja hat eine Preissenkung von -5%.",
     n2Title: "Neue Anzeige für deine Suche", n2Body: "3 neue Immobilien wurden für „Wohnungen in Prishtina“ hinzugefügt.",
     n3Title: "Der Makler hat geantwortet", n3Body: "Du hast eine neue Nachricht zur Villa in Durrës.",
@@ -425,6 +431,9 @@ const STRINGS = {
     notifEmpty: "No notifications yet. When someone saves one of your listings, it'll show up here.",
     notifFavoriteTitle: (name) => `${name} saved your listing`,
     someoneLabel: "Someone",
+    messagesTitle: "Messages", messagesEmpty: "No messages yet. When someone writes to you, it'll show up here.",
+    messagesRow: "Messages", messageBtn: "Send message", chatStartHint: "Start the conversation with a message.",
+    chatInputPlaceholder: "Write a message...",
     n1Title: "New price!", n1Body: "New-build 3+1 apartment in Peja has a -5% price cut.",
     n2Title: "New listing for your search", n2Body: "3 new properties were added for 'Apartments in Prishtina'.",
     n3Title: "The agent replied", n3Body: "You have a new message about the villa in Durrës.",
@@ -560,21 +569,22 @@ function flagEmoji(code) {
 
 // Type-and-filter picker over our local WORLD_COUNTRIES list — instant, no
 // network needed since we already hold the full list in the app.
-function CountryTypeahead({ value, onChange, placeholder }) {
-  const selected = WORLD_COUNTRIES.find((c) => c.code === value);
+function CountryTypeahead({ value, onChange, placeholder, countries }) {
+  const list = countries || WORLD_COUNTRIES;
+  const selected = list.find((c) => c.code === value);
   const [query, setQuery] = useState(selected ? `${flagEmoji(selected.code)} ${selected.name} (${selected.dial})` : "");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const sel = WORLD_COUNTRIES.find((c) => c.code === value);
+    const sel = list.find((c) => c.code === value);
     setQuery(sel ? `${flagEmoji(sel.code)} ${sel.name} (${sel.dial})` : "");
   }, [value]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const base = !q || WORLD_COUNTRIES.some((c) => `${flagEmoji(c.code)} ${c.name} (${c.dial})` === query)
-      ? WORLD_COUNTRIES
-      : WORLD_COUNTRIES.filter((c) => c.name.toLowerCase().includes(q));
+    const base = !q || list.some((c) => `${flagEmoji(c.code)} ${c.name} (${c.dial})` === query)
+      ? list
+      : list.filter((c) => c.name.toLowerCase().includes(q));
     return base.slice(0, 8);
   }, [query]);
 
@@ -881,6 +891,11 @@ const WORLD_COUNTRIES = [
   { code: "ZW", name: "Zimbabve", dial: "+263" },
   { code: "CH", name: "Zvicër", dial: "+41" },
 ];
+// The app's core markets — used to keep the country picker short and focused
+// wherever someone is publishing a listing (as opposed to the full worldwide
+// list used at registration, since a Kosovo/Albania/Montenegro/N. Macedonia
+// listings app has no reason to publish under a foreign dial code).
+const CORE_COUNTRIES = WORLD_COUNTRIES.slice(0, 4);
 
 const CITY_GROUPS = [
   { country: "countryKosovo", cities: ["Ferizaj", "Gjakovë", "Gjilan", "Mitrovicë", "Pejë", "Prishtinë", "Prizren"] },
@@ -1168,6 +1183,27 @@ async function loadNotificationsRemote(userId) {
 async function markNotificationsReadRemote(userId) {
   if (!SUPABASE_CONFIGURED || !userId) return;
   await supabaseFetch(`notifications?owner_id=eq.${userId}&read=eq.false`, { method: "PATCH", body: JSON.stringify({ read: true }) });
+}
+// --- Direct messaging between users --------------------------------------
+async function sendMessageRemote(senderId, receiverId, body, senderName, receiverName, listingId, listingTitle) {
+  if (!SUPABASE_CONFIGURED) return;
+  await supabaseFetch("messages", {
+    method: "POST",
+    body: JSON.stringify([{
+      sender_id: senderId, receiver_id: receiverId, body,
+      sender_name: senderName || "", receiver_name: receiverName || "",
+      listing_id: listingId || null, listing_title: listingTitle || "",
+    }]),
+  });
+}
+async function loadMyMessagesRemote(userId) {
+  if (!SUPABASE_CONFIGURED || !userId) return [];
+  const rows = await supabaseFetch(`messages?or=(sender_id.eq.${userId},receiver_id.eq.${userId})&select=*&order=created_at.asc&limit=500`);
+  return rows || [];
+}
+async function markThreadReadRemote(userId, otherId) {
+  if (!SUPABASE_CONFIGURED || !userId) return;
+  await supabaseFetch(`messages?receiver_id=eq.${userId}&sender_id=eq.${otherId}&read=eq.false`, { method: "PATCH", body: JSON.stringify({ read: true }) });
 }
 async function touchLastActive(userId) {
   if (!SUPABASE_CONFIGURED || !userId) return;
@@ -2392,7 +2428,7 @@ function ListingCard({ listing, isFav, onToggleFav, onOpen }) {
 // ---------------------------------------------------------------------------
 // Detail screen
 // ---------------------------------------------------------------------------
-function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, onContactAgent }) {
+function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, onContactAgent, onMessageOwner }) {
   const { t, lang } = useLang();
   const Icon = CAT_ICON[listing.cat] || Building2;
   const categories = CATEGORIES(t);
@@ -2499,6 +2535,14 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
               style={{ width: "100%", background: listing.contactPhone ? "var(--ph-accent-light)" : NAVY, color: listing.contactPhone ? "var(--ph-text)" : "#fff", border: "none", borderRadius: 12, padding: "14px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
             >
               <Mail size={16} /> {t.emailBtn}
+            </button>
+          )}
+          {!isMine && listing.owner_id && (
+            <button
+              onClick={onMessageOwner}
+              style={{ width: "100%", background: "transparent", color: "var(--ph-accent)", border: "1.5px solid var(--ph-accent)", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
+            >
+              <Send size={15} /> {t.messageBtn}
             </button>
           )}
         </div>
@@ -2639,7 +2683,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
         </div>
       </div>
 
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "linear-gradient(180deg, rgba(246,242,234,0) 0%, #F6F2EA 22%)" }}>
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "linear-gradient(180deg, rgba(246,242,234,0) 0%, #F6F2EA 22%)", display: "flex", flexDirection: "column", gap: 8 }}>
         <button
           onClick={onContactAgent}
           style={{
@@ -2648,6 +2692,14 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
         }}>
           <Phone size={16} /> {t.contactAgent}
         </button>
+        {!isMine && listing.owner_id && (
+          <button
+            onClick={onMessageOwner}
+            style={{ width: "100%", background: "var(--ph-surface)", color: "var(--ph-accent)", border: "1.5px solid var(--ph-accent)", borderRadius: 12, padding: "12px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
+          >
+            <Send size={15} /> {t.messageBtn}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -3604,6 +3656,166 @@ function NotificationsScreen({ notifications, onMarkRead, profile }) {
   );
 }
 
+// List of conversations, derived client-side from the flat messages array —
+// grouped by "the other person", most recent message first.
+function MessagesScreen({ messages, myId, profile, onOpenThread, onBack }) {
+  const { t, lang } = useLang();
+  const conversations = useMemo(() => {
+    const byOther = {};
+    for (const m of messages) {
+      const otherId = m.sender_id === myId ? m.receiver_id : m.sender_id;
+      const otherName = m.sender_id === myId ? (m.receiver_name || t.someoneLabel) : (m.sender_name || t.someoneLabel);
+      if (!byOther[otherId] || new Date(m.created_at) > new Date(byOther[otherId].created_at)) {
+        byOther[otherId] = m;
+      }
+      byOther[otherId] = { ...byOther[otherId], otherName: byOther[otherId].otherName || otherName };
+    }
+    const list = Object.entries(byOther).map(([otherId, last]) => {
+      const unread = messages.filter((m) => m.sender_id === otherId && m.receiver_id === myId && !m.read).length;
+      const otherName = last.sender_id === myId ? (last.receiver_name || t.someoneLabel) : (last.sender_name || t.someoneLabel);
+      return { otherId, otherName, last, unread };
+    });
+    return list.sort((a, b) => new Date(b.last.created_at) - new Date(a.last.created_at));
+  }, [messages, myId]);
+
+  return (
+    <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY }}>
+        <button onClick={onBack} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
+          <ChevronLeft size={20} color="#fff" />
+        </button>
+        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{t.messagesTitle}</span>
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", padding: 18 }}>
+        {!profile ? (
+          <div style={{ textAlign: "center", padding: "50px 20px", color: "var(--ph-text-muted)", fontSize: 13.5 }}>{t.notifGuestHint}</div>
+        ) : conversations.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "50px 20px", color: "var(--ph-text-muted)" }}>
+            <div style={{ width: 56, height: 56, borderRadius: "50%", background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+              <Mail size={24} color="var(--ph-accent)" />
+            </div>
+            <div style={{ fontSize: 13.5 }}>{t.messagesEmpty}</div>
+          </div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {conversations.map((c) => (
+              <button
+                key={c.otherId}
+                onClick={() => onOpenThread(c.otherId, c.otherName, c.last.listing_title)}
+                style={{
+                  display: "flex", alignItems: "center", gap: 12, textAlign: "left", cursor: "pointer",
+                  background: c.unread > 0 ? "var(--ph-accent-light)" : "var(--ph-surface)", border: "1px solid var(--ph-border)", borderRadius: 14, padding: 14,
+                }}
+              >
+                <div style={{ width: 40, height: 40, borderRadius: "50%", background: NAVY, color: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontWeight: 700, fontSize: 14 }}>
+                  {initialsOf(c.otherName)}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                    <span style={{ fontWeight: 700, fontSize: 13.5, color: "var(--ph-text)" }}>{c.otherName}</span>
+                    <span style={{ fontSize: 10.5, color: "var(--ph-text-muted)", flexShrink: 0 }}>{formatShortDate(c.last.created_at, lang)}</span>
+                  </div>
+                  {c.last.listing_title && <div style={{ fontSize: 11, color: "var(--ph-accent)", fontWeight: 600, marginTop: 2 }}>{c.last.listing_title}</div>}
+                  <div style={{ fontSize: 12.5, color: "var(--ph-text-muted)", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {c.last.body}
+                  </div>
+                </div>
+                {c.unread > 0 && (
+                  <span style={{ background: "var(--ph-accent)", color: "#fff", fontSize: 10.5, fontWeight: 700, borderRadius: 999, minWidth: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 5px", flexShrink: 0 }}>
+                    {c.unread}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Single conversation thread — bubble list plus a send box. Polls for new
+// messages every few seconds while open (no websocket/realtime channel set
+// up, so this is the simple, reliable way to approximate "live" updates).
+function ChatThreadScreen({ myId, myName, otherId, otherName, listingTitle, onBack, onRefresh, messages }) {
+  const { t, lang } = useLang();
+  const [body, setBody] = useState("");
+  const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    const id = setInterval(onRefresh, 4000);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const thread = useMemo(() => {
+    return messages
+      .filter((m) => (m.sender_id === myId && m.receiver_id === otherId) || (m.sender_id === otherId && m.receiver_id === myId))
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  }, [messages, myId, otherId]);
+
+  const send = async () => {
+    if (!body.trim() || sending) return;
+    setSending(true);
+    try {
+      await sendMessageRemote(myId, otherId, body.trim(), myName, otherName, null, listingTitle);
+      setBody("");
+      onRefresh();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 30 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY }}>
+        <button onClick={onBack} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
+          <ChevronLeft size={20} color="#fff" />
+        </button>
+        <div>
+          <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{otherName}</div>
+          {listingTitle && <div style={{ fontSize: 11, color: "var(--ph-accent-light)" }}>{listingTitle}</div>}
+        </div>
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", padding: 18, display: "flex", flexDirection: "column", gap: 8 }}>
+        {thread.length === 0 && (
+          <div style={{ textAlign: "center", color: "var(--ph-text-muted)", fontSize: 12.5, marginTop: 20 }}>{t.chatStartHint}</div>
+        )}
+        {thread.map((m) => {
+          const mine = m.sender_id === myId;
+          return (
+            <div key={m.id} style={{ display: "flex", justifyContent: mine ? "flex-end" : "flex-start" }}>
+              <div style={{
+                maxWidth: "78%", padding: "9px 13px", borderRadius: 16,
+                borderBottomRightRadius: mine ? 4 : 16, borderBottomLeftRadius: mine ? 16 : 4,
+                background: mine ? "var(--ph-accent)" : "var(--ph-surface)", border: mine ? "none" : "1px solid var(--ph-border)",
+                color: mine ? "#fff" : "var(--ph-text)",
+              }}>
+                <div style={{ fontSize: 13, lineHeight: 1.4, wordBreak: "break-word" }}>{m.body}</div>
+                <div style={{ fontSize: 9.5, marginTop: 3, opacity: 0.75, textAlign: "right" }}>{formatShortDate(m.created_at, lang)}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ padding: "10px 14px calc(env(safe-area-inset-bottom, 0px) + 10px)", background: "var(--ph-surface)", borderTop: "1px solid var(--ph-border)", display: "flex", gap: 8 }}>
+        <input
+          style={{ ...inputStyle, flex: 1 }} value={body} onChange={(e) => setBody(e.target.value)}
+          placeholder={t.chatInputPlaceholder} onKeyDown={(e) => { if (e.key === "Enter") send(); }}
+        />
+        <button
+          onClick={send} disabled={sending || !body.trim()}
+          style={{ width: 42, height: 42, borderRadius: "50%", border: "none", background: "var(--ph-accent)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, opacity: (sending || !body.trim()) ? 0.6 : 1 }}
+        >
+          <Send size={17} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // Dedicated screen for the "Hotele & Fjetje" button: its own city/settlement
 // pickers and a results grid restricted to the hotel/accommodation category only.
 // Dedicated real-estate browsing screen: pick city/village up top like the
@@ -3914,11 +4126,12 @@ function MyListingsScreen({ listings, myIds, onBack, onOpen, onDelete, onEdit })
   );
 }
 
-function ProfileScreen({ profile, favCount, myCount, onOpenMyListings, onAddNew, onEditProfile, onLogout, onAvatarChange, onOpenSettings, onOpenAccount }) {
+function ProfileScreen({ profile, favCount, myCount, unreadMessages, onOpenMyListings, onAddNew, onEditProfile, onLogout, onAvatarChange, onOpenSettings, onOpenAccount, onOpenMessages }) {
   const { t } = useLang();
   const [avatarBusy, setAvatarBusy] = useState(false);
   const rows = [
     { label: t.myListingsRow(myCount), action: onOpenMyListings },
+    { label: t.messagesRow, action: onOpenMessages, icon: Mail, badge: unreadMessages },
     { label: t.myAccountRow, action: onOpenAccount, icon: User },
     { label: t.publishRow, action: onAddNew },
     { label: t.editProfileRow, action: onEditProfile, icon: Pencil },
@@ -3985,7 +4198,14 @@ function ProfileScreen({ profile, favCount, myCount, onOpenMyListings, onAddNew,
             style={{ padding: "14px 16px", fontSize: 13.5, color: "var(--ph-text)", fontWeight: 500, borderBottom: i < rows.length - 1 ? "1px solid var(--ph-border-soft)" : "none", cursor: r.action ? "pointer" : "default", display: "flex", alignItems: "center", justifyContent: "space-between" }}
           >
             {r.label}
-            {r.icon && <r.icon size={13} color={"var(--ph-text-muted)"} />}
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              {r.badge > 0 && (
+                <span style={{ background: "var(--ph-accent)", color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 999, minWidth: 17, height: 17, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 4px" }}>
+                  {r.badge}
+                </span>
+              )}
+              {r.icon && <r.icon size={13} color={"var(--ph-text-muted)"} />}
+            </div>
           </div>
         ))}
       </div>
@@ -4008,6 +4228,9 @@ export default function PronaHomeApp() {
   const [agencies, setAgencies] = useState(AGENCIES);
   const [favorites, setFavorites] = useState(new Set());
   const [notifications, setNotifications] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [showMessages, setShowMessages] = useState(false);
+  const [openThread, setOpenThread] = useState(null); // { otherId, otherName, listingTitle }
   const [myIds, setMyIds] = useState(new Set());
   const [profile, setProfile] = useState(null);
   const [userId, setUserId] = useState(null); // Supabase auth user id, once logged in
@@ -4068,6 +4291,7 @@ export default function PronaHomeApp() {
               setFavorites(new Set(favIds));
               touchLastActive(session.user.id);
               loadNotificationsRemote(session.user.id).then(setNotifications).catch((e) => console.error(e));
+              loadMyMessagesRemote(session.user.id).then(setMessages).catch((e) => console.error(e));
             } catch (e) {
               // Session likely expired — fall back to logged-out state.
               currentSession = null;
@@ -4123,6 +4347,19 @@ export default function PronaHomeApp() {
   const markNotificationsRead = () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
     if (SUPABASE_CONFIGURED && userId) markNotificationsReadRemote(userId).catch((e) => console.error(e));
+  };
+
+  const refreshMessages = () => {
+    if (SUPABASE_CONFIGURED && userId) loadMyMessagesRemote(userId).then(setMessages).catch((e) => console.error(e));
+  };
+
+  const openThreadWith = (otherId, otherName, listingTitle) => {
+    setOpenThread({ otherId, otherName: otherName || t.someoneLabel, listingTitle: listingTitle || "" });
+    setShowMessages(false);
+    if (SUPABASE_CONFIGURED && userId) {
+      markThreadReadRemote(userId, otherId).catch((e) => console.error(e));
+      setMessages((prev) => prev.map((m) => (m.sender_id === otherId && m.receiver_id === userId ? { ...m, read: true } : m)));
+    }
   };
 
   const toggleFav = async (id) => {
@@ -4244,16 +4481,18 @@ export default function PronaHomeApp() {
     setGuestMode(false);
     touchLastActive(session.user.id);
     try {
-      const [favIds, freshListings, freshAgencies, notifs] = await Promise.all([
+      const [favIds, freshListings, freshAgencies, notifs, msgs] = await Promise.all([
         loadFavoritesRemote(session.user.id),
         SUPABASE_CONFIGURED ? supabaseFetch("active_listings?select=*&order=created_at.desc") : Promise.resolve(null),
         SUPABASE_CONFIGURED ? supabaseFetch("agencies?select=name&order=created_at.asc") : Promise.resolve(null),
         loadNotificationsRemote(session.user.id),
+        loadMyMessagesRemote(session.user.id),
       ]);
       setFavorites(new Set(favIds));
       if (freshListings) setListings(freshListings.map(rowToListing));
       if (freshAgencies) setAgencies(freshAgencies.map((r) => r.name));
       setNotifications(notifs);
+      setMessages(msgs);
     } catch (e) { console.error(e); }
   };
   const continueAsGuest = () => setGuestMode(true);
@@ -4424,9 +4663,11 @@ export default function PronaHomeApp() {
                 profile ? (
                   <ProfileScreen
                     profile={profile} favCount={favorites.size} myCount={myIds.size}
+                    unreadMessages={messages.filter((m) => m.receiver_id === userId && !m.read).length}
                     onOpenMyListings={() => setShowMyListings(true)} onAddNew={() => requireAuth(() => setShowNewListing(true))}
                     onEditProfile={() => setShowEditProfile(true)} onLogout={logout} onAvatarChange={updateAvatar}
                     onOpenSettings={() => setShowSettings(true)} onOpenAccount={() => setShowAccount(true)}
+                    onOpenMessages={() => setShowMessages(true)}
                   />
                 ) : (
                   <GuestProfileScreen onLogin={() => setGuestMode(false)} />
@@ -4440,6 +4681,26 @@ export default function PronaHomeApp() {
                   listing={openListing} isFav={favorites.has(openListing.id)} onToggleFav={toggleFav}
                   onBack={() => setOpenListing(null)} isMine={myIds.has(openListing.id)} onDelete={deleteListing}
                   onContactAgent={() => requireAuth(() => {})}
+                  onMessageOwner={() => requireAuth(() => {
+                    if (!openListing.owner_id || openListing.owner_id === userId) return;
+                    const otherName = openListing.contactFirstName
+                      ? `${openListing.contactFirstName} ${openListing.contactLastName || ""}`.trim()
+                      : (openListing.agency && openListing.agency !== "Privat" ? openListing.agency : t.someoneLabel);
+                    setOpenListing(null);
+                    openThreadWith(openListing.owner_id, otherName, openListing.title);
+                  })}
+                />
+              )}
+              {showMessages && (
+                <MessagesScreen
+                  messages={messages} myId={userId} profile={profile}
+                  onOpenThread={openThreadWith} onBack={() => setShowMessages(false)}
+                />
+              )}
+              {openThread && (
+                <ChatThreadScreen
+                  myId={userId} myName={profile?.name || ""} otherId={openThread.otherId} otherName={openThread.otherName}
+                  listingTitle={openThread.listingTitle} onBack={() => setOpenThread(null)} onRefresh={refreshMessages} messages={messages}
                 />
               )}
               {showNewListing && <NewListingScreen onBack={() => { setShowNewListing(false); setEditingListing(null); }} onPublish={publishListing} agencies={agencies} editingListing={editingListing} profile={profile} />}

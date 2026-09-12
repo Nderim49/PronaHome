@@ -3,7 +3,7 @@ import {
   Search, Heart, Bell, User, MapPin, ChevronLeft, SlidersHorizontal,
   BedDouble, Maximize2, Phone, Building2, Home as HomeIcon, KeyRound,
   Warehouse, Trees, Landmark, X, Check, Plus, Trash2, Loader2, Mail, LogOut, Pencil,
-  Camera, Globe, Hotel, Briefcase, Users, Car, Building, Store, Factory, UtensilsCrossed, Wrench, Download
+  Camera, Globe, Hotel, Briefcase, Users, Car, Building, Store, Factory, UtensilsCrossed, Wrench, Download, Eye
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -120,12 +120,17 @@ const STRINGS = {
     priceRangeLabel: "Diapazoni i çmimit (€)", minimumLabel: "Minimumi", maximumLabel: "Maksimumi",
     roomsRangeLabel: "Numri i dhomave", areaRangeLabel: "Sipërfaqja në m²", landAreaRangeLabel: "Sipërfaqja e truallit (m²)",
     resetLabel: "Rivendos", showResultsCount: (n) => `Shfaq ${n} rezultate`,
+    postedOn: (d) => `Postuar më ${d}`,
     tabSearch: "Kërko", tabFavorites: "Të preferuara", tabNotifications: "Njoftime", tabProfile: "Profili",
     badgeRent: "Me qera", badgeSale: "Në shitje", perMonth: "/ muaj", roomsUnit: "dhoma",
     favTitle: "Të preferuarat",
     favEmpty1: "Ende nuk ke ruajtur asnjë pronë.",
     favEmpty2: "Shtyp zemrën te një shpallje për ta ruajtur këtu.",
     notifTitle: "Njoftimet",
+    notifGuestHint: "Hyr në llogarinë tënde për të parë njoftimet.",
+    notifEmpty: "Ende pa njoftime. Kur dikush ruan një nga shpalljet e tua, do ta shohësh këtu.",
+    notifFavoriteTitle: (name) => `${name} ruajti shpalljen tënde`,
+    someoneLabel: "Dikush",
     n1Title: "Çmim i ri!", n1Body: "Banesë 3+1 e re në ndërtim në Pejë ka ulje çmimi -5%.",
     n2Title: "Shpallje e re në kërkimin tënd", n2Body: "3 prona të reja u shtuan për 'Banesa në Prishtinë'.",
     n3Title: "Agjenti të është përgjigjur", n3Body: "Ke një mesazh të ri për vilën në Durrës.",
@@ -155,7 +160,7 @@ const STRINGS = {
     sectionPrivacy: "Privatësia", shareLocationLabel: "Ndaj vendndodhjen time", shareLocationHint: "Për rezultate më të sakta pranë teje",
     analyticsLabel: "Analitika për përmirësim", analyticsHint: "Ndihmon PronaHome të përmirësohet",
     privacyPolicyLink: "Politika e Privatësisë", termsLink: "Kushtet e Përdorimit",
-    newListingTitle: "Shpall një pronë",
+    newListingTitle: "Shpall një pronë", editListingTitle: "Ndrysho shpalljen",
     photoLabel: "Fotografia kryesore (opsionale)", photoPreparing: "Duke përgatitur...",
     photoTapToUpload: "Shtyp për të ngarkuar foto", photoChange: "Ndrysho fotografinë",
     photoAddMore: "Shto më shumë", coverPhotoLabel: "Kryesore",
@@ -244,12 +249,17 @@ const STRINGS = {
     priceRangeLabel: "Preisspanne in €", minimumLabel: "Minimum", maximumLabel: "Maximum",
     roomsRangeLabel: "Anzahl der Zimmer", areaRangeLabel: "Wohnfläche in m²", landAreaRangeLabel: "Grundstücksfläche in m²",
     resetLabel: "Zurücksetzen", showResultsCount: (n) => `${n} Treffer anzeigen`,
+    postedOn: (d) => `Veröffentlicht am ${d}`,
     tabSearch: "Suchen", tabFavorites: "Favoriten", tabNotifications: "Mitteilungen", tabProfile: "Profil",
     badgeRent: "Zu vermieten", badgeSale: "Zu verkaufen", perMonth: "/ Monat", roomsUnit: "Zimmer",
     favTitle: "Favoriten",
     favEmpty1: "Du hast noch keine Immobilie gespeichert.",
     favEmpty2: "Tippe auf das Herz bei einer Anzeige, um sie hier zu speichern.",
     notifTitle: "Mitteilungen",
+    notifGuestHint: "Melde dich an, um deine Mitteilungen zu sehen.",
+    notifEmpty: "Noch keine Mitteilungen. Sobald jemand eine deiner Anzeigen speichert, erscheint das hier.",
+    notifFavoriteTitle: (name) => `${name} hat deine Anzeige gespeichert`,
+    someoneLabel: "Jemand",
     n1Title: "Neuer Preis!", n1Body: "Neubauwohnung 3+1 in Peja hat eine Preissenkung von -5%.",
     n2Title: "Neue Anzeige für deine Suche", n2Body: "3 neue Immobilien wurden für „Wohnungen in Prishtina“ hinzugefügt.",
     n3Title: "Der Makler hat geantwortet", n3Body: "Du hast eine neue Nachricht zur Villa in Durrës.",
@@ -279,7 +289,7 @@ const STRINGS = {
     sectionPrivacy: "Datenschutz", shareLocationLabel: "Meinen Standort teilen", shareLocationHint: "Für genauere Ergebnisse in deiner Nähe",
     analyticsLabel: "Analytik zur Verbesserung", analyticsHint: "Hilft PronaHome, sich zu verbessern",
     privacyPolicyLink: "Datenschutzerklärung", termsLink: "Nutzungsbedingungen",
-    newListingTitle: "Eine Immobilie veröffentlichen",
+    newListingTitle: "Eine Immobilie veröffentlichen", editListingTitle: "Anzeige bearbeiten",
     photoLabel: "Hauptfoto (optional)", photoPreparing: "Wird vorbereitet...",
     photoTapToUpload: "Tippen, um Fotos hochzuladen", photoChange: "Foto ändern",
     photoAddMore: "Weitere hinzufügen", coverPhotoLabel: "Titelbild",
@@ -368,12 +378,17 @@ const STRINGS = {
     priceRangeLabel: "Price range (€)", minimumLabel: "Minimum", maximumLabel: "Maximum",
     roomsRangeLabel: "Number of rooms", areaRangeLabel: "Living area in m²", landAreaRangeLabel: "Land area in m²",
     resetLabel: "Reset", showResultsCount: (n) => `Show ${n} results`,
+    postedOn: (d) => `Posted on ${d}`,
     tabSearch: "Search", tabFavorites: "Favorites", tabNotifications: "Notifications", tabProfile: "Profile",
     badgeRent: "For rent", badgeSale: "For sale", perMonth: "/ month", roomsUnit: "rooms",
     favTitle: "Favorites",
     favEmpty1: "You haven't saved any properties yet.",
     favEmpty2: "Tap the heart on a listing to save it here.",
     notifTitle: "Notifications",
+    notifGuestHint: "Sign in to see your notifications.",
+    notifEmpty: "No notifications yet. When someone saves one of your listings, it'll show up here.",
+    notifFavoriteTitle: (name) => `${name} saved your listing`,
+    someoneLabel: "Someone",
     n1Title: "New price!", n1Body: "New-build 3+1 apartment in Peja has a -5% price cut.",
     n2Title: "New listing for your search", n2Body: "3 new properties were added for 'Apartments in Prishtina'.",
     n3Title: "The agent replied", n3Body: "You have a new message about the villa in Durrës.",
@@ -403,7 +418,7 @@ const STRINGS = {
     sectionPrivacy: "Privacy", shareLocationLabel: "Share my location", shareLocationHint: "For more accurate results near you",
     analyticsLabel: "Analytics to improve the app", analyticsHint: "Helps PronaHome get better",
     privacyPolicyLink: "Privacy Policy", termsLink: "Terms of Use",
-    newListingTitle: "Publish a property",
+    newListingTitle: "Publish a property", editListingTitle: "Edit listing",
     photoLabel: "Main photo (optional)", photoPreparing: "Preparing...",
     photoTapToUpload: "Tap to upload photos", photoChange: "Change photo",
     photoAddMore: "Add more", coverPhotoLabel: "Cover",
@@ -907,6 +922,12 @@ function formatPrice(listing, t) {
   if (listing.type !== "Qera") return `${n} €`;
   return listing.cat === "hotel" ? `${n} € ${t.perNight}` : `${n} € ${t.perMonth}`;
 }
+function formatShortDate(iso, lang) {
+  try {
+    const locale = lang === "de" ? "de-DE" : lang === "en" ? "en-GB" : "sq-AL";
+    return new Date(iso).toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" });
+  } catch (e) { return ""; }
+}
 function initialsOf(name) {
   if (!name) return "PH";
   const parts = name.trim().split(/\s+/);
@@ -1058,6 +1079,38 @@ async function saveProfileRemote(userId, profile) {
   };
   await supabaseFetch("profiles", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=representation" }, body: JSON.stringify([row]) });
 }
+// Marks a user as "active right now" — called on every login and whenever the
+// app opens with a still-valid session. This is what the 6-month inactivity
+// window (see active_listings view + the pg_cron cleanup job) is based on:
+// a user's OWN activity, not any particular listing's edit date.
+// Writes a notification row for a listing's owner when someone (not the
+// owner themselves) favorites their listing. Fire-and-forget from the
+// caller's side — a failed notification should never block the favorite.
+async function notifyOwner(ownerId, listingId, type, actorName, listingTitle) {
+  if (!SUPABASE_CONFIGURED) return;
+  await supabaseFetch("notifications", {
+    method: "POST",
+    body: JSON.stringify([{ owner_id: ownerId, listing_id: listingId, type, actor_name: actorName || "", listing_title: listingTitle || "" }]),
+  });
+}
+async function loadNotificationsRemote(userId) {
+  if (!SUPABASE_CONFIGURED || !userId) return [];
+  const rows = await supabaseFetch(`notifications?owner_id=eq.${userId}&select=*&order=created_at.desc&limit=50`);
+  return rows || [];
+}
+async function markNotificationsReadRemote(userId) {
+  if (!SUPABASE_CONFIGURED || !userId) return;
+  await supabaseFetch(`notifications?owner_id=eq.${userId}&read=eq.false`, { method: "PATCH", body: JSON.stringify({ read: true }) });
+}
+async function touchLastActive(userId) {
+  if (!SUPABASE_CONFIGURED || !userId) return;
+  try {
+    await supabaseFetch(`profiles?id=eq.${userId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ last_active: new Date().toISOString() }),
+    });
+  } catch (e) { console.error("touchLastActive failed", e); }
+}
 async function loadFavoritesRemote(userId) {
   const rows = await supabaseFetch(`favorites?user_id=eq.${userId}&select=listing_id`);
   return (rows || []).map((r) => r.listing_id);
@@ -1083,6 +1136,10 @@ function rowToListing(r) {
 // ---------------------------------------------------------------------------
 // Storage helpers
 // ---------------------------------------------------------------------------
+// Listings belonging to a user who hasn't been active (hasn't opened/used the
+// app) in 6+ months are excluded from what people see — the "active_listings"
+// Postgres view (created via SQL, see setup notes) does this filtering based
+// on profiles.last_active, so a simple read from it is all the client needs.
 async function loadSharedListings() {
   if (!SUPABASE_CONFIGURED) {
     // Fallback while Supabase isn't wired up yet, so the app still runs.
@@ -1095,7 +1152,7 @@ async function loadSharedListings() {
     return SEED_LISTINGS;
   }
   try {
-    const rows = await supabaseFetch("listings?select=*&order=created_at.desc");
+    const rows = await supabaseFetch("active_listings?select=*&order=created_at.desc");
     if (rows && rows.length) return rows.map(rowToListing);
   } catch (e) { console.error("Supabase load listings failed", e); lastSupabaseError = `load: ${e.message}`; }
   // Empty table (first run) — seed it once.
@@ -2226,7 +2283,7 @@ function ListingCard({ listing, isFav, onToggleFav, onOpen }) {
 // Detail screen
 // ---------------------------------------------------------------------------
 function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, onContactAgent }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const Icon = CAT_ICON[listing.cat] || Building2;
   const categories = CATEGORIES(t);
   const gallery = (listing.images && listing.images.length ? listing.images : (listing.image ? [listing.image] : []));
@@ -2317,6 +2374,20 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           </div>
         )}
 
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14, flexWrap: "wrap" }}>
+          {listing.created_at && (
+            <span style={{ fontSize: 11.5, color: "var(--ph-text-muted)" }}>
+              {t.postedOn(formatShortDate(listing.created_at, lang))}
+            </span>
+          )}
+          <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11.5, color: "var(--ph-accent)", fontWeight: 600 }}>
+            <Eye size={13} /> {listing.views || 0}
+          </span>
+          <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11.5, color: "var(--ph-accent)", fontWeight: 600 }}>
+            <Heart size={13} /> {listing.saves || 0}
+          </span>
+        </div>
+
         <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 26, fontWeight: 700, color: "var(--ph-accent)", marginBottom: 16 }}>
           {formatPrice(listing, t)}
         </div>
@@ -2375,13 +2446,21 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
 // ---------------------------------------------------------------------------
 // New listing form
 // ---------------------------------------------------------------------------
-function NewListingScreen({ onBack, onPublish, agencies }) {
+function NewListingScreen({ onBack, onPublish, agencies, editingListing }) {
   const { t } = useLang();
+  const isEditing = !!editingListing;
   const categories = CATEGORIES(t).filter((c) => c.id !== "all" && c.id !== "shitje" && c.id !== "qera");
-  const [form, setForm] = useState({ title: "", cat: "banesa", type: "Shitje", city: CITIES_LIST[0], area: "", address: "", addressNumber: "", price: "", m2: "", rooms: "", floor: "", desc: "", tags: "", agency: "Privat" });
+  const [form, setForm] = useState(() => editingListing ? {
+    title: editingListing.title || "", cat: editingListing.cat || "banesa", type: editingListing.type || "Shitje",
+    city: editingListing.city || CITIES_LIST[0], area: editingListing.area === "-" ? "" : (editingListing.area || ""),
+    address: editingListing.address || "", addressNumber: editingListing.addressNumber || "",
+    price: editingListing.price != null ? String(editingListing.price) : "", m2: editingListing.m2 != null ? String(editingListing.m2) : "",
+    rooms: editingListing.rooms != null ? String(editingListing.rooms) : "", floor: editingListing.floor === "-" ? "" : (editingListing.floor || ""),
+    desc: editingListing.desc || "", tags: (editingListing.tags || []).join(", "), agency: editingListing.agency || "Privat",
+  } : { title: "", cat: "banesa", type: "Shitje", city: CITIES_LIST[0], area: "", address: "", addressNumber: "", price: "", m2: "", rooms: "", floor: "", desc: "", tags: "", agency: "Privat" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState(editingListing ? (editingListing.images || (editingListing.image ? [editingListing.image] : [])) : []);
   const [imageBusy, setImageBusy] = useState(false);
   const MAX_IMAGES = 10;
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -2409,15 +2488,16 @@ function NewListingScreen({ onBack, onPublish, agencies }) {
     setError("");
     setSaving(true);
     const newListing = {
-      id: `local-${Date.now()}`,
+      id: isEditing ? editingListing.id : `local-${Date.now()}`,
       title: form.title.trim(), cat: form.cat, type: form.type, city: form.city,
       area: form.area.trim() || "-", address: form.address.trim(), addressNumber: form.addressNumber.trim(), price: Number(form.price), m2: Number(form.m2),
       rooms: Number(form.rooms) || 0, floor: form.floor.trim() || "-",
       desc: form.desc.trim() || "", tags: form.tags.split(",").map((x) => x.trim()).filter(Boolean),
       images, image: images[0] || null, agency: form.agency.trim() || "Privat",
     };
+    if (isEditing) newListing.owner_id = editingListing.owner_id;
     try {
-      await onPublish(newListing);
+      await onPublish(newListing, isEditing);
     } catch (e) {
       setError(e.message || t.requiredError);
     } finally {
@@ -2431,7 +2511,7 @@ function NewListingScreen({ onBack, onPublish, agencies }) {
         <button onClick={onBack} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
           <ChevronLeft size={20} color="#fff" />
         </button>
-        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{t.newListingTitle}</span>
+        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{isEditing ? t.editListingTitle : t.newListingTitle}</span>
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: 18, display: "flex", flexDirection: "column", gap: 14 }}>
@@ -2600,7 +2680,7 @@ function NewListingScreen({ onBack, onPublish, agencies }) {
             justifyContent: "center", gap: 8, cursor: saving ? "default" : "pointer", opacity: saving ? 0.7 : 1,
           }}
         >
-          {saving ? <><Loader2 size={16} className="spin" /> {t.publishing}</> : t.publishBtn}
+          {saving ? <><Loader2 size={16} className="spin" /> {isEditing ? t.saving : t.publishing}</> : (isEditing ? t.saveChanges : t.publishBtn)}
         </button>
       </div>
     </div>
@@ -2801,7 +2881,7 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
 // ---------------------------------------------------------------------------
 // Bottom navigation
 // ---------------------------------------------------------------------------
-function TabBar({ active, setActive, favCount }) {
+function TabBar({ active, setActive, favCount, notifCount }) {
   const { t } = useLang();
   const tabs = [
     { id: "kerko", label: t.tabSearch, icon: Search },
@@ -2823,6 +2903,9 @@ function TabBar({ active, setActive, favCount }) {
             <Icon size={19} strokeWidth={isActive ? 2.3 : 1.9} color={isActive ? "var(--ph-accent)" : "#A7ABB7"} />
             {tab.id === "preferuara" && favCount > 0 && (
               <span style={{ position: "absolute", top: -2, right: "calc(50% - 16px)", background: NAVY, color: "#fff", fontSize: 9, fontWeight: 700, borderRadius: 999, minWidth: 14, height: 14, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 3px" }}>{favCount}</span>
+            )}
+            {tab.id === "njoftime" && notifCount > 0 && (
+              <span style={{ position: "absolute", top: -2, right: "calc(50% - 16px)", background: NAVY, color: "#fff", fontSize: 9, fontWeight: 700, borderRadius: 999, minWidth: 14, height: 14, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 3px" }}>{notifCount}</span>
             )}
             <span style={{ fontSize: 10.5, fontWeight: isActive ? 600 : 500 }}>{tab.label}</span>
           </button>
@@ -3074,30 +3157,42 @@ function FavoritesScreen({ listings, favorites, toggleFav, onOpen }) {
   );
 }
 
-function NotificationsScreen() {
-  const { t } = useLang();
-  const items = [
-    { title: t.n1Title, body: t.n1Body, time: t.timeAgo2h },
-    { title: t.n2Title, body: t.n2Body, time: t.timeAgoYesterday },
-    { title: t.n3Title, body: t.n3Body, time: t.timeAgo2d },
-  ];
+function NotificationsScreen({ notifications, onMarkRead, profile }) {
+  const { t, lang } = useLang();
+  useEffect(() => {
+    if (profile && notifications.some((n) => !n.read)) onMarkRead();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div style={{ flex: 1, overflowY: "auto", padding: "18px 18px 24px" }}>
       <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 19, fontWeight: 700, color: "var(--ph-text)", margin: "4px 0 16px" }}>{t.notifTitle}</h2>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {items.map((n, i) => (
-          <div key={i} style={{ background: "var(--ph-surface)", border: "1px solid var(--ph-border)", borderRadius: 14, padding: 14, display: "flex", gap: 12 }}>
-            <div style={{ width: 34, height: 34, borderRadius: "50%", background: "#EFE6D2", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <Bell size={15} color={"var(--ph-accent)"} />
-            </div>
-            <div>
-              <div style={{ fontWeight: 600, fontSize: 13.5, color: "var(--ph-text)", marginBottom: 2 }}>{n.title}</div>
-              <div style={{ fontSize: 12.5, color: "var(--ph-text-muted)", lineHeight: 1.45 }}>{n.body}</div>
-              <div style={{ fontSize: 11, color: "var(--ph-text-muted)", marginTop: 4 }}>{n.time}</div>
-            </div>
+      {!profile ? (
+        <div style={{ textAlign: "center", padding: "50px 20px", color: "var(--ph-text-muted)", fontSize: 13.5 }}>{t.notifGuestHint}</div>
+      ) : notifications.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "50px 20px", color: "var(--ph-text-muted)" }}>
+          <div style={{ width: 56, height: 56, borderRadius: "50%", background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+            <Bell size={24} color="var(--ph-accent)" />
           </div>
-        ))}
-      </div>
+          <div style={{ fontSize: 13.5 }}>{t.notifEmpty}</div>
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {notifications.map((n) => (
+            <div key={n.id} style={{ background: n.read ? "var(--ph-surface)" : "var(--ph-accent-light)", border: "1px solid var(--ph-border)", borderRadius: 14, padding: 14, display: "flex", gap: 12 }}>
+              <div style={{ width: 34, height: 34, borderRadius: "50%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <Heart size={15} color="var(--ph-accent)" fill="var(--ph-accent)" />
+              </div>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: 13.5, color: "var(--ph-text)", marginBottom: 2 }}>
+                  {t.notifFavoriteTitle(n.actor_name || t.someoneLabel)}
+                </div>
+                <div style={{ fontSize: 12.5, color: "var(--ph-text-muted)", lineHeight: 1.45 }}>{n.listing_title}</div>
+                <div style={{ fontSize: 11, color: "var(--ph-text-muted)", marginTop: 4 }}>{formatShortDate(n.created_at, lang)}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -3281,7 +3376,7 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
   );
 }
 
-function MyListingsScreen({ listings, myIds, onBack, onOpen, onDelete }) {
+function MyListingsScreen({ listings, myIds, onBack, onOpen, onDelete, onEdit }) {
   const { t } = useLang();
   const items = listings.filter((l) => myIds.has(l.id));
   return (
@@ -3303,9 +3398,14 @@ function MyListingsScreen({ listings, myIds, onBack, onOpen, onDelete }) {
                   <div style={{ fontWeight: 600, fontSize: 13.5, color: "var(--ph-text)", marginBottom: 3 }}>{l.title}</div>
                   <div style={{ fontSize: 12, color: "var(--ph-text-muted)" }}>{l.area}, {l.city} · {formatPrice(l, t)}</div>
                 </div>
-                <button onClick={(e) => { e.stopPropagation(); onDelete(l.id); }} style={{ border: "none", background: "#FBEDEA", borderRadius: 10, padding: 8, cursor: "pointer" }}>
-                  <Trash2 size={14} color="#B0473C" />
-                </button>
+                <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                  <button onClick={(e) => { e.stopPropagation(); onEdit(l); }} style={{ border: "none", background: "var(--ph-accent-light)", borderRadius: 10, padding: 8, cursor: "pointer" }}>
+                    <Pencil size={14} color="var(--ph-accent)" />
+                  </button>
+                  <button onClick={(e) => { e.stopPropagation(); onDelete(l.id); }} style={{ border: "none", background: "#FBEDEA", borderRadius: 10, padding: 8, cursor: "pointer" }}>
+                    <Trash2 size={14} color="#B0473C" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -3408,6 +3508,7 @@ export default function PronaHomeApp() {
   const [listings, setListings] = useState([]);
   const [agencies, setAgencies] = useState(AGENCIES);
   const [favorites, setFavorites] = useState(new Set());
+  const [notifications, setNotifications] = useState([]);
   const [myIds, setMyIds] = useState(new Set());
   const [profile, setProfile] = useState(null);
   const [userId, setUserId] = useState(null); // Supabase auth user id, once logged in
@@ -3415,6 +3516,7 @@ export default function PronaHomeApp() {
   const [showGuestPrompt, setShowGuestPrompt] = useState(false);
   const [openListing, setOpenListing] = useState(null);
   const [showNewListing, setShowNewListing] = useState(false);
+  const [editingListing, setEditingListing] = useState(null);
   const [showMyListings, setShowMyListings] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -3464,6 +3566,8 @@ export default function PronaHomeApp() {
               setUserId(session.user.id);
               setProfile(remoteProfile);
               setFavorites(new Set(favIds));
+              touchLastActive(session.user.id);
+              loadNotificationsRemote(session.user.id).then(setNotifications).catch((e) => console.error(e));
             } catch (e) {
               // Session likely expired — fall back to logged-out state.
               currentSession = null;
@@ -3504,6 +3608,23 @@ export default function PronaHomeApp() {
     savePersonal("language", l);
   };
 
+  const bumpListingField = (id, field, delta) => {
+    setListings((prev) => prev.map((l) => (l.id === id ? { ...l, [field]: Math.max((l[field] || 0) + delta, 0) } : l)));
+  };
+
+  const openListingDetail = (l) => {
+    setOpenListing(l);
+    if (SUPABASE_CONFIGURED && l && l.owner_id !== userId) {
+      bumpListingField(l.id, "views", 1);
+      supabaseFetch("rpc/increment_listing_views", { method: "POST", body: JSON.stringify({ listing_id: l.id }) }).catch((e) => console.error("view count failed", e));
+    }
+  };
+
+  const markNotificationsRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    if (SUPABASE_CONFIGURED && userId) markNotificationsReadRemote(userId).catch((e) => console.error(e));
+  };
+
   const toggleFav = async (id) => {
     if (!profile) { setShowGuestPrompt(true); return; }
     const prevFavorites = favorites;
@@ -3511,20 +3632,29 @@ export default function PronaHomeApp() {
     const next = new Set(favorites);
     isRemoving ? next.delete(id) : next.add(id);
     setFavorites(next);
+    bumpListingField(id, "saves", isRemoving ? -1 : 1);
     try {
       if (SUPABASE_CONFIGURED && userId) {
         await (isRemoving ? removeFavoriteRemote(userId, id) : addFavoriteRemote(userId, id));
+        supabaseFetch("rpc/bump_listing_saves", { method: "POST", body: JSON.stringify({ listing_id: id, delta: isRemoving ? -1 : 1 }) }).catch((e) => console.error("save count failed", e));
+        if (!isRemoving) {
+          const target = listings.find((l) => l.id === id);
+          if (target && target.owner_id && target.owner_id !== userId) {
+            notifyOwner(target.owner_id, id, "favorite", profile.name, target.title).catch((e) => console.error("notify failed", e));
+          }
+        }
       } else {
         await savePersonal("favorites", Array.from(next));
       }
     } catch (e) {
       console.error(e);
       setFavorites(prevFavorites);
+      bumpListingField(id, "saves", isRemoving ? 1 : -1);
       setToast(`${t.saveErrorToast} (${e.message || "?"})`);
     }
   };
 
-  const publishListing = async (newListing) => {
+  const publishListing = async (newListing, isEditing) => {
     // Recognize the provider by name (case-insensitive); reuse the existing
     // entry's exact casing if it matches, otherwise register it as brand new.
     const enteredAgency = (newListing.agency || "Privat").trim();
@@ -3537,14 +3667,16 @@ export default function PronaHomeApp() {
     const prevAgencies = agencies;
     const prevMyIds = myIds;
 
-    const nextListings = [listingToSave, ...listings];
+    const nextListings = isEditing
+      ? listings.map((l) => (l.id === listingToSave.id ? listingToSave : l))
+      : [listingToSave, ...listings];
     setListings(nextListings);
 
     const nextAgencies = existingMatch ? agencies : [...agencies, resolvedAgency];
     if (!existingMatch) setAgencies(nextAgencies);
 
     let nextMine = myIds;
-    if (!SUPABASE_CONFIGURED) {
+    if (!SUPABASE_CONFIGURED && !isEditing) {
       nextMine = new Set(myIds);
       nextMine.add(listingToSave.id);
       setMyIds(nextMine);
@@ -3552,11 +3684,12 @@ export default function PronaHomeApp() {
 
     try {
       const saves = [saveSharedListings(nextListings), saveListingRemote(listingToSave)];
-      if (!SUPABASE_CONFIGURED) saves.push(savePersonal("my-listings", Array.from(nextMine)));
+      if (!SUPABASE_CONFIGURED && !isEditing) saves.push(savePersonal("my-listings", Array.from(nextMine)));
       if (!existingMatch) saves.push(saveSharedAgencies(nextAgencies), addAgencyRemote(resolvedAgency));
       await Promise.all(saves);
       setShowNewListing(false);
-      setTab("kerko");
+      setEditingListing(null);
+      if (!isEditing) setTab("kerko");
     } catch (e) {
       console.error(e);
       setListings(prevListings);
@@ -3611,15 +3744,18 @@ export default function PronaHomeApp() {
     setUserId(session.user.id);
     setProfile(profileData);
     setGuestMode(false);
+    touchLastActive(session.user.id);
     try {
-      const [favIds, freshListings, freshAgencies] = await Promise.all([
+      const [favIds, freshListings, freshAgencies, notifs] = await Promise.all([
         loadFavoritesRemote(session.user.id),
-        SUPABASE_CONFIGURED ? supabaseFetch("listings?select=*&order=created_at.desc") : Promise.resolve(null),
+        SUPABASE_CONFIGURED ? supabaseFetch("active_listings?select=*&order=created_at.desc") : Promise.resolve(null),
         SUPABASE_CONFIGURED ? supabaseFetch("agencies?select=name&order=created_at.asc") : Promise.resolve(null),
+        loadNotificationsRemote(session.user.id),
       ]);
       setFavorites(new Set(favIds));
       if (freshListings) setListings(freshListings.map(rowToListing));
       if (freshAgencies) setAgencies(freshAgencies.map((r) => r.name));
+      setNotifications(notifs);
     } catch (e) { console.error(e); }
   };
   const continueAsGuest = () => setGuestMode(true);
@@ -3775,7 +3911,7 @@ export default function PronaHomeApp() {
             <>
               {tab === "kerko" && (
                 <SearchScreen
-                  listings={listings} favorites={favorites} toggleFav={toggleFav} onOpen={setOpenListing}
+                  listings={listings} favorites={favorites} toggleFav={toggleFav} onOpen={openListingDetail}
                   onAddNew={() => requireAuth(() => setShowNewListing(true))} onOpenFilters={() => setShowFilters(true)}
                   onOpenHotelScreen={() => setShowHotelScreen(true)}
                   onOpenAgenciesScreen={() => setShowAgenciesScreen(true)}
@@ -3783,8 +3919,8 @@ export default function PronaHomeApp() {
                   onQuickFilter={(partial) => setFilters((f) => ({ ...f, ...partial }))}
                 />
               )}
-              {tab === "preferuara" && <FavoritesScreen listings={listings} favorites={favorites} toggleFav={toggleFav} onOpen={setOpenListing} />}
-              {tab === "njoftime" && <NotificationsScreen />}
+              {tab === "preferuara" && <FavoritesScreen listings={listings} favorites={favorites} toggleFav={toggleFav} onOpen={openListingDetail} />}
+              {tab === "njoftime" && <NotificationsScreen notifications={notifications} onMarkRead={markNotificationsRead} profile={profile} />}
               {tab === "profili" && (
                 profile ? (
                   <ProfileScreen
@@ -3798,7 +3934,7 @@ export default function PronaHomeApp() {
                 )
               )}
 
-              <TabBar active={tab} setActive={setTab} favCount={favorites.size} />
+              <TabBar active={tab} setActive={setTab} favCount={favorites.size} notifCount={notifications.filter((n) => !n.read).length} />
 
               {openListing && (
                 <DetailScreen
@@ -3807,9 +3943,9 @@ export default function PronaHomeApp() {
                   onContactAgent={() => requireAuth(() => {})}
                 />
               )}
-              {showNewListing && <NewListingScreen onBack={() => setShowNewListing(false)} onPublish={publishListing} agencies={agencies} />}
+              {showNewListing && <NewListingScreen onBack={() => { setShowNewListing(false); setEditingListing(null); }} onPublish={publishListing} agencies={agencies} editingListing={editingListing} />}
               {showMyListings && (
-                <MyListingsScreen listings={listings} myIds={myIds} onBack={() => setShowMyListings(false)} onOpen={(l) => { setShowMyListings(false); setOpenListing(l); }} onDelete={deleteListing} />
+                <MyListingsScreen listings={listings} myIds={myIds} onBack={() => setShowMyListings(false)} onOpen={(l) => { setShowMyListings(false); openListingDetail(l); }} onDelete={deleteListing} onEdit={(l) => { setShowMyListings(false); setEditingListing(l); setShowNewListing(true); }} />
               )}
               {showEditProfile && <EditProfileScreen profile={profile} onBack={() => setShowEditProfile(false)} onSave={saveProfileEdit} />}
               {showSettings && (
@@ -3833,13 +3969,13 @@ export default function PronaHomeApp() {
               {showHotelScreen && (
                 <HotelScreen
                   listings={listings} favorites={favorites} toggleFav={toggleFav}
-                  onOpen={setOpenListing} onBack={() => setShowHotelScreen(false)}
+                  onOpen={openListingDetail} onBack={() => setShowHotelScreen(false)}
                 />
               )}
               {showAgenciesScreen && (
                 <AgenciesScreen
                   listings={listings} agencies={agencies} favorites={favorites} toggleFav={toggleFav}
-                  onOpen={setOpenListing} onBack={() => setShowAgenciesScreen(false)}
+                  onOpen={openListingDetail} onBack={() => setShowAgenciesScreen(false)}
                 />
               )}
             </>

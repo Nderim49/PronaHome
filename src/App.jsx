@@ -120,6 +120,7 @@ const STRINGS = {
     agenciesScreenTitle: "Profesionistët", agenciesScreenSubtitle: "Gjej ekspertin e duhur për shtëpinë tënde",
     providerGroupRealEstate: "Patundshmëri", providerGroupFurniture: "Mobilje & Kuzhina",
     providerGroupCraftsmen: "Zejtarë", providerGroupArchitects: "Arkitektë & Statikë",
+    businessCardCategoryLabel: "Karta e Vizitës",
     noProvidersYet: "Ende pa ofertues aktivë në këtë kategori.",
     privateSeller: "Privat", listingsCount: (n) => `${n} shpallje`, backToAgencies: "Kthehu te ofertuesit",
     perNight: "/ natë",
@@ -275,6 +276,7 @@ const STRINGS = {
     agenciesScreenTitle: "Fachleute", agenciesScreenSubtitle: "Finde die passenden Experten für dein Zuhause",
     providerGroupRealEstate: "Immobilien", providerGroupFurniture: "Möbel & Küchen",
     providerGroupCraftsmen: "Handwerker", providerGroupArchitects: "Architekten & Statiker",
+    businessCardCategoryLabel: "Visitenkarte",
     noProvidersYet: "Noch keine aktiven Anbieter in dieser Kategorie.",
     privateSeller: "Privat", listingsCount: (n) => `${n} Anzeigen`, backToAgencies: "Zurück zu den Anbietern",
     perNight: "/ Nacht",
@@ -430,6 +432,7 @@ const STRINGS = {
     agenciesScreenTitle: "Professionals", agenciesScreenSubtitle: "Find the right expert for your home",
     providerGroupRealEstate: "Real Estate", providerGroupFurniture: "Furniture & Kitchens",
     providerGroupCraftsmen: "Tradespeople", providerGroupArchitects: "Architects & Structural Engineers",
+    businessCardCategoryLabel: "Business Card",
     noProvidersYet: "No active providers in this category yet.",
     privateSeller: "Private", listingsCount: (n) => `${n} listings`, backToAgencies: "Back to providers",
     perNight: "/ night",
@@ -3076,29 +3079,35 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
 
       <div style={{ flex: 1, overflowY: "auto", padding: 18, display: "flex", flexDirection: "column" }}>
         <SettingsSection title={t.categoryLabel}>
-          <div style={{ padding: 14 }}>
-            <select style={inputStyle} value={form.cat} onChange={set("cat")}>
-              <optgroup label={t.providerGroupRealEstate}>
-                {categories.filter((c) => !NON_PROPERTY_CATS.includes(c.id) || c.id === "hotel").map((c) => (
+          <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
+            <div>
+              <label style={labelStyle}>{t.providerGroupRealEstate}</label>
+              <select
+                style={inputStyle}
+                value={!BUSINESS_CARD_CATS.includes(form.cat) ? form.cat : ""}
+                onChange={(e) => { if (e.target.value) setForm((f) => ({ ...f, cat: e.target.value })); }}
+              >
+                {BUSINESS_CARD_CATS.includes(form.cat) && <option value="">{t.chooseOption}</option>}
+                {categories.filter((c) => !BUSINESS_CARD_CATS.includes(c.id)).map((c) => (
                   <option key={c.id} value={c.id}>{c.label}</option>
                 ))}
-              </optgroup>
-              <optgroup label={t.providerGroupFurniture}>
-                {categories.filter((c) => providerGroupOfCat(c.id) === "furniture").map((c) => (
-                  <option key={c.id} value={c.id}>{c.label}</option>
-                ))}
-              </optgroup>
-              <optgroup label={t.providerGroupCraftsmen}>
-                {categories.filter((c) => providerGroupOfCat(c.id) === "craftsmen").map((c) => (
-                  <option key={c.id} value={c.id}>{c.label}</option>
-                ))}
-              </optgroup>
-              <optgroup label={t.providerGroupArchitects}>
-                {categories.filter((c) => providerGroupOfCat(c.id) === "architects").map((c) => (
-                  <option key={c.id} value={c.id}>{c.label}</option>
-                ))}
-              </optgroup>
-            </select>
+              </select>
+            </div>
+            {isAgencyAccount && (
+              <div>
+                <label style={labelStyle}>{t.businessCardCategoryLabel}</label>
+                <select
+                  style={inputStyle}
+                  value={BUSINESS_CARD_CATS.includes(form.cat) ? form.cat : ""}
+                  onChange={(e) => { if (e.target.value) setForm((f) => ({ ...f, cat: e.target.value })); }}
+                >
+                  {!BUSINESS_CARD_CATS.includes(form.cat) && <option value="">{t.chooseOption}</option>}
+                  {categories.filter((c) => BUSINESS_CARD_CATS.includes(c.id)).map((c) => (
+                    <option key={c.id} value={c.id}>{c.label}</option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         </SettingsSection>
 
@@ -4266,35 +4275,13 @@ function HotelScreen({ listings, favorites, toggleFav, onOpen, onBack }) {
 // Dedicated screen for the "Anbieter" / "Ofertuesit" banner: lists every provider
 // (private sellers first, then real, researched agencies) and drills into that
 // provider's own listings on selection.
-function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBack }) {
+function AgenciesScreen({ onBack, onOpenGroup }) {
   const { t } = useLang();
-  const [expandedGroup, setExpandedGroup] = useState("furniture");
-  const [cityByGroup, setCityByGroup] = useState({ furniture: "", craftsmen: "", architects: "" });
-  const [areaByGroup, setAreaByGroup] = useState({ furniture: "", craftsmen: "", architects: "" });
-
   const GROUPS = [
     { id: "furniture", label: t.providerGroupFurniture, icon: BedDouble, gradient: "linear-gradient(135deg, #6B4A2E 0%, #B08554 140%)" },
     { id: "craftsmen", label: t.providerGroupCraftsmen, icon: Wrench, gradient: "linear-gradient(135deg, #4A4238 0%, #8A7A5E 140%)" },
     { id: "architects", label: t.providerGroupArchitects, icon: Landmark, gradient: "linear-gradient(135deg, #2E3A4A 0%, #5C7290 140%)" },
   ];
-
-  const resultsFor = (gid) => {
-    const city = cityByGroup[gid];
-    const area = areaByGroup[gid];
-    return listings.filter((l) => {
-      if (providerGroupOfCat(l.cat) !== gid) return false;
-      if (city && l.city !== city) return false;
-      if (area && l.area !== area) return false;
-      return true;
-    });
-  };
-  const setCityForGroup = (gid, value) => {
-    setCityByGroup((prev) => ({ ...prev, [gid]: value }));
-    setAreaByGroup((prev) => ({ ...prev, [gid]: "" }));
-  };
-  const setAreaForGroup = (gid, value) => {
-    setAreaByGroup((prev) => ({ ...prev, [gid]: value }));
-  };
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
@@ -4312,78 +4299,96 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
       <div style={{ flex: 1, overflowY: "auto", padding: "14px 18px 24px", display: "flex", flexDirection: "column", gap: 12 }}>
         {GROUPS.map((g) => {
           const GIcon = g.icon;
-          const isExpanded = expandedGroup === g.id;
-          const results = isExpanded ? resultsFor(g.id) : [];
-          const city = cityByGroup[g.id];
-          const area = areaByGroup[g.id];
           return (
-            <div
-              key={g.id}
+            <button
+              key={g.id} onClick={() => onOpenGroup(g.id)}
               style={{
-                borderRadius: 16, overflow: "hidden",
-                border: isExpanded ? "2.5px solid var(--ph-accent)" : "2.5px solid transparent",
+                display: "flex", alignItems: "center", gap: 14, textAlign: "left", cursor: "pointer",
+                borderRadius: 16, padding: "13px 16px", background: g.gradient, border: "none",
               }}
             >
-              <button
-                onClick={() => setExpandedGroup(isExpanded ? null : g.id)}
-                style={{
-                  width: "100%", display: "flex", alignItems: "center", gap: 14, textAlign: "left", cursor: "pointer",
-                  padding: "13px 16px", background: g.gradient, border: "none",
-                }}
-              >
-                <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <GIcon size={17} color="#fff" />
-                </div>
-                <span style={{ color: "#fff", fontSize: 13.5, fontWeight: 700, fontFamily: "'Poppins', sans-serif", flex: 1 }}>{g.label}</span>
-                <ChevronLeft
-                  size={16} color="#fff"
-                  style={{ transform: isExpanded ? "rotate(90deg)" : "rotate(-90deg)", transition: "transform 0.15s", flexShrink: 0 }}
-                />
-              </button>
-
-              {isExpanded && (
-                <div style={{ background: "var(--ph-surface)", padding: 14 }}>
-                  <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-                    <select
-                      style={{ ...inputStyle, flex: 1 }} value={city}
-                      onChange={(e) => setCityForGroup(g.id, e.target.value)}
-                    >
-                      <option value="">{t.allCities}</option>
-                      {CITY_GROUPS.map((cg) => (
-                        <optgroup key={cg.country} label={t[cg.country]}>
-                          {cg.cities.map((c) => <option key={c} value={c}>{c}</option>)}
-                        </optgroup>
-                      ))}
-                    </select>
-                    {SETTLEMENTS_BY_CITY[city] && (
-                      <select style={{ ...inputStyle, flex: 1 }} value={area} onChange={(e) => setAreaForGroup(g.id, e.target.value)}>
-                        <option value="">{t.anySettlement}</option>
-                        {SETTLEMENTS_BY_CITY[city].map((s) => <option key={s} value={s}>{s}</option>)}
-                      </select>
-                    )}
-                  </div>
-
-                  <div style={{ fontSize: 12, color: "var(--ph-text-muted)", fontWeight: 600, marginBottom: 10 }}>
-                    {t.listingsCount(results.length)}
-                  </div>
-
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-                    {results.map((l) => (
-                      <div key={l.id} style={{ width: "calc(50% - 6px)" }}>
-                        <ListingCard listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
-                      </div>
-                    ))}
-                    {results.length === 0 && (
-                      <div style={{ width: "100%", textAlign: "center", padding: "20px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
-                        {t.noProvidersYet}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <GIcon size={17} color="#fff" />
+              </div>
+              <span style={{ color: "#fff", fontSize: 13.5, fontWeight: 700, fontFamily: "'Poppins', sans-serif", flex: 1 }}>{g.label}</span>
+              <ChevronLeft size={16} color="#fff" style={{ transform: "rotate(180deg)", flexShrink: 0 }} />
+            </button>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+const PROVIDER_GROUP_META = {
+  furniture: { icon: BedDouble, gradient: "linear-gradient(135deg, #6B4A2E 0%, #B08554 140%)" },
+  craftsmen: { icon: Wrench, gradient: "linear-gradient(135deg, #4A4238 0%, #8A7A5E 140%)" },
+  architects: { icon: Landmark, gradient: "linear-gradient(135deg, #2E3A4A 0%, #5C7290 140%)" },
+};
+
+function ProviderGroupScreen({ group, listings, favorites, toggleFav, onOpen, onBack }) {
+  const { t } = useLang();
+  const [city, setCity] = useState("");
+  const [area, setArea] = useState("");
+  const meta = PROVIDER_GROUP_META[group] || PROVIDER_GROUP_META.furniture;
+  const GIcon = meta.icon;
+  const labelMap = { furniture: t.providerGroupFurniture, craftsmen: t.providerGroupCraftsmen, architects: t.providerGroupArchitects };
+  const label = labelMap[group] || "";
+
+  const results = useMemo(() => {
+    return listings.filter((l) => {
+      if (providerGroupOfCat(l.cat) !== group) return false;
+      if (city && l.city !== city) return false;
+      if (area && l.area !== area) return false;
+      return true;
+    });
+  }, [listings, group, city, area]);
+
+  return (
+    <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 21 }}>
+      <div style={{ background: meta.gradient, padding: "16px 18px 18px", borderBottomLeftRadius: 22, borderBottomRightRadius: 22 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+          <button onClick={onBack} style={{ border: "none", background: "rgba(255,255,255,0.22)", borderRadius: "50%", width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+            <ChevronLeft size={18} color="#fff" />
+          </button>
+          <GIcon size={20} color="#fff" />
+          <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 17, color: "#fff" }}>{label}</span>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <select
+            style={{ ...inputStyle, flex: 1, background: "#fff" }} value={city}
+            onChange={(e) => { setCity(e.target.value); setArea(""); }}
+          >
+            <option value="">{t.allCities}</option>
+            {CITY_GROUPS.map((cg) => (
+              <optgroup key={cg.country} label={t[cg.country]}>
+                {cg.cities.map((c) => <option key={c} value={c}>{c}</option>)}
+              </optgroup>
+            ))}
+          </select>
+          {SETTLEMENTS_BY_CITY[city] && (
+            <select style={{ ...inputStyle, flex: 1, background: "#fff" }} value={area} onChange={(e) => setArea(e.target.value)}>
+              <option value="">{t.anySettlement}</option>
+              {SETTLEMENTS_BY_CITY[city].map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+          )}
+        </div>
+      </div>
+
+      <div style={{ padding: "12px 18px 4px", fontSize: 12.5, color: "var(--ph-text-muted)", fontWeight: 600 }}>
+        {t.listingsCount(results.length)}
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", padding: "6px 18px 24px", display: "flex", flexWrap: "wrap", gap: 12 }}>
+        {results.map((l) => (
+          <div key={l.id} style={{ width: "calc(50% - 6px)" }}>
+            <ListingCard listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
+          </div>
+        ))}
+        {results.length === 0 && (
+          <div style={{ width: "100%", textAlign: "center", padding: "30px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
+            {t.noProvidersYet}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -4552,6 +4557,7 @@ export default function PronaHomeApp() {
   const [showHotelScreen, setShowHotelScreen] = useState(false);
   const [showPropertyScreen, setShowPropertyScreen] = useState(false);
   const [showAgenciesScreen, setShowAgenciesScreen] = useState(false);
+  const [openProviderGroup, setOpenProviderGroup] = useState(null);
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [loading, setLoading] = useState(true);
   const [enteringApp, setEnteringApp] = useState(false);
@@ -5134,8 +5140,14 @@ export default function PronaHomeApp() {
               )}
               {showAgenciesScreen && (
                 <AgenciesScreen
-                  listings={listings} agencies={agencies} favorites={favorites} toggleFav={toggleFav}
-                  onOpen={openListingDetail} onBack={() => setShowAgenciesScreen(false)}
+                  onBack={() => setShowAgenciesScreen(false)}
+                  onOpenGroup={(gid) => setOpenProviderGroup(gid)}
+                />
+              )}
+              {openProviderGroup && (
+                <ProviderGroupScreen
+                  group={openProviderGroup} listings={listings} favorites={favorites} toggleFav={toggleFav}
+                  onOpen={openListingDetail} onBack={() => setOpenProviderGroup(null)}
                 />
               )}
             </div>

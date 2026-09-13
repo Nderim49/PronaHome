@@ -143,6 +143,7 @@ const STRINGS = {
     favTitle: "Të preferuarat",
     favEmpty1: "Ende nuk ke ruajtur asnjë pronë.",
     favEmpty2: "Shtyp zemrën te një shpallje për ta ruajtur këtu.",
+    favGuestHint: "Hyr në llogarinë tënde për të ruajtur prona si të preferuara.",
     notifTitle: "Njoftimet",
     notifGuestHint: "Hyr në llogarinë tënde për të parë njoftimet.",
     notifEmpty: "Ende pa njoftime. Kur dikush ruan një nga shpalljet e tua, do ta shohësh këtu.",
@@ -199,7 +200,7 @@ const STRINGS = {
     roomsFieldLabel: "Dhoma", roomsPlaceholder: "p.sh. 3",
     floorLabel: "Kati", floorPlaceholder: "p.sh. 3/6",
     groundFloorLabel: "Përdhesë", basementLabel: "Bodrum", atticLabel: "Papafingo / Mansardë",
-    floorNotApplicableLabel: "Shtëpi", chooseOption: "Zgjidh",
+    floorNotApplicableLabel: "Shtëpi", chooseOption: "Zgjidh", changeCategoryLabel: "Ndrysho kategorinë",
     descLabel: "Përshkrimi", descPlaceholder: "Përshkruaj pronën shkurtimisht...",
     tagsLabel: "Karakteristikat (ndaj me presje)", tagsPlaceholder: "p.sh. Parking, Ashensor, Ballkon",
     agencyFieldLabel: "Ofertuesi", agencyFieldPlaceholder: "Privat, ose emri i agjencisë tënde",
@@ -301,6 +302,7 @@ const STRINGS = {
     favTitle: "Favoriten",
     favEmpty1: "Du hast noch keine Immobilie gespeichert.",
     favEmpty2: "Tippe auf das Herz bei einer Anzeige, um sie hier zu speichern.",
+    favGuestHint: "Melde dich an, um Immobilien als Favoriten zu speichern.",
     notifTitle: "Mitteilungen",
     notifGuestHint: "Melde dich an, um deine Mitteilungen zu sehen.",
     notifEmpty: "Noch keine Mitteilungen. Sobald jemand eine deiner Anzeigen speichert, erscheint das hier.",
@@ -357,7 +359,7 @@ const STRINGS = {
     roomsFieldLabel: "Zimmer", roomsPlaceholder: "z. B. 3",
     floorLabel: "Etage", floorPlaceholder: "z. B. 3/6",
     groundFloorLabel: "Erdgeschoss", basementLabel: "Keller", atticLabel: "Dachgeschoss",
-    floorNotApplicableLabel: "Haus", chooseOption: "Auswählen",
+    floorNotApplicableLabel: "Haus", chooseOption: "Auswählen", changeCategoryLabel: "Kategorie ändern",
     descLabel: "Beschreibung", descPlaceholder: "Beschreibe die Immobilie kurz...",
     tagsLabel: "Merkmale (durch Komma getrennt)", tagsPlaceholder: "z. B. Parkplatz, Aufzug, Balkon",
     agencyFieldLabel: "Anbieter", agencyFieldPlaceholder: "Privat, oder der Name deiner Agentur",
@@ -459,6 +461,7 @@ const STRINGS = {
     favTitle: "Favorites",
     favEmpty1: "You haven't saved any properties yet.",
     favEmpty2: "Tap the heart on a listing to save it here.",
+    favGuestHint: "Sign in to save properties as favorites.",
     notifTitle: "Notifications",
     notifGuestHint: "Sign in to see your notifications.",
     notifEmpty: "No notifications yet. When someone saves one of your listings, it'll show up here.",
@@ -515,7 +518,7 @@ const STRINGS = {
     roomsFieldLabel: "Rooms", roomsPlaceholder: "e.g. 3",
     floorLabel: "Floor", floorPlaceholder: "e.g. 3/6",
     groundFloorLabel: "Ground floor", basementLabel: "Basement", atticLabel: "Attic / Loft",
-    floorNotApplicableLabel: "House", chooseOption: "Choose",
+    floorNotApplicableLabel: "House", chooseOption: "Choose", changeCategoryLabel: "Change category",
     descLabel: "Description", descPlaceholder: "Briefly describe the property...",
     tagsLabel: "Features (comma-separated)", tagsPlaceholder: "e.g. Parking, Elevator, Balcony",
     agencyFieldLabel: "Provider", agencyFieldPlaceholder: "Private, or your agency's name",
@@ -3165,20 +3168,22 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
       <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: 18, display: "flex", flexDirection: "column" }}>
         <SettingsSection title={t.categoryLabel}>
           <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
-            <div>
-              <label style={labelStyle}>{t.providerGroupRealEstate}</label>
-              <select
-                style={inputStyle}
-                value={!BUSINESS_CARD_CATS.includes(form.cat) ? form.cat : ""}
-                onChange={(e) => { if (e.target.value) setForm((f) => ({ ...f, cat: e.target.value })); }}
-              >
-                {!(form.cat && !BUSINESS_CARD_CATS.includes(form.cat)) && <option value="">{t.chooseOption}</option>}
-                {categories.filter((c) => !BUSINESS_CARD_CATS.includes(c.id)).map((c) => (
-                  <option key={c.id} value={c.id}>{c.label}</option>
-                ))}
-              </select>
-            </div>
-            {isAgencyAccount && (
+            {(!form.cat || !BUSINESS_CARD_CATS.includes(form.cat)) && (
+              <div>
+                <label style={labelStyle}>{t.providerGroupRealEstate}</label>
+                <select
+                  style={inputStyle}
+                  value={!BUSINESS_CARD_CATS.includes(form.cat) ? form.cat : ""}
+                  onChange={(e) => { if (e.target.value) setForm((f) => ({ ...f, cat: e.target.value })); }}
+                >
+                  {!(form.cat && !BUSINESS_CARD_CATS.includes(form.cat)) && <option value="">{t.chooseOption}</option>}
+                  {categories.filter((c) => !BUSINESS_CARD_CATS.includes(c.id)).map((c) => (
+                    <option key={c.id} value={c.id}>{c.label}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {isAgencyAccount && (!form.cat || BUSINESS_CARD_CATS.includes(form.cat)) && (
               <div>
                 <label style={labelStyle}>{t.businessCardCategoryLabel}</label>
                 <select
@@ -3196,6 +3201,15 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                   ))}
                 </select>
               </div>
+            )}
+            {isAgencyAccount && form.cat && (
+              <button
+                type="button"
+                onClick={() => setForm((f) => ({ ...f, cat: "" }))}
+                style={{ alignSelf: "flex-start", border: "none", background: "none", color: "var(--ph-accent)", fontSize: 12, fontWeight: 600, cursor: "pointer", padding: 0 }}
+              >
+                {t.changeCategoryLabel}
+              </button>
             )}
           </div>
         </SettingsSection>
@@ -3986,13 +4000,26 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
   );
 }
 
-function FavoritesScreen({ listings, favorites, toggleFav, onOpen }) {
+function FavoritesScreen({ listings, favorites, toggleFav, onOpen, profile, onRegister }) {
   const { t } = useLang();
   const items = listings.filter((l) => favorites.has(l.id));
   return (
     <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "18px 18px 24px" }}>
       <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 19, fontWeight: 700, color: "var(--ph-text)", margin: "4px 0 16px" }}>{t.favTitle}</h2>
-      {items.length === 0 ? (
+      {!profile ? (
+        <div style={{ textAlign: "center", padding: "50px 20px" }}>
+          <div style={{ width: 56, height: 56, borderRadius: "50%", background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+            <Heart size={24} color="var(--ph-accent)" />
+          </div>
+          <div style={{ fontSize: 13.5, color: "var(--ph-text-muted)", marginBottom: 16 }}>{t.favGuestHint}</div>
+          <button
+            onClick={onRegister}
+            style={{ background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "12px 22px", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13.5, cursor: "pointer" }}
+          >
+            {t.guestProfileLoginBtn}
+          </button>
+        </div>
+      ) : items.length === 0 ? (
         <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--ph-text-muted)" }}>
           <div style={{ width: 56, height: 56, borderRadius: "50%", background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
             <Heart size={24} color="var(--ph-accent)" />
@@ -4012,7 +4039,7 @@ function FavoritesScreen({ listings, favorites, toggleFav, onOpen }) {
   );
 }
 
-function NotificationsScreen({ notifications, onMarkRead, profile }) {
+function NotificationsScreen({ notifications, onMarkRead, profile, onRegister }) {
   const { t, lang } = useLang();
   useEffect(() => {
     if (profile && notifications.some((n) => !n.read)) onMarkRead();
@@ -4022,7 +4049,18 @@ function NotificationsScreen({ notifications, onMarkRead, profile }) {
     <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "18px 18px 24px" }}>
       <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 19, fontWeight: 700, color: "var(--ph-text)", margin: "4px 0 16px" }}>{t.notifTitle}</h2>
       {!profile ? (
-        <div style={{ textAlign: "center", padding: "50px 20px", color: "var(--ph-text-muted)", fontSize: 13.5 }}>{t.notifGuestHint}</div>
+        <div style={{ textAlign: "center", padding: "50px 20px" }}>
+          <div style={{ width: 56, height: 56, borderRadius: "50%", background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+            <Bell size={24} color="var(--ph-accent)" />
+          </div>
+          <div style={{ fontSize: 13.5, color: "var(--ph-text-muted)", marginBottom: 16 }}>{t.notifGuestHint}</div>
+          <button
+            onClick={onRegister}
+            style={{ background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "12px 22px", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13.5, cursor: "pointer" }}
+          >
+            {t.guestProfileLoginBtn}
+          </button>
+        </div>
       ) : notifications.length === 0 ? (
         <div style={{ textAlign: "center", padding: "50px 20px", color: "var(--ph-text-muted)" }}>
           <div style={{ width: 56, height: 56, borderRadius: "50%", background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
@@ -5167,8 +5205,8 @@ export default function PronaHomeApp() {
                   onQuickFilter={(partial) => setFilters((f) => ({ ...f, ...partial }))}
                 />
               )}
-              {tab === "preferuara" && <FavoritesScreen listings={listings} favorites={favorites} toggleFav={toggleFav} onOpen={openListingDetail} />}
-              {tab === "njoftime" && <NotificationsScreen notifications={notifications} onMarkRead={markNotificationsRead} profile={profile} />}
+              {tab === "preferuara" && <FavoritesScreen listings={listings} favorites={favorites} toggleFav={toggleFav} onOpen={openListingDetail} profile={profile} onRegister={() => setShowGuestPrompt(true)} />}
+              {tab === "njoftime" && <NotificationsScreen notifications={notifications} onMarkRead={markNotificationsRead} profile={profile} onRegister={() => setShowGuestPrompt(true)} />}
               {tab === "profili" && (
                 profile ? (
                   <ProfileScreen

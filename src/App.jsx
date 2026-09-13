@@ -646,7 +646,7 @@ function CountryTypeahead({ value, onChange, placeholder, countries }) {
         <div style={{
           position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, zIndex: 40,
           background: "var(--ph-surface)", border: "1px solid var(--ph-border)", borderRadius: 10,
-          maxHeight: 220, overflowY: "auto", boxShadow: "0 10px 24px rgba(15,23,41,0.18)",
+          maxHeight: 220, overflowY: "auto", overflowX: "hidden", boxShadow: "0 10px 24px rgba(15,23,41,0.18)",
         }}>
           {filtered.map((c) => (
             <button
@@ -720,7 +720,7 @@ function GeoTypeahead({ value, onChange, placeholder, kind }) {
         <div style={{
           position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, zIndex: 40,
           background: "var(--ph-surface)", border: "1px solid var(--ph-border)", borderRadius: 10,
-          maxHeight: 220, overflowY: "auto", boxShadow: "0 10px 24px rgba(15,23,41,0.18)",
+          maxHeight: 220, overflowY: "auto", overflowX: "hidden", boxShadow: "0 10px 24px rgba(15,23,41,0.18)",
         }}>
           {loading && <div style={{ padding: "10px 12px", fontSize: 12, color: "var(--ph-text-muted)" }}>…</div>}
           {!loading && suggestions.map((s, i) => (
@@ -1697,7 +1697,7 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
           </button>
         </>
       ) : (
-        <div style={{ maxHeight: "70vh", overflowY: "auto", paddingRight: 2 }}>
+        <div style={{ maxHeight: "70vh", overflowY: "auto", overflowX: "hidden", paddingRight: 2 }}>
           <div style={{ fontSize: 12.5, color: "var(--ph-text-muted)", marginBottom: 12 }}>{t.almostDoneHint}</div>
 
           <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
@@ -1926,7 +1926,7 @@ function EditProfileScreen({ profile, onBack, onSave }) {
         <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{t.editTitle}</span>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: 18 }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: 18 }}>
         <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
           <div style={{
             width: 68, height: 68, borderRadius: "50%",
@@ -2256,7 +2256,7 @@ function AccountScreen({ profile, favorites, myListingIds, listings, onBack, onD
         <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{t.accountScreenTitle}</span>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: 18 }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: 18 }}>
         <SettingsSection title={t.sectionAccountDetails}>
           <SettingsRow
             label={t.emailVerified} hint={profile.email}
@@ -2357,7 +2357,7 @@ function LegalDocScreen({ docKey, onBack }) {
         </button>
         <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{doc.title}</span>
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: "18px 18px 30px" }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "18px 18px 30px" }}>
         <div style={{ fontSize: 11, color: "var(--ph-text-muted)", marginBottom: 16 }}>{doc.updated}</div>
         {doc.sections.map((s) => (
           <div key={s.h} style={{ marginBottom: 16, paddingLeft: 10, borderLeft: "2px solid var(--ph-accent-light)" }}>
@@ -2417,7 +2417,7 @@ function SettingsScreen({ onBack, settings, onChange, onOpenPrivacy, onOpenTerms
         <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{t.settingsRow}</span>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: 18 }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: 18 }}>
         <Section title={t.sectionNotifications}>
           <Row label={t.pushNotif} hint={t.pushNotifHint} control={<Toggle checked={settings.pushNotif} onChange={set("pushNotif")} />} />
           <Row label={t.emailNotif} hint={t.emailNotifHint} control={<Toggle checked={settings.emailNotif} onChange={set("emailNotif")} />} />
@@ -2542,7 +2542,7 @@ function ChangePasswordScreen({ onBack, profile, onSubmit }) {
         </button>
         <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{t.changePasswordRow}</span>
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: 18 }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: 18 }}>
         <SettingsSection title={t.changePasswordRow}>
           <div style={{ padding: 14 }}>
             <label style={labelStyle}>{t.currentPasswordLabel}</label>
@@ -2682,6 +2682,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
   const [showBizLightbox, setShowBizLightbox] = useState(false);
   const [lightboxIdx, setLightboxIdx] = useState(0);
   const [showBio, setShowBio] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const onGalleryScroll = (e) => {
     const w = e.currentTarget.clientWidth;
     if (w) setPhotoIdx(Math.round(e.currentTarget.scrollLeft / w));
@@ -2713,7 +2714,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           </div>
         </div>
 
-        <div style={{ flex: 1, overflowY: "auto", padding: "18px 18px 100px" }}>
+        <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "18px 18px 100px" }}>
           <span style={{ fontSize: 11, fontWeight: 700, color: NAVY, background: "#EFE6D2", padding: "4px 10px", borderRadius: 999, letterSpacing: 0.3 }}>
             {(categories.find((c) => c.id === listing.cat) || {}).label}
           </span>
@@ -2764,28 +2765,32 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
               </button>
               <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{listing.title}</span>
             </div>
-            <div style={{ flex: 1, overflowY: "auto", padding: 20 }}>
+            <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: 20 }}>
               <div style={{ fontSize: 14.5, color: "var(--ph-text)", lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{listing.desc}</div>
             </div>
           </div>
         )}
 
         <div style={{ padding: "12px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "var(--ph-surface)", borderTop: "1px solid var(--ph-border)", display: "flex", flexDirection: "column", gap: 8 }}>
-          {listing.contactPhone && (
-            <button
-              onClick={() => (window.location.href = `tel:${listing.contactPhone}`)}
-              style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "14px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
-            >
-              <Phone size={16} /> {t.callBtn}
-            </button>
-          )}
-          {listing.contactEmail && (
-            <button
-              onClick={() => (window.location.href = `mailto:${listing.contactEmail}`)}
-              style={{ width: "100%", background: listing.contactPhone ? "var(--ph-accent-light)" : NAVY, color: listing.contactPhone ? "var(--ph-text)" : "#fff", border: "none", borderRadius: 12, padding: "14px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
-            >
-              <Mail size={16} /> {t.emailBtn}
-            </button>
+          {(listing.contactPhone || listing.contactEmail) && (
+            <div style={{ display: "flex", gap: 8 }}>
+              {listing.contactPhone && (
+                <button
+                  onClick={() => (window.location.href = `tel:${listing.contactPhone}`)}
+                  style={{ flex: 1, background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "11px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer" }}
+                >
+                  <Phone size={14} /> {t.callBtn}
+                </button>
+              )}
+              {listing.contactEmail && (
+                <button
+                  onClick={() => (window.location.href = `mailto:${listing.contactEmail}`)}
+                  style={{ flex: 1, background: listing.contactPhone ? "var(--ph-accent-light)" : NAVY, color: listing.contactPhone ? "var(--ph-text)" : "#fff", border: "none", borderRadius: 12, padding: "11px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer" }}
+                >
+                  <Mail size={14} /> {t.emailBtn}
+                </button>
+              )}
+            </div>
           )}
           {!isMine && listing.owner_id && (
             <button
@@ -2869,7 +2874,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
         )}
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "18px 18px 100px" }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "18px 18px 100px" }}>
         <span style={{ fontSize: 11, fontWeight: 700, color: NAVY, background: "#EFE6D2", padding: "4px 10px", borderRadius: 999, letterSpacing: 0.3 }}>
           {(categories.find((c) => c.id === listing.cat) || {}).label || t.genericProperty}
         </span>
@@ -2929,38 +2934,81 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
         </div>
 
         <div style={{ marginBottom: 18 }}>
-          <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14, color: "var(--ph-text)", marginBottom: 6 }}>{t.descriptionLabel}</div>
-          <p style={{ fontSize: 13.5, color: "var(--ph-text)", lineHeight: 1.6, margin: 0 }}>{listing.desc}</p>
-        </div>
-
-        <div>
-          <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14, color: "var(--ph-text)", marginBottom: 8 }}>{t.featuresLabel}</div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-            {(listing.tags || []).map((tag) => (
-              <span key={tag} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12.5, color: "var(--ph-text)", background: "var(--ph-surface)", border: "1px solid var(--ph-border)", padding: "6px 10px", borderRadius: 999 }}>
-                <Check size={12} color={"var(--ph-accent)"} /> {tag}
-              </span>
-            ))}
-          </div>
+          <button
+            onClick={() => setShowDetails(true)}
+            style={{
+              width: "100%", textAlign: "left", background: "var(--ph-surface)", border: "1px solid var(--ph-border)",
+              borderRadius: 14, padding: 14, cursor: "pointer", display: "flex", flexDirection: "column", gap: 10,
+            }}
+          >
+            <div>
+              <div style={{ fontSize: 11.5, fontWeight: 700, color: "var(--ph-text-muted)", textTransform: "uppercase", letterSpacing: 0.4, marginBottom: 6 }}>
+                {t.descriptionLabel}
+              </div>
+              <div style={{ fontSize: 13.5, color: "var(--ph-text)", lineHeight: 1.6, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                {listing.desc}
+              </div>
+            </div>
+            {(listing.tags || []).length > 0 && (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {listing.tags.slice(0, 4).map((tag) => (
+                  <span key={tag} style={{ fontSize: 11, color: "var(--ph-text-muted)", background: "var(--ph-bg)", border: "1px solid var(--ph-border)", padding: "3px 8px", borderRadius: 999 }}>
+                    {tag}
+                  </span>
+                ))}
+                {listing.tags.length > 4 && (
+                  <span style={{ fontSize: 11, color: "var(--ph-text-muted)", alignSelf: "center" }}>+{listing.tags.length - 4}</span>
+                )}
+              </div>
+            )}
+            <div style={{ fontSize: 12, color: "var(--ph-accent)", fontWeight: 600 }}>{t.readMoreLabel} ›</div>
+          </button>
         </div>
       </div>
 
+      {showDetails && (
+        <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 40 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY }}>
+            <button onClick={() => setShowDetails(false)} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
+              <ChevronLeft size={20} color="#fff" />
+            </button>
+            <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{listing.title}</span>
+          </div>
+          <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: 20 }}>
+            <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14, color: "var(--ph-text)", marginBottom: 8 }}>{t.descriptionLabel}</div>
+            <div style={{ fontSize: 14.5, color: "var(--ph-text)", lineHeight: 1.7, whiteSpace: "pre-wrap", marginBottom: 26 }}>{listing.desc}</div>
+            <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14, color: "var(--ph-text)", marginBottom: 10 }}>{t.featuresLabel}</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {(listing.tags || []).map((tag) => (
+                <span key={tag} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 13, color: "var(--ph-text)", background: "var(--ph-surface)", border: "1px solid var(--ph-border)", padding: "7px 12px", borderRadius: 999 }}>
+                  <Check size={13} color={"var(--ph-accent)"} /> {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "linear-gradient(180deg, rgba(246,242,234,0) 0%, #F6F2EA 22%)", display: "flex", flexDirection: "column", gap: 8 }}>
-        {listing.contactPhone && (
-          <button
-            onClick={() => (window.location.href = `tel:${listing.contactPhone}`)}
-            style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
-          >
-            <Phone size={16} /> {t.callBtn}
-          </button>
-        )}
-        {listing.contactEmail && (
-          <button
-            onClick={() => (window.location.href = `mailto:${listing.contactEmail}`)}
-            style={{ width: "100%", background: listing.contactPhone ? "var(--ph-accent-light)" : NAVY, color: listing.contactPhone ? "var(--ph-text)" : "#fff", border: "none", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
-          >
-            <Mail size={16} /> {t.emailBtn}
-          </button>
+        {(listing.contactPhone || listing.contactEmail) && (
+          <div style={{ display: "flex", gap: 8 }}>
+            {listing.contactPhone && (
+              <button
+                onClick={() => (window.location.href = `tel:${listing.contactPhone}`)}
+                style={{ flex: 1, background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "11px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer" }}
+              >
+                <Phone size={14} /> {t.callBtn}
+              </button>
+            )}
+            {listing.contactEmail && (
+              <button
+                onClick={() => (window.location.href = `mailto:${listing.contactEmail}`)}
+                style={{ flex: 1, background: listing.contactPhone ? "var(--ph-accent-light)" : NAVY, color: listing.contactPhone ? "var(--ph-text)" : "#fff", border: "none", borderRadius: 12, padding: "11px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer" }}
+              >
+                <Mail size={14} /> {t.emailBtn}
+              </button>
+            )}
+          </div>
         )}
         {!isMine && listing.owner_id && (
           <button
@@ -3114,7 +3162,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
         <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{isEditing ? t.editListingTitle : t.newListingTitle}</span>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: 18, display: "flex", flexDirection: "column" }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: 18, display: "flex", flexDirection: "column" }}>
         <SettingsSection title={t.categoryLabel}>
           <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
             <div>
@@ -3520,7 +3568,7 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
         </button>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "18px 18px 8px", display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "18px 18px 8px", display: "flex", flexDirection: "column", gap: 16 }}>
         <SettingsSection title={t.propertyTypeLabel}>
           <div style={{ padding: 14 }}>
             <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
@@ -3750,7 +3798,7 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
   };
 
   return (
-    <div style={{ flex: 1, overflowY: "auto" }}>
+    <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
       <div style={{ background: NAVY, padding: "16px 18px 20px", borderBottomLeftRadius: 22, borderBottomRightRadius: 22 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -3942,7 +3990,7 @@ function FavoritesScreen({ listings, favorites, toggleFav, onOpen }) {
   const { t } = useLang();
   const items = listings.filter((l) => favorites.has(l.id));
   return (
-    <div style={{ flex: 1, overflowY: "auto", padding: "18px 18px 24px" }}>
+    <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "18px 18px 24px" }}>
       <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 19, fontWeight: 700, color: "var(--ph-text)", margin: "4px 0 16px" }}>{t.favTitle}</h2>
       {items.length === 0 ? (
         <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--ph-text-muted)" }}>
@@ -3971,7 +4019,7 @@ function NotificationsScreen({ notifications, onMarkRead, profile }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <div style={{ flex: 1, overflowY: "auto", padding: "18px 18px 24px" }}>
+    <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "18px 18px 24px" }}>
       <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 19, fontWeight: 700, color: "var(--ph-text)", margin: "4px 0 16px" }}>{t.notifTitle}</h2>
       {!profile ? (
         <div style={{ textAlign: "center", padding: "50px 20px", color: "var(--ph-text-muted)", fontSize: 13.5 }}>{t.notifGuestHint}</div>
@@ -4034,7 +4082,7 @@ function MessagesScreen({ messages, myId, profile, onOpenThread, onBack }) {
         </button>
         <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{t.messagesTitle}</span>
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: 18 }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: 18 }}>
         {!profile ? (
           <div style={{ textAlign: "center", padding: "50px 20px", color: "var(--ph-text-muted)", fontSize: 13.5 }}>{t.notifGuestHint}</div>
         ) : conversations.length === 0 ? (
@@ -4127,7 +4175,7 @@ function ChatThreadScreen({ myId, myName, otherId, otherName, listingTitle, onBa
           {listingTitle && <div style={{ fontSize: 11, color: "var(--ph-accent-light)" }}>{listingTitle}</div>}
         </div>
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: 18, display: "flex", flexDirection: "column", gap: 8 }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: 18, display: "flex", flexDirection: "column", gap: 8 }}>
         {thread.length === 0 && (
           <div style={{ textAlign: "center", color: "var(--ph-text-muted)", fontSize: 12.5, marginTop: 20 }}>{t.chatStartHint}</div>
         )}
@@ -4235,7 +4283,7 @@ function PropertyByOwnerScreen({ listings, favorites, toggleFav, onOpen, onBack 
       <div style={{ padding: "12px 18px 4px", fontSize: 12.5, color: "var(--ph-text-muted)", fontWeight: 600 }}>
         {t.listingsCount(results.length)}
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: "6px 18px 24px", display: "flex", flexWrap: "wrap", gap: 12 }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "6px 18px 24px", display: "flex", flexWrap: "wrap", gap: 12 }}>
         {results.map((l) => (
           <div key={l.id} style={{ width: "calc(50% - 6px)" }}>
             <ListingCard listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
@@ -4322,7 +4370,7 @@ function HotelScreen({ listings, favorites, toggleFav, onOpen, onBack }) {
         </span>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "8px 18px 24px", display: "flex", flexWrap: "wrap", gap: 12 }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "8px 18px 24px", display: "flex", flexWrap: "wrap", gap: 12 }}>
         {results.map((l) => (
           <div key={l.id} style={{ width: "calc(50% - 6px)" }}>
             <ListingCard listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
@@ -4364,7 +4412,7 @@ function AgenciesScreen({ onBack, onOpenGroup }) {
         <div style={{ color: "rgba(255,255,255,0.9)", fontSize: 12.5 }}>{t.agenciesScreenSubtitle}</div>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "14px 18px 24px", display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "14px 18px 24px", display: "flex", flexDirection: "column", gap: 12 }}>
         {GROUPS.map((g) => {
           const GIcon = g.icon;
           return (
@@ -4451,7 +4499,7 @@ function ProviderGroupScreen({ group, listings, favorites, toggleFav, onOpen, on
       <div style={{ padding: "12px 18px 4px", fontSize: 12.5, color: "var(--ph-text-muted)", fontWeight: 600 }}>
         {t.listingsCount(results.length)}
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: "6px 18px 24px", display: "flex", flexWrap: "wrap", gap: 12 }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "6px 18px 24px", display: "flex", flexWrap: "wrap", gap: 12 }}>
         {results.map((l) => (
           <div key={l.id} style={{ width: "calc(50% - 6px)" }}>
             <ListingCard listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
@@ -4478,7 +4526,7 @@ function MyListingsScreen({ listings, myIds, onBack, onOpen, onDelete, onEdit })
         </button>
         <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{t.myListingsTitle}</span>
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: 18 }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: 18 }}>
         {items.length === 0 ? (
           <div style={{ textAlign: "center", padding: "50px 20px", color: "var(--ph-text-muted)", fontSize: 13.5 }}>{t.myListingsEmpty}</div>
         ) : (
@@ -4534,7 +4582,7 @@ function ProfileScreen({ profile, favCount, myCount, unreadMessages, onOpenMyLis
   };
 
   return (
-    <div style={{ flex: 1, overflowY: "auto", padding: "18px 18px 24px" }}>
+    <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "18px 18px 24px" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 22 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <label

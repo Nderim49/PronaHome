@@ -2906,7 +2906,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${listing.address} ${listing.addressNumber || ""} ${listing.city || ""}`.trim())}`}
             target="_blank" rel="noopener noreferrer"
             style={{
-              display: "flex", alignItems: "center", gap: 10, color: "var(--ph-text)", fontWeight: 600, fontSize: 13,
+              display: "flex", alignItems: "center", gap: 10, color: "var(--ph-text)", fontWeight: 500, fontSize: 13,
               textDecoration: "none", background: "var(--ph-surface)", border: "1px solid var(--ph-border)",
               borderRadius: 12, padding: "10px 12px", marginBottom: 18,
             }}
@@ -2939,20 +2939,6 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           </div>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 18, flexWrap: "wrap" }}>
-          {listing.created_at && (
-            <span style={{ fontSize: 11, color: "var(--ph-text-muted)" }}>
-              {t.postedOn(formatShortDate(listing.created_at, lang))}
-            </span>
-          )}
-          <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: "var(--ph-text-muted)" }}>
-            <Eye size={12} /> {listing.views || 0}
-          </span>
-          <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: "var(--ph-text-muted)" }}>
-            <Heart size={12} /> {listing.saves || 0}
-          </span>
-        </div>
-
         <div style={{ marginBottom: 18 }}>
           <button
             onClick={() => setShowDetails(true)}
@@ -2983,6 +2969,20 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             )}
             <div style={{ fontSize: 12, color: "var(--ph-accent)", fontWeight: 600 }}>{t.readMoreLabel} ›</div>
           </button>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
+          {listing.created_at && (
+            <span style={{ fontSize: 11, color: "var(--ph-text-muted)" }}>
+              {t.postedOn(formatShortDate(listing.created_at, lang))}
+            </span>
+          )}
+          <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: "var(--ph-text-muted)" }}>
+            <Eye size={12} /> {listing.views || 0}
+          </span>
+          <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: "var(--ph-text-muted)" }}>
+            <Heart size={12} /> {listing.saves || 0}
+          </span>
         </div>
       </div>
 
@@ -3160,7 +3160,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
     const newListing = isBusinessCard ? {
       id: isEditing ? editingListing.id : `local-${Date.now()}`,
       title: form.agency.trim() && form.agency.trim() !== "Privat" ? form.agency.trim() : fullName,
-      cat: form.cat, type: form.type, city: "", area: "-",
+      cat: form.cat, type: form.type, city: form.city, area: form.area.trim() || "-",
       address: form.address.trim(), addressNumber: form.addressNumber.trim(),
       price: 0, m2: 0, rooms: 0, floor: "-", desc: form.desc.trim(), tags: [],
       images, image: images[0] || null, agency: form.agency.trim() || "Privat",
@@ -3315,7 +3315,35 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
           </SettingsSection>
 
           <SettingsSection title={t.homeAddressLabel}>
-            <div style={{ padding: 14 }}>
+            <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ display: "flex", gap: 10 }}>
+                <div style={{ flex: 1 }}>
+                  <label style={labelStyle}>{t.cityLabel}</label>
+                  <select
+                    style={inputStyle} value={form.city}
+                    onChange={(e) => setForm((f) => ({ ...f, city: e.target.value, area: "" }))}
+                  >
+                    {CITY_GROUPS.map((g) => (
+                      <optgroup key={g.country} label={t[g.country]}>
+                        {g.cities.map((c) => (
+                          <option key={c} value={c}>{c}</option>
+                        ))}
+                      </optgroup>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={labelStyle}>{t.areaLabel}</label>
+                  {SETTLEMENTS_BY_CITY[form.city] ? (
+                    <select style={inputStyle} value={form.area} onChange={set("area")}>
+                      <option value="">{t.cityCenterLabel}</option>
+                      {SETTLEMENTS_BY_CITY[form.city].map((s) => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  ) : (
+                    <input style={inputStyle} value={form.area} onChange={set("area")} placeholder={t.areaPlaceholder} />
+                  )}
+                </div>
+              </div>
               <div style={{ display: "flex", gap: 8 }}>
                 <div style={{ flex: 2 }}>
                   <GeoTypeahead value={form.address} onChange={(v) => setForm((f) => ({ ...f, address: v }))} placeholder={t.homeAddressPlaceholder} kind="address" />

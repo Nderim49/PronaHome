@@ -3075,19 +3075,33 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
     { id: "notar", label: t.catNotar },
     { id: "financim", label: t.catFinancim },
   ];
-  const [form, setForm] = useState(() => editingListing ? {
-    title: editingListing.title || "", cat: editingListing.cat || "banesa", type: editingListing.type || "Shitje",
-    city: editingListing.city || CITIES_LIST[0], area: editingListing.area === "-" ? "" : (editingListing.area || ""),
-    address: editingListing.address || "", addressNumber: editingListing.addressNumber || "",
-    price: editingListing.price != null ? String(editingListing.price) : "", m2: editingListing.m2 != null ? String(editingListing.m2) : "",
-    rooms: editingListing.rooms != null ? String(editingListing.rooms) : "", floor: editingListing.floor === "-" ? "" : (editingListing.floor || ""),
-    desc: editingListing.desc || "", tags: (editingListing.tags || []).join(", "), agency: editingListing.agency || "Privat",
-    contactFirstName: editingListing.contactFirstName || "", contactLastName: editingListing.contactLastName || "",
-    contactPhone: editingListing.contactPhone || "", contactEmail: editingListing.contactEmail || "", contactCountry: editingListing.contactCountry || "XK",
-  } : {
-    title: "", cat: "", type: "Shitje", city: CITIES_LIST[0], area: "", address: "", addressNumber: "",
-    price: "", m2: "", rooms: "", floor: "", desc: "", tags: "", agency: "Privat",
-    contactFirstName: "", contactLastName: "", contactPhone: "", contactEmail: "", contactCountry: "XK",
+  const [form, setForm] = useState(() => {
+    if (editingListing) {
+      return {
+        title: editingListing.title || "", cat: editingListing.cat || "banesa", type: editingListing.type || "Shitje",
+        city: editingListing.city || CITIES_LIST[0], area: editingListing.area === "-" ? "" : (editingListing.area || ""),
+        address: editingListing.address || "", addressNumber: editingListing.addressNumber || "",
+        price: editingListing.price != null ? String(editingListing.price) : "", m2: editingListing.m2 != null ? String(editingListing.m2) : "",
+        rooms: editingListing.rooms != null ? String(editingListing.rooms) : "", floor: editingListing.floor === "-" ? "" : (editingListing.floor || ""),
+        desc: editingListing.desc || "", tags: (editingListing.tags || []).join(", "), agency: editingListing.agency || "Privat",
+        contactFirstName: editingListing.contactFirstName || "", contactLastName: editingListing.contactLastName || "",
+        contactPhone: editingListing.contactPhone || "", contactEmail: editingListing.contactEmail || "", contactCountry: editingListing.contactCountry || "XK",
+      };
+    }
+    // New listing: prefill contact phone/email from the user's own account
+    // profile, so they don't have to retype it on every single listing —
+    // still fully editable below.
+    const prefillCountryCode = profile?.country || "XK";
+    const prefillCountry = WORLD_COUNTRIES.find((c) => c.code === prefillCountryCode) || WORLD_COUNTRIES[0];
+    const prefillPhone = profile?.phone && profile.phone.startsWith(prefillCountry.dial)
+      ? profile.phone.slice(prefillCountry.dial.length).trim()
+      : (profile?.phone || "");
+    return {
+      title: "", cat: "", type: "Shitje", city: CITIES_LIST[0], area: "", address: "", addressNumber: "",
+      price: "", m2: "", rooms: "", floor: "", desc: "", tags: "", agency: "Privat",
+      contactFirstName: "", contactLastName: "",
+      contactPhone: prefillPhone, contactEmail: profile?.email || "", contactCountry: prefillCountry.code,
+    };
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);

@@ -4268,9 +4268,9 @@ function HotelScreen({ listings, favorites, toggleFav, onOpen, onBack }) {
 // provider's own listings on selection.
 function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBack }) {
   const { t } = useLang();
-  const [group, setGroup] = useState("furniture");
-  const [city, setCity] = useState("");
-  const [area, setArea] = useState("");
+  const [expandedGroup, setExpandedGroup] = useState("furniture");
+  const [cityByGroup, setCityByGroup] = useState({ furniture: "", craftsmen: "", architects: "" });
+  const [areaByGroup, setAreaByGroup] = useState({ furniture: "", craftsmen: "", architects: "" });
 
   const GROUPS = [
     { id: "furniture", label: t.providerGroupFurniture, icon: BedDouble, gradient: "linear-gradient(135deg, #6B4A2E 0%, #B08554 140%)" },
@@ -4278,14 +4278,23 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
     { id: "architects", label: t.providerGroupArchitects, icon: Landmark, gradient: "linear-gradient(135deg, #2E3A4A 0%, #5C7290 140%)" },
   ];
 
-  const results = useMemo(() => {
+  const resultsFor = (gid) => {
+    const city = cityByGroup[gid];
+    const area = areaByGroup[gid];
     return listings.filter((l) => {
-      if (providerGroupOfCat(l.cat) !== group) return false;
+      if (providerGroupOfCat(l.cat) !== gid) return false;
       if (city && l.city !== city) return false;
       if (area && l.area !== area) return false;
       return true;
     });
-  }, [listings, group, city, area]);
+  };
+  const setCityForGroup = (gid, value) => {
+    setCityByGroup((prev) => ({ ...prev, [gid]: value }));
+    setAreaByGroup((prev) => ({ ...prev, [gid]: "" }));
+  };
+  const setAreaForGroup = (gid, value) => {
+    setAreaByGroup((prev) => ({ ...prev, [gid]: value }));
+  };
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
@@ -4297,64 +4306,84 @@ function AgenciesScreen({ listings, agencies, favorites, toggleFav, onOpen, onBa
           <Users size={20} color="#fff" />
           <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 17, color: "#fff" }}>{t.agenciesScreenTitle}</span>
         </div>
-        <div style={{ color: "rgba(255,255,255,0.9)", fontSize: 12.5, marginBottom: 14 }}>{t.agenciesScreenSubtitle}</div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <select
-            style={{ ...inputStyle, flex: 1, background: "#fff" }} value={city}
-            onChange={(e) => { setCity(e.target.value); setArea(""); }}
-          >
-            <option value="">{t.allCities}</option>
-            {CITY_GROUPS.map((g) => (
-              <optgroup key={g.country} label={t[g.country]}>
-                {g.cities.map((c) => <option key={c} value={c}>{c}</option>)}
-              </optgroup>
-            ))}
-          </select>
-          {SETTLEMENTS_BY_CITY[city] && (
-            <select style={{ ...inputStyle, flex: 1, background: "#fff" }} value={area} onChange={(e) => setArea(e.target.value)}>
-              <option value="">{t.anySettlement}</option>
-              {SETTLEMENTS_BY_CITY[city].map((s) => <option key={s} value={s}>{s}</option>)}
-            </select>
-          )}
-        </div>
+        <div style={{ color: "rgba(255,255,255,0.9)", fontSize: 12.5 }}>{t.agenciesScreenSubtitle}</div>
       </div>
 
-      <div style={{ padding: "12px 18px 4px", display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "14px 18px 24px", display: "flex", flexDirection: "column", gap: 12 }}>
         {GROUPS.map((g) => {
           const GIcon = g.icon;
-          const active = group === g.id;
+          const isExpanded = expandedGroup === g.id;
+          const results = isExpanded ? resultsFor(g.id) : [];
+          const city = cityByGroup[g.id];
+          const area = areaByGroup[g.id];
           return (
-            <button
-              key={g.id} onClick={() => setGroup(g.id)}
+            <div
+              key={g.id}
               style={{
-                display: "flex", alignItems: "center", gap: 14, textAlign: "left", cursor: "pointer",
-                borderRadius: 16, padding: "13px 16px", background: g.gradient,
-                border: active ? "2.5px solid var(--ph-accent)" : "2.5px solid transparent",
+                borderRadius: 16, overflow: "hidden",
+                border: isExpanded ? "2.5px solid var(--ph-accent)" : "2.5px solid transparent",
               }}
             >
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <GIcon size={17} color="#fff" />
-              </div>
-              <span style={{ color: "#fff", fontSize: 13.5, fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>{g.label}</span>
-            </button>
+              <button
+                onClick={() => setExpandedGroup(isExpanded ? null : g.id)}
+                style={{
+                  width: "100%", display: "flex", alignItems: "center", gap: 14, textAlign: "left", cursor: "pointer",
+                  padding: "13px 16px", background: g.gradient, border: "none",
+                }}
+              >
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <GIcon size={17} color="#fff" />
+                </div>
+                <span style={{ color: "#fff", fontSize: 13.5, fontWeight: 700, fontFamily: "'Poppins', sans-serif", flex: 1 }}>{g.label}</span>
+                <ChevronLeft
+                  size={16} color="#fff"
+                  style={{ transform: isExpanded ? "rotate(90deg)" : "rotate(-90deg)", transition: "transform 0.15s", flexShrink: 0 }}
+                />
+              </button>
+
+              {isExpanded && (
+                <div style={{ background: "var(--ph-surface)", padding: 14 }}>
+                  <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+                    <select
+                      style={{ ...inputStyle, flex: 1 }} value={city}
+                      onChange={(e) => setCityForGroup(g.id, e.target.value)}
+                    >
+                      <option value="">{t.allCities}</option>
+                      {CITY_GROUPS.map((cg) => (
+                        <optgroup key={cg.country} label={t[cg.country]}>
+                          {cg.cities.map((c) => <option key={c} value={c}>{c}</option>)}
+                        </optgroup>
+                      ))}
+                    </select>
+                    {SETTLEMENTS_BY_CITY[city] && (
+                      <select style={{ ...inputStyle, flex: 1 }} value={area} onChange={(e) => setAreaForGroup(g.id, e.target.value)}>
+                        <option value="">{t.anySettlement}</option>
+                        {SETTLEMENTS_BY_CITY[city].map((s) => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    )}
+                  </div>
+
+                  <div style={{ fontSize: 12, color: "var(--ph-text-muted)", fontWeight: 600, marginBottom: 10 }}>
+                    {t.listingsCount(results.length)}
+                  </div>
+
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+                    {results.map((l) => (
+                      <div key={l.id} style={{ width: "calc(50% - 6px)" }}>
+                        <ListingCard listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
+                      </div>
+                    ))}
+                    {results.length === 0 && (
+                      <div style={{ width: "100%", textAlign: "center", padding: "20px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
+                        {t.noProvidersYet}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           );
         })}
-      </div>
-
-      <div style={{ padding: "12px 18px 4px", fontSize: 12.5, color: "var(--ph-text-muted)", fontWeight: 600 }}>
-        {t.listingsCount(results.length)}
-      </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: "6px 18px 24px", display: "flex", flexWrap: "wrap", gap: 12 }}>
-        {results.map((l) => (
-          <div key={l.id} style={{ width: "calc(50% - 6px)" }}>
-            <ListingCard listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={onOpen} />
-          </div>
-        ))}
-        {results.length === 0 && (
-          <div style={{ width: "100%", textAlign: "center", padding: "30px 10px", color: "var(--ph-text-muted)", fontSize: 13 }}>
-            {t.noProvidersYet}
-          </div>
-        )}
       </div>
     </div>
   );
@@ -4525,6 +4554,7 @@ export default function PronaHomeApp() {
   const [showAgenciesScreen, setShowAgenciesScreen] = useState(false);
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [loading, setLoading] = useState(true);
+  const [enteringApp, setEnteringApp] = useState(false);
   const [debugBanner, setDebugBanner] = useState(null);
   const [toast, setToast] = useState(null);
   useEffect(() => {
@@ -4750,11 +4780,17 @@ export default function PronaHomeApp() {
   };
 
   const completeOnboarding = async (p) => {
+    setEnteringApp(true);
+    const start = Date.now();
     const withMeta = { ...p, createdAt: new Date().toISOString() };
     setProfile(withMeta);
     await savePersonal("profile", withMeta);
+    const elapsed = Date.now() - start;
+    setTimeout(() => setEnteringApp(false), Math.max(0, 2000 - elapsed));
   };
   const onLoginWithSession = async (session, profileData) => {
+    setEnteringApp(true);
+    const loginStart = Date.now();
     setUserId(session.user.id);
     setProfile(profileData);
     setGuestMode(false);
@@ -4773,8 +4809,14 @@ export default function PronaHomeApp() {
       setNotifications(notifs);
       setMessages(msgs);
     } catch (e) { console.error(e); }
+    const elapsed = Date.now() - loginStart;
+    setTimeout(() => setEnteringApp(false), Math.max(0, 2000 - elapsed));
   };
-  const continueAsGuest = () => setGuestMode(true);
+  const continueAsGuest = () => {
+    setEnteringApp(true);
+    setGuestMode(true);
+    setTimeout(() => setEnteringApp(false), 2000);
+  };
   const requireAuth = (action) => {
     if (profile) action();
     else setShowGuestPrompt(true);
@@ -4915,7 +4957,7 @@ export default function PronaHomeApp() {
               </button>
             </div>
           )}
-          {loading ? (
+          {loading || enteringApp ? (
             <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10 }}>
               <BrandMark size={34} />
               <Loader2 size={20} color={"var(--ph-accent)"} className="spin" />

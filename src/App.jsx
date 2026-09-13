@@ -2893,9 +2893,14 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
         <h1 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 21, fontWeight: 700, color: "var(--ph-text)", margin: "12px 0 4px", lineHeight: 1.25 }}>
           {listing.title}
         </h1>
-        <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--ph-text-muted)", fontSize: 13.5, marginBottom: 10 }}>
-          <MapPin size={13} /> {listing.area}, {listing.city}
+        <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--ph-text-muted)", fontSize: 13.5, marginBottom: 14 }}>
+          <MapPin size={13} /> {listing.area && listing.area !== "-" ? `${listing.area}, ` : ""}{listing.city}
         </div>
+
+        <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 26, fontWeight: 700, color: "var(--ph-accent)", marginBottom: 16 }}>
+          {formatPrice(listing, t)}
+        </div>
+
         {listing.address && (
           <a
             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${listing.address} ${listing.addressNumber || ""} ${listing.city || ""}`.trim())}`}
@@ -2903,7 +2908,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             style={{
               display: "flex", alignItems: "center", gap: 10, color: "var(--ph-text)", fontWeight: 600, fontSize: 13,
               textDecoration: "none", background: "var(--ph-surface)", border: "1px solid var(--ph-border)",
-              borderRadius: 12, padding: "10px 12px", marginBottom: 14,
+              borderRadius: 12, padding: "10px 12px", marginBottom: 18,
             }}
           >
             <div style={{ width: 28, height: 28, borderRadius: 8, background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -2913,24 +2918,6 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             <ChevronLeft size={14} color="var(--ph-text-muted)" style={{ transform: "rotate(180deg)", flexShrink: 0 }} />
           </a>
         )}
-
-        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 18, flexWrap: "wrap", background: "var(--ph-surface)", border: "1px solid var(--ph-border)", borderRadius: 12, padding: "10px 14px" }}>
-          {listing.created_at && (
-            <span style={{ fontSize: 11.5, color: "var(--ph-text-muted)" }}>
-              {t.postedOn(formatShortDate(listing.created_at, lang))}
-            </span>
-          )}
-          <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11.5, color: "var(--ph-accent)", fontWeight: 600 }}>
-            <Eye size={13} /> {listing.views || 0}
-          </span>
-          <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11.5, color: "var(--ph-accent)", fontWeight: 600 }}>
-            <Heart size={13} /> {listing.saves || 0}
-          </span>
-        </div>
-
-        <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 26, fontWeight: 700, color: "var(--ph-accent)", marginBottom: 16 }}>
-          {formatPrice(listing, t)}
-        </div>
 
         <div style={{ display: "flex", gap: 10, marginBottom: 18 }}>
           <div style={{ flex: 1, background: "var(--ph-surface)", borderRadius: 12, padding: "10px 8px", textAlign: "center", border: "1px solid var(--ph-border)" }}>
@@ -2950,6 +2937,20 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             <div style={{ fontSize: 13, fontWeight: 700, color: "var(--ph-text)" }}>{listing.floor}</div>
             <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)" }}>{t.floorStat}</div>
           </div>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 18, flexWrap: "wrap" }}>
+          {listing.created_at && (
+            <span style={{ fontSize: 11, color: "var(--ph-text-muted)" }}>
+              {t.postedOn(formatShortDate(listing.created_at, lang))}
+            </span>
+          )}
+          <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: "var(--ph-text-muted)" }}>
+            <Eye size={12} /> {listing.views || 0}
+          </span>
+          <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: "var(--ph-text-muted)" }}>
+            <Heart size={12} /> {listing.saves || 0}
+          </span>
         </div>
 
         <div style={{ marginBottom: 18 }}>

@@ -3182,18 +3182,31 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
       <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: 18, display: "flex", flexDirection: "column" }}>
         <SettingsSection title={t.categoryLabel}>
           <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
-            {(!form.cat || !BUSINESS_CARD_CATS.includes(form.cat)) && (
+            {(!form.cat || (!BUSINESS_CARD_CATS.includes(form.cat) && form.cat !== "hotel")) && (
               <div>
                 <label style={labelStyle}>{t.providerGroupRealEstate}</label>
                 <select
                   style={inputStyle}
-                  value={!BUSINESS_CARD_CATS.includes(form.cat) ? form.cat : ""}
+                  value={(!BUSINESS_CARD_CATS.includes(form.cat) && form.cat !== "hotel") ? form.cat : ""}
                   onChange={(e) => { if (e.target.value) setForm((f) => ({ ...f, cat: e.target.value })); }}
                 >
-                  {!(form.cat && !BUSINESS_CARD_CATS.includes(form.cat)) && <option value="">{t.chooseOption}</option>}
-                  {categories.filter((c) => !BUSINESS_CARD_CATS.includes(c.id)).map((c) => (
+                  {!(form.cat && !BUSINESS_CARD_CATS.includes(form.cat) && form.cat !== "hotel") && <option value="">{t.chooseOption}</option>}
+                  {categories.filter((c) => !BUSINESS_CARD_CATS.includes(c.id) && c.id !== "hotel").map((c) => (
                     <option key={c.id} value={c.id}>{c.label}</option>
                   ))}
+                </select>
+              </div>
+            )}
+            {isAgencyAccount && (!form.cat || form.cat === "hotel") && (
+              <div>
+                <label style={labelStyle}>{t.catHotel}</label>
+                <select
+                  style={inputStyle}
+                  value={form.cat === "hotel" ? "hotel" : ""}
+                  onChange={(e) => { if (e.target.value) setForm((f) => ({ ...f, cat: e.target.value })); }}
+                >
+                  {form.cat !== "hotel" && <option value="">{t.chooseOption}</option>}
+                  <option value="hotel">{t.catHotel}</option>
                 </select>
               </div>
             )}
@@ -5024,8 +5037,23 @@ export default function PronaHomeApp() {
   };
   const saveProfileEdit = async (p) => {
     setProfile(p);
-    if (SUPABASE_CONFIGURED && userId) await saveProfileRemote(userId, p);
-    else await savePersonal("profile", p);
+    if (SUPABASE_CONFIGURED && userId) {
+      await saveProfileRemote(userId, p);
+      // Keep the contact details on this user's own property listings in
+      // sync with their profile, so an updated phone/email applies
+      // retroactively too — not just to listings published from now on.
+      // Business-card listings (Möbel, Handwerker, Architekt, ...) are left
+      // untouched since those intentionally represent a specific contact
+      // that may differ from the account holder's own profile.
+      const myOwnPropertyListings = listings.filter((l) => l.owner_id === userId && !BUSINESS_CARD_CATS.includes(l.cat));
+      if (myOwnPropertyListings.length) {
+        const updated = myOwnPropertyListings.map((l) => ({ ...l, contactPhone: p.phone || "", contactEmail: p.email || "" }));
+        setListings((prev) => prev.map((l) => updated.find((u) => u.id === l.id) || l));
+        Promise.all(updated.map((l) => saveListingRemote(l))).catch((e) => console.error("sync listing contact failed", e));
+      }
+    } else {
+      await savePersonal("profile", p);
+    }
   };
   const updateAvatar = async (dataUrl) => {
     const prevProfile = profile;

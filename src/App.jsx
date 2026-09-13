@@ -4555,6 +4555,24 @@ export default function PronaHomeApp() {
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [loading, setLoading] = useState(true);
   const [enteringApp, setEnteringApp] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [splashLeaving, setSplashLeaving] = useState(false);
+  const MIN_SPLASH_MS = 1400;
+  const SPLASH_EXIT_MS = 420;
+  const finishEntering = () => {
+    setSplashLeaving(true);
+    setTimeout(() => {
+      setEnteringApp(false);
+      setSplashLeaving(false);
+    }, SPLASH_EXIT_MS);
+  };
+  const finishLogout = () => {
+    setSplashLeaving(true);
+    setTimeout(() => {
+      setLoggingOut(false);
+      setSplashLeaving(false);
+    }, SPLASH_EXIT_MS);
+  };
   const [debugBanner, setDebugBanner] = useState(null);
   const [toast, setToast] = useState(null);
   useEffect(() => {
@@ -4786,7 +4804,7 @@ export default function PronaHomeApp() {
     setProfile(withMeta);
     await savePersonal("profile", withMeta);
     const elapsed = Date.now() - start;
-    setTimeout(() => setEnteringApp(false), Math.max(0, 2000 - elapsed));
+    setTimeout(finishEntering, Math.max(0, MIN_SPLASH_MS - elapsed));
   };
   const onLoginWithSession = async (session, profileData) => {
     setEnteringApp(true);
@@ -4810,12 +4828,12 @@ export default function PronaHomeApp() {
       setMessages(msgs);
     } catch (e) { console.error(e); }
     const elapsed = Date.now() - loginStart;
-    setTimeout(() => setEnteringApp(false), Math.max(0, 2000 - elapsed));
+    setTimeout(finishEntering, Math.max(0, MIN_SPLASH_MS - elapsed));
   };
   const continueAsGuest = () => {
     setEnteringApp(true);
     setGuestMode(true);
-    setTimeout(() => setEnteringApp(false), 2000);
+    setTimeout(finishEntering, MIN_SPLASH_MS);
   };
   const requireAuth = (action) => {
     if (profile) action();
@@ -4852,12 +4870,16 @@ export default function PronaHomeApp() {
     await savePersonal("accent", id);
   };
   const logout = async () => {
+    setLoggingOut(true);
+    const start = Date.now();
     if (SUPABASE_CONFIGURED) await signOutRemote();
     setProfile(null);
     setUserId(null);
     setFavorites(new Set());
     setMyIds(new Set());
     await deletePersonal("profile");
+    const elapsed = Date.now() - start;
+    setTimeout(finishLogout, Math.max(0, MIN_SPLASH_MS - elapsed));
   };
   const deleteAccount = async () => {
     setShowAccount(false);
@@ -4918,8 +4940,29 @@ export default function PronaHomeApp() {
           @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
           .splash-in { animation: splashIn 0.7s ease-out; }
           @keyframes splashIn {
-            from { opacity: 0; transform: scale(0.9) translateY(6px); }
+            from { opacity: 0; transform: scale(0.94) translateY(6px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
+          }
+          .splash-out { animation: splashOut 0.42s ease-in forwards; }
+          @keyframes splashOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(1.03); }
+          }
+          .app-fade-in { animation: appFadeIn 0.5s ease-out; }
+          @keyframes appFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .shine-wrap { position: relative; display: inline-block; overflow: hidden; }
+          .shine-sweep {
+            position: absolute; top: 0; left: -60%; width: 45%; height: 100%;
+            background: linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.85) 50%, transparent 100%);
+            transform: skewX(-18deg); pointer-events: none;
+            animation: shineSweep 1s ease-in-out 0.45s 1;
+          }
+          @keyframes shineSweep {
+            from { left: -60%; }
+            to { left: 130%; }
           }
           .dual-thumb {
             position: absolute; left: 0; top: 0; width: 100%; margin: 0;
@@ -4963,19 +5006,29 @@ export default function PronaHomeApp() {
             </div>
           )}
           {loading || enteringApp ? (
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, background: "var(--ph-bg)" }}>
+            <div className={splashLeaving ? "splash-out" : undefined} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, background: "var(--ph-bg)" }}>
               <div className="splash-in" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
                 <BrandMark size={62} />
-                <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 25, color: "var(--ph-text)" }}>
+                <div className="shine-wrap" style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 25, color: "var(--ph-text)" }}>
                   Prona<span style={{ color: "var(--ph-accent)" }}>Home</span>
+                  <span className="shine-sweep" />
                 </div>
                 <div style={{ fontSize: 13, color: "var(--ph-text-muted)" }}>{t.tagline}</div>
+              </div>
+            </div>
+          ) : loggingOut ? (
+            <div className={splashLeaving ? "splash-out" : undefined} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, background: "var(--ph-bg)" }}>
+              <div className="splash-in" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+                <BrandMark size={62} />
+                <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 20, color: "var(--ph-text)" }}>
+                  Bis bald 😊
+                </div>
               </div>
             </div>
           ) : !profile && !guestMode ? (
             <OnboardingScreen onSubmit={completeOnboarding} onLoginWithSession={onLoginWithSession} onContinueAsGuest={continueAsGuest} />
           ) : (
-            <>
+            <div className="app-fade-in" style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
               {tab === "kerko" && (
                 <SearchScreen
                   listings={listings} favorites={favorites} toggleFav={toggleFav} onOpen={openListingDetail}
@@ -5085,7 +5138,7 @@ export default function PronaHomeApp() {
                   onOpen={openListingDetail} onBack={() => setShowAgenciesScreen(false)}
                 />
               )}
-            </>
+            </div>
           )}
         </div>
       </div>

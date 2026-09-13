@@ -205,7 +205,7 @@ const STRINGS = {
     agencyFieldLabel: "Ofertuesi", agencyFieldPlaceholder: "Privat, ose emri i agjencisë tënde",
     agencyFieldHint: "Lëre 'Privat' nëse shet/jep me qira si individ. Nëse shkruan një emër të ri agjencie, ai do të shfaqet automatikisht te 'Ofertuesit'.",
     agencyFieldLockedHint: "Vetëm llogaritë e regjistruara si 'Agjenci' mund të shpallin nën një emër tjetër. Ndrysho këtë te 'Ndrysho profilin'.",
-    requiredError: "Plotëso të paktën titullin, çmimin, sipërfaqen dhe qytetin.",
+    requiredError: "Plotëso të paktën kategorinë, titullin, çmimin, sipërfaqen, qytetin dhe telefonin ose email-in.",
     publishBtn: "Publiko shpalljen", publishing: "Duke publikuar...",
     contactAgent: "Kontakto agjentin", descriptionLabel: "Përshkrimi", featuresLabel: "Karakteristikat",
     sectionPriceSize: "Çmimi & Madhësia", sectionProviderInfo: "Ofertuesi",
@@ -363,7 +363,7 @@ const STRINGS = {
     agencyFieldLabel: "Anbieter", agencyFieldPlaceholder: "Privat, oder der Name deiner Agentur",
     agencyFieldHint: "Lass 'Privat' stehen, wenn du als Privatperson anbietest. Gibst du einen neuen Agenturnamen ein, erscheint er automatisch unter 'Anbieter'.",
     agencyFieldLockedHint: "Nur Konten mit Kontotyp 'Agentur' können unter einem anderen Namen inserieren. Umstellbar unter 'Profil bearbeiten'.",
-    requiredError: "Fülle mindestens Titel, Preis, Fläche und Stadt aus.",
+    requiredError: "Fülle mindestens Kategorie, Titel, Preis, Fläche, Stadt sowie Telefon oder E-Mail aus.",
     publishBtn: "Anzeige veröffentlichen", publishing: "Wird veröffentlicht...",
     contactAgent: "Makler kontaktieren", descriptionLabel: "Beschreibung", featuresLabel: "Merkmale",
     sectionPriceSize: "Preis & Größe", sectionProviderInfo: "Anbieter",
@@ -521,7 +521,7 @@ const STRINGS = {
     agencyFieldLabel: "Provider", agencyFieldPlaceholder: "Private, or your agency's name",
     agencyFieldHint: "Leave 'Private' if you're listing as an individual. Enter a new agency name and it will automatically appear under 'Providers'.",
     agencyFieldLockedHint: "Only accounts registered as 'Agency' can list under a different name. Switch this under 'Edit profile'.",
-    requiredError: "Fill in at least the title, price, area and city.",
+    requiredError: "Fill in at least the category, title, price, area, city, and phone or email.",
     publishBtn: "Publish listing", publishing: "Publishing...",
     contactAgent: "Contact agent", descriptionLabel: "Description", featuresLabel: "Features",
     sectionPriceSize: "Price & Size", sectionProviderInfo: "Provider",
@@ -2945,15 +2945,31 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
         </div>
       </div>
 
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "linear-gradient(180deg, rgba(246,242,234,0) 0%, #F6F2EA 22%)" }}>
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "linear-gradient(180deg, rgba(246,242,234,0) 0%, #F6F2EA 22%)", display: "flex", flexDirection: "column", gap: 8 }}>
+        {listing.contactPhone && (
+          <button
+            onClick={() => (window.location.href = `tel:${listing.contactPhone}`)}
+            style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
+          >
+            <Phone size={16} /> {t.callBtn}
+          </button>
+        )}
+        {listing.contactEmail && (
+          <button
+            onClick={() => (window.location.href = `mailto:${listing.contactEmail}`)}
+            style={{ width: "100%", background: listing.contactPhone ? "var(--ph-accent-light)" : NAVY, color: listing.contactPhone ? "var(--ph-text)" : "#fff", border: "none", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
+          >
+            <Mail size={16} /> {t.emailBtn}
+          </button>
+        )}
         {!isMine && listing.owner_id && (
           <button
             onClick={onContactAgent}
             style={{
-            width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0",
-            fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer",
+            width: "100%", background: "transparent", color: "var(--ph-accent)", border: "1.5px solid var(--ph-accent)", borderRadius: 12, padding: "13px 0",
+            fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer",
           }}>
-            <Send size={16} /> {t.contactAgent}
+            <Send size={15} /> {t.contactAgent}
           </button>
         )}
       </div>
@@ -3018,7 +3034,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
     contactFirstName: editingListing.contactFirstName || "", contactLastName: editingListing.contactLastName || "",
     contactPhone: editingListing.contactPhone || "", contactEmail: editingListing.contactEmail || "", contactCountry: editingListing.contactCountry || "XK",
   } : {
-    title: "", cat: "banesa", type: "Shitje", city: CITIES_LIST[0], area: "", address: "", addressNumber: "",
+    title: "", cat: "", type: "Shitje", city: CITIES_LIST[0], area: "", address: "", addressNumber: "",
     price: "", m2: "", rooms: "", floor: "", desc: "", tags: "", agency: "Privat",
     contactFirstName: "", contactLastName: "", contactPhone: "", contactEmail: "", contactCountry: "XK",
   });
@@ -3035,7 +3051,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
   const NO_M2_CATS = ["mobilje", "zejtar", "arkitekt", "statike"];
   const canSubmit = isBusinessCard
     ? form.contactFirstName.trim() && form.contactLastName.trim() && (form.contactPhone.trim() || form.contactEmail.trim())
-    : form.title.trim() && form.price && form.city && (NO_M2_CATS.includes(form.cat) || form.m2);
+    : form.cat.trim() && form.title.trim() && form.price && form.city && (NO_M2_CATS.includes(form.cat) || form.m2) && (form.contactPhone.trim() || form.contactEmail.trim());
 
   const handleImagePick = async (e) => {
     const files = Array.from(e.target.files || []).slice(0, isBusinessCard ? 1 : MAX_IMAGES - images.length);
@@ -3075,6 +3091,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
       rooms: Number(form.rooms) || 0, floor: form.floor.trim() || "-",
       desc: form.desc.trim() || "", tags: form.tags.split(",").map((x) => x.trim()).filter(Boolean),
       images, image: images[0] || null, agency: isAgencyAccount ? (form.agency.trim() || "Privat") : "Privat",
+      contactPhone: form.contactPhone.trim() ? `${selectedContactCountry.dial} ${form.contactPhone.trim()}` : "", contactEmail: form.contactEmail.trim(),
     };
     if (isEditing) newListing.owner_id = editingListing.owner_id;
     try {
@@ -3107,7 +3124,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                 value={!BUSINESS_CARD_CATS.includes(form.cat) ? form.cat : ""}
                 onChange={(e) => { if (e.target.value) setForm((f) => ({ ...f, cat: e.target.value })); }}
               >
-                {BUSINESS_CARD_CATS.includes(form.cat) && <option value="">{t.chooseOption}</option>}
+                {!(form.cat && !BUSINESS_CARD_CATS.includes(form.cat)) && <option value="">{t.chooseOption}</option>}
                 {categories.filter((c) => !BUSINESS_CARD_CATS.includes(c.id)).map((c) => (
                   <option key={c.id} value={c.id}>{c.label}</option>
                 ))}
@@ -3402,6 +3419,31 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
               </datalist>
               <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)", marginTop: 8 }}>
                 {isAgencyAccount ? t.agencyFieldHint : t.agencyFieldLockedHint}
+              </div>
+            </div>
+          </SettingsSection>
+
+          <SettingsSection title={t.contactInfoLabel}>
+            <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
+              <div>
+                <label style={labelStyle}>{t.countryLabel}</label>
+                <div style={{ marginBottom: 8 }}>
+                  <CountryTypeahead value={form.contactCountry} onChange={(v) => setForm((f) => ({ ...f, contactCountry: v }))} placeholder={t.countryLabel} />
+                </div>
+                <label style={labelStyle}>{t.phoneLabel}</label>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <div style={{
+                    display: "flex", alignItems: "center", gap: 5, padding: "0 12px", borderRadius: 12,
+                    border: "1px solid var(--ph-border)", background: "var(--ph-surface)", color: "var(--ph-text)", fontSize: 13.5, flexShrink: 0,
+                  }}>
+                    {flagEmoji(selectedContactCountry.code)} {selectedContactCountry.dial}
+                  </div>
+                  <input style={{ ...inputStyle, flex: 1 }} type="tel" value={form.contactPhone} onChange={set("contactPhone")} placeholder={t.phoneLocalPlaceholder} />
+                </div>
+              </div>
+              <div>
+                <label style={labelStyle}>{t.onboardEmailLabel}</label>
+                <input style={inputStyle} type="email" value={form.contactEmail} onChange={set("contactEmail")} placeholder={t.onboardEmailPlaceholder} />
               </div>
             </div>
           </SettingsSection>
@@ -5058,7 +5100,7 @@ export default function PronaHomeApp() {
               <div className="splash-in" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
                 <BrandMark size={62} />
                 <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 20, color: "var(--ph-text)" }}>
-                  Bis bald 😊
+                  Bis bald
                 </div>
               </div>
             </div>

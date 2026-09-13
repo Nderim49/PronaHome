@@ -3,7 +3,7 @@ import {
   Search, Heart, Bell, User, MapPin, ChevronLeft, SlidersHorizontal,
   BedDouble, Maximize2, Phone, Building2, Home as HomeIcon, KeyRound,
   Warehouse, Trees, Landmark, X, Check, Plus, Trash2, Loader2, Mail, LogOut, Pencil,
-  Camera, Globe, Hotel, Briefcase, Users, Car, Building, Store, Factory, UtensilsCrossed, Wrench, Download, Eye, Send
+  Camera, Globe, Hotel, Briefcase, Users, Car, Building, Store, Factory, UtensilsCrossed, Wrench, Download, Eye, Send, EyeOff
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -69,10 +69,16 @@ const STRINGS = {
     continueAsGuestBtn: "Vazhdo si vizitor", orDividerLabel: "OSE", guestPromptTitle: "Nevojitet regjistrimi",
     passwordLabel: "Fjalëkalimi", passwordPlaceholder: "Të paktën 6 shkronja/shifra",
     setPasswordHint: "Vendos një fjalëkalim për t'u kyçur më shpejt herën tjetër.",
+    confirmPasswordLabel: "Përsërit fjalëkalimin", passwordMismatchError: "Fjalëkalimet nuk përputhen.",
+    capsLockWarning: "Shkronjat e mëdha (Caps Lock) janë aktive.",
     passwordTooShortError: "Fjalëkalimi duhet të ketë të paktën 6 shkronja/shifra.",
     companyRequiredError: "Shkruaj emrin e kompanisë ose zgjidh 'Individ'.",
     companyLockedHint: "E kyçur gjatë regjistrimit. Mund ta ndryshosh më vonë te 'Ndrysho profilin', duke kaluar në 'Agjenci'.",
     forgotCodeLink: "Hyr me kod në vend të kësaj", backToStart: "Kthehu",
+    forgotPasswordLink: "Ke harruar fjalëkalimin?",
+    forgotPasswordHint: "Shkruaj email-in tënd — do të dërgojmë një kod për ta rivendosur fjalëkalimin.",
+    newPasswordHint: "Kodi u konfirmua. Vendos një fjalëkalim të ri për llogarinë tënde.",
+    newPasswordLabel: "Fjalëkalimi i ri", setNewPasswordBtn: "Ruaj fjalëkalimin e ri",
     firstNameLabel: "Emri", firstNamePlaceholder: "p.sh. Arben", lastNameLabel: "Mbiemri", lastNamePlaceholder: "p.sh. Leka",
     dobLabel: "Data e lindjes", countryLabel: "Shteti", cityFreeTextPlaceholder: "p.sh. Prishtinë", phoneLocalPlaceholder: "44 123 456",
     guestPromptMessage: "Për të ruajtur një pronë, kontaktuar agjentin, ose publikuar një shpallje, duhet së pari të regjistrohesh ose të kyçesh.",
@@ -107,7 +113,7 @@ const STRINGS = {
     catGarazhe: "Garazhë / Vende Parkimi", catZyre: "Zyre", catShitjePakice: "Shitje me Pakicë",
     catHale: "Halle / Prodhimi", catGastronomi: "Gastronomi / Hotel", catBiznesSpecial: "Biznes i Veçantë",
     hotelOwnerBtn: "Hotele & Fjetje", hotelOwnerHint: "Shiko të gjitha hotelet, motelet dhe shtëpitë e pushimit",
-    propertyOwnerHint: "Shpallje nga individë privatë dhe agjenci imobiliare",
+    propertyOwnerHint: "Nga privatë dhe agjenci",
     hotelScreenTitle: "Hotele & Fjetje", hotelScreenSubtitle: "Zgjidh qytetin dhe vendbanimin për të gjetur fjetjen ideale",
     propertyScreenTitle: "Patundshmëri",
     agenciesBtn: "Profesionistët", agenciesHint: "Gjej ekspertin e duhur për shtëpinë tënde", agentSellerLabel: "Agjenci",
@@ -168,6 +174,9 @@ const STRINGS = {
     newListingsAlerts: "Shpallje të reja në kërkimet e mia", newListingsAlertsHint: "Kur shtohen prona të reja që përputhen me kërkimet",
     sectionDesign: "Dizajni", darkModeLabel: "Pamja e errët", darkModeHint: "Ngjyra më të errëta për sytë natën", comingSoon: "Së shpejti",
     accentColorLabel: "Ngjyra kryesore", accentColorHint: "Zgjidh ngjyrën e theksit për butonat dhe elementet aktive",
+    sectionSecurity: "Siguria", changePasswordRow: "Ndrysho fjalëkalimin", changePasswordHint: "Vendos një fjalëkalim të ri",
+    currentPasswordLabel: "Fjalëkalimi aktual", currentPasswordRequiredError: "Shkruaj fjalëkalimin aktual.",
+    currentPasswordWrongError: "Fjalëkalimi aktual është i pasaktë.",
     sectionPrivacy: "Privatësia", shareLocationLabel: "Ndaj vendndodhjen time", shareLocationHint: "Për rezultate më të sakta pranë teje",
     analyticsLabel: "Analitika për përmirësim", analyticsHint: "Ndihmon PronaHome të përmirësohet",
     privacyPolicyLink: "Politika e Privatësisë", termsLink: "Kushtet e Përdorimit",
@@ -215,10 +224,16 @@ const STRINGS = {
     continueAsGuestBtn: "Als Gast fortfahren", orDividerLabel: "ODER", guestPromptTitle: "Anmeldung erforderlich",
     passwordLabel: "Passwort", passwordPlaceholder: "Mindestens 6 Zeichen",
     setPasswordHint: "Lege ein Passwort fest, um dich nächstes Mal schneller anzumelden.",
+    confirmPasswordLabel: "Passwort wiederholen", passwordMismatchError: "Die Passwörter stimmen nicht überein.",
+    capsLockWarning: "Feststelltaste (Caps Lock) ist aktiviert.",
     passwordTooShortError: "Das Passwort muss mindestens 6 Zeichen haben.",
     companyRequiredError: "Gib den Firmennamen ein oder wähle 'Privatperson'.",
     companyLockedHint: "Bei der Registrierung gesperrt. Später unter 'Profil bearbeiten' auf 'Agentur' umstellbar.",
     forgotCodeLink: "Stattdessen mit Code anmelden", backToStart: "Zurück",
+    forgotPasswordLink: "Passwort vergessen?",
+    forgotPasswordHint: "Gib deine E-Mail-Adresse ein — wir schicken dir einen Code, um dein Passwort zurückzusetzen.",
+    newPasswordHint: "Code bestätigt. Lege jetzt ein neues Passwort für dein Konto fest.",
+    newPasswordLabel: "Neues Passwort", setNewPasswordBtn: "Neues Passwort speichern",
     firstNameLabel: "Vorname", firstNamePlaceholder: "z. B. Anna", lastNameLabel: "Nachname", lastNamePlaceholder: "z. B. Müller",
     dobLabel: "Geburtsdatum", countryLabel: "Land", cityFreeTextPlaceholder: "z. B. Berlin", phoneLocalPlaceholder: "151 12345678",
     guestPromptMessage: "Um eine Immobilie zu speichern, den Makler zu kontaktieren oder eine Anzeige zu veröffentlichen, musst du dich zuerst registrieren oder anmelden.",
@@ -253,7 +268,7 @@ const STRINGS = {
     catGarazhe: "Garage/Stellplatz", catZyre: "Büro", catShitjePakice: "Einzelhandel",
     catHale: "Halle/Produktion", catGastronomi: "Gastronomie/Hotel", catBiznesSpecial: "Spezialgewerbe",
     hotelOwnerBtn: "Hotels & Unterkünfte", hotelOwnerHint: "Alle Hotels, Motels und Ferienhäuser ansehen",
-    propertyOwnerHint: "Anzeigen von Privatpersonen und Immobilienagenturen",
+    propertyOwnerHint: "Von privat und Agenturen",
     hotelScreenTitle: "Hotels & Unterkünfte", hotelScreenSubtitle: "Wähle Stadt und Ortschaft, um die passende Unterkunft zu finden",
     propertyScreenTitle: "Immobilien",
     agenciesBtn: "Fachleute", agenciesHint: "Finde die passenden Experten für dein Zuhause", agentSellerLabel: "Makler",
@@ -314,6 +329,9 @@ const STRINGS = {
     newListingsAlerts: "Neue Anzeigen für meine Suchen", newListingsAlertsHint: "Wenn neue passende Immobilien hinzukommen",
     sectionDesign: "Design", darkModeLabel: "Dunkler Modus", darkModeHint: "Dunklere Farben, angenehmer bei Nacht", comingSoon: "Demnächst",
     accentColorLabel: "Akzentfarbe", accentColorHint: "Wähle die Farbe für Buttons und aktive Elemente",
+    sectionSecurity: "Sicherheit", changePasswordRow: "Passwort ändern", changePasswordHint: "Lege ein neues Passwort fest",
+    currentPasswordLabel: "Aktuelles Passwort", currentPasswordRequiredError: "Gib dein aktuelles Passwort ein.",
+    currentPasswordWrongError: "Das aktuelle Passwort ist falsch.",
     sectionPrivacy: "Datenschutz", shareLocationLabel: "Meinen Standort teilen", shareLocationHint: "Für genauere Ergebnisse in deiner Nähe",
     analyticsLabel: "Analytik zur Verbesserung", analyticsHint: "Hilft PronaHome, sich zu verbessern",
     privacyPolicyLink: "Datenschutzerklärung", termsLink: "Nutzungsbedingungen",
@@ -361,10 +379,16 @@ const STRINGS = {
     continueAsGuestBtn: "Continue as guest", orDividerLabel: "OR", guestPromptTitle: "Sign-in required",
     passwordLabel: "Password", passwordPlaceholder: "At least 6 characters",
     setPasswordHint: "Set a password to log in faster next time.",
+    confirmPasswordLabel: "Confirm password", passwordMismatchError: "Passwords don't match.",
+    capsLockWarning: "Caps Lock is on.",
     passwordTooShortError: "Password must be at least 6 characters.",
     companyRequiredError: "Enter the company name or choose 'Individual'.",
     companyLockedHint: "Locked during registration. You can switch to 'Agency' later under 'Edit profile'.",
     forgotCodeLink: "Sign in with code instead", backToStart: "Back",
+    forgotPasswordLink: "Forgot password?",
+    forgotPasswordHint: "Enter your email — we'll send you a code to reset your password.",
+    newPasswordHint: "Code confirmed. Set a new password for your account.",
+    newPasswordLabel: "New password", setNewPasswordBtn: "Save new password",
     firstNameLabel: "First name", firstNamePlaceholder: "e.g. John", lastNameLabel: "Last name", lastNamePlaceholder: "e.g. Smith",
     dobLabel: "Date of birth", countryLabel: "Country", cityFreeTextPlaceholder: "e.g. London", phoneLocalPlaceholder: "7911 123456",
     guestPromptMessage: "To save a property, contact the agent, or publish a listing, you need to register or sign in first.",
@@ -399,7 +423,7 @@ const STRINGS = {
     catGarazhe: "Garage/Parking Space", catZyre: "Office", catShitjePakice: "Retail",
     catHale: "Warehouse/Production", catGastronomi: "Gastronomy/Hotel", catBiznesSpecial: "Special-Purpose Commercial",
     hotelOwnerBtn: "Hotels & Stays", hotelOwnerHint: "See all hotels, motels and vacation homes",
-    propertyOwnerHint: "Listings from private sellers and real estate agencies",
+    propertyOwnerHint: "From private sellers and agencies",
     hotelScreenTitle: "Hotels & Stays", hotelScreenSubtitle: "Choose a city and settlement to find the right stay",
     propertyScreenTitle: "Real Estate",
     agenciesBtn: "Professionals", agenciesHint: "Find the right expert for your home", agentSellerLabel: "Agency",
@@ -460,6 +484,9 @@ const STRINGS = {
     newListingsAlerts: "New listings for my searches", newListingsAlertsHint: "When new matching properties are added",
     sectionDesign: "Appearance", darkModeLabel: "Dark mode", darkModeHint: "Darker colors, easier on the eyes at night", comingSoon: "Coming soon",
     accentColorLabel: "Accent color", accentColorHint: "Choose the highlight color for buttons and active elements",
+    sectionSecurity: "Security", changePasswordRow: "Change password", changePasswordHint: "Set a new password",
+    currentPasswordLabel: "Current password", currentPasswordRequiredError: "Enter your current password.",
+    currentPasswordWrongError: "The current password is incorrect.",
     sectionPrivacy: "Privacy", shareLocationLabel: "Share my location", shareLocationHint: "For more accurate results near you",
     analyticsLabel: "Analytics to improve the app", analyticsHint: "Helps PronaHome get better",
     privacyPolicyLink: "Privacy Policy", termsLink: "Terms of Use",
@@ -1370,6 +1397,14 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
   const [homeAddressNumber, setHomeAddressNumber] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [capsLockOn, setCapsLockOn] = useState(false);
+  const [forgotPasswordFlow, setForgotPasswordFlow] = useState(false);
+  const [pendingProfile, setPendingProfile] = useState(null);
+  const checkCapsLock = (e) => {
+    if (typeof e.getModifierState === "function") setCapsLockOn(e.getModifierState("CapsLock"));
+  };
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const selectedCountry = WORLD_COUNTRIES.find((c) => c.code === country) || WORLD_COUNTRIES[0];
@@ -1393,10 +1428,29 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
       const session = await verifyLoginCode(email.trim(), code.trim());
       let existingProfile = await loadProfileRemote(session.user.id);
       if (existingProfile && existingProfile.name) {
-        await onLoginWithSession(session, existingProfile);
+        if (forgotPasswordFlow) {
+          setPendingProfile(existingProfile);
+          setPassword(""); setConfirmPassword("");
+          setStep("new-password");
+        } else {
+          await onLoginWithSession(session, existingProfile);
+        }
       } else {
         setStep("reg-finish");
       }
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+  const submitNewPassword = async () => {
+    if (password.trim().length < 6) { setError(t.passwordTooShortError); return; }
+    if (password.trim() !== confirmPassword.trim()) { setError(t.passwordMismatchError); return; }
+    setError(""); setSaving(true);
+    try {
+      await setAccountPassword(password.trim());
+      await onLoginWithSession(currentSession, pendingProfile);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -1407,6 +1461,7 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
     if (!firstName.trim() || !lastName.trim()) { setError(t.onboardError); return; }
     if (accountType === "agency" && !company.trim()) { setError(t.companyRequiredError); return; }
     if (password.trim().length < 6) { setError(t.passwordTooShortError); return; }
+    if (password.trim() !== confirmPassword.trim()) { setError(t.passwordMismatchError); return; }
     setError(""); setSaving(true);
     try {
       const profile = {
@@ -1529,10 +1584,16 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
             {saving ? t.onboardSubmitting : t.loginBtn}
           </button>
           <button
-            onClick={() => { setStep("reg-email"); setError(""); }}
+            onClick={() => { setForgotPasswordFlow(false); setStep("reg-email"); setError(""); }}
             style={{ width: "100%", border: "none", background: "none", color: "var(--ph-text-muted)", fontSize: 12, marginTop: 10, cursor: "pointer" }}
           >
             {t.forgotCodeLink}
+          </button>
+          <button
+            onClick={() => { setForgotPasswordFlow(true); setStep("reg-email"); setError(""); }}
+            style={{ width: "100%", border: "none", background: "none", color: "var(--ph-accent)", fontSize: 12, fontWeight: 600, marginTop: 6, cursor: "pointer" }}
+          >
+            {t.forgotPasswordLink}
           </button>
           <button
             onClick={resetToStart}
@@ -1543,6 +1604,9 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
         </>
       ) : step === "reg-email" ? (
         <>
+          {forgotPasswordFlow && (
+            <div style={{ fontSize: 12.5, color: "var(--ph-text-muted)", marginBottom: 12 }}>{t.forgotPasswordHint}</div>
+          )}
           <div style={{ marginBottom: 8 }}>
             <label style={labelStyle}>{t.onboardEmailLabel}</label>
             <input style={inputStyle} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.onboardEmailPlaceholder} />
@@ -1582,6 +1646,38 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
             style={{ width: "100%", border: "none", background: "none", color: "var(--ph-text-muted)", fontSize: 12, marginTop: 10, cursor: "pointer" }}
           >
             {t.useAnotherEmail}
+          </button>
+        </>
+      ) : step === "new-password" ? (
+        <>
+          <div style={{ fontSize: 12.5, color: "var(--ph-text-muted)", marginBottom: 12 }}>{t.newPasswordHint}</div>
+          <label style={labelStyle}>{t.newPasswordLabel}</label>
+          <div style={{ position: "relative", marginBottom: 4 }}>
+            <input
+              style={{ ...inputStyle, paddingRight: 40 }} type={showPassword ? "text" : "password"} value={password}
+              onChange={(e) => setPassword(e.target.value)} onKeyUp={checkCapsLock} onKeyDown={checkCapsLock}
+              placeholder={t.passwordPlaceholder}
+            />
+            <button
+              type="button" onClick={() => setShowPassword((v) => !v)}
+              style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", border: "none", background: "none", cursor: "pointer", padding: 4, display: "flex" }}
+            >
+              {showPassword ? <EyeOff size={16} color="var(--ph-text-muted)" /> : <Eye size={16} color="var(--ph-text-muted)" />}
+            </button>
+          </div>
+          {capsLockOn && <div style={{ fontSize: 11, color: "#B0473C", marginBottom: 8 }}>{t.capsLockWarning}</div>}
+          <label style={{ ...labelStyle, marginTop: 4 }}>{t.confirmPasswordLabel}</label>
+          <input
+            style={inputStyle} type={showPassword ? "text" : "password"} value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)} onKeyUp={checkCapsLock} onKeyDown={checkCapsLock}
+            placeholder={t.passwordPlaceholder}
+          />
+          {error && <div style={{ color: "#B0473C", fontSize: 12.5, marginTop: 8 }}>{error}</div>}
+          <button
+            onClick={submitNewPassword} disabled={saving}
+            style={{ width: "100%", background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, marginTop: 10, cursor: saving ? "default" : "pointer", opacity: saving ? 0.7 : 1 }}
+          >
+            {saving ? t.onboardSubmitting : t.setNewPasswordBtn}
           </button>
         </>
       ) : (
@@ -1667,7 +1763,30 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
           </div>
 
           <label style={labelStyle}>{t.passwordLabel}</label>
-          <input style={inputStyle} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t.passwordPlaceholder} />
+          <div style={{ position: "relative", marginBottom: 4 }}>
+            <input
+              style={{ ...inputStyle, paddingRight: 40 }} type={showPassword ? "text" : "password"} value={password}
+              onChange={(e) => setPassword(e.target.value)} onKeyUp={checkCapsLock} onKeyDown={checkCapsLock}
+              placeholder={t.passwordPlaceholder}
+            />
+            <button
+              type="button" onClick={() => setShowPassword((v) => !v)}
+              style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", border: "none", background: "none", cursor: "pointer", padding: 4, display: "flex" }}
+            >
+              {showPassword ? <EyeOff size={16} color="var(--ph-text-muted)" /> : <Eye size={16} color="var(--ph-text-muted)" />}
+            </button>
+          </div>
+          {capsLockOn && (
+            <div style={{ fontSize: 11, color: "#B0473C", marginBottom: 8 }}>
+              {t.capsLockWarning}
+            </div>
+          )}
+          <label style={{ ...labelStyle, marginTop: 4 }}>{t.confirmPasswordLabel}</label>
+          <input
+            style={inputStyle} type={showPassword ? "text" : "password"} value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)} onKeyUp={checkCapsLock} onKeyDown={checkCapsLock}
+            placeholder={t.passwordPlaceholder}
+          />
           <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)", marginTop: 5 }}>{t.setPasswordHint}</div>
           {error && <div style={{ color: "#B0473C", fontSize: 12.5, marginTop: 8 }}>{error}</div>}
           <button
@@ -2267,7 +2386,7 @@ function SettingsRow({ label, hint, control, isLast, onClick }) {
   );
 }
 
-function SettingsScreen({ onBack, settings, onChange, onOpenPrivacy, onOpenTerms, accentId, onAccentChange }) {
+function SettingsScreen({ onBack, settings, onChange, onOpenPrivacy, onOpenTerms, accentId, onAccentChange, onOpenChangePassword }) {
   const { t } = useLang();
   const set = (key) => (val) => onChange({ ...settings, [key]: val });
   const Section = SettingsSection;
@@ -2326,6 +2445,19 @@ function SettingsScreen({ onBack, settings, onChange, onOpenPrivacy, onOpenTerms
           </div>
         </Section>
 
+        <Section title={t.sectionSecurity}>
+          <button
+            onClick={onOpenChangePassword}
+            style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", border: "none", background: "none", cursor: "pointer", textAlign: "left" }}
+          >
+            <div>
+              <div style={{ fontSize: 13.5, fontWeight: 500, color: "var(--ph-text)" }}>{t.changePasswordRow}</div>
+              <div style={{ fontSize: 11, color: "var(--ph-text-muted)" }}>{t.changePasswordHint}</div>
+            </div>
+            <ChevronLeft size={15} color="var(--ph-text-muted)" style={{ transform: "rotate(180deg)" }} />
+          </button>
+        </Section>
+
         <Section title={t.sectionPrivacy}>
           <Row label={t.shareLocationLabel} hint={t.shareLocationHint} control={<Toggle checked={settings.shareLocation} onChange={set("shareLocation")} />} />
           <Row label={t.analyticsLabel} hint={t.analyticsHint} control={<Toggle checked={settings.analytics} onChange={set("analytics")} />} isLast />
@@ -2343,6 +2475,102 @@ function SettingsScreen({ onBack, settings, onChange, onOpenPrivacy, onOpenTerms
     </div>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Change password (from Settings, while already logged in)
+// ---------------------------------------------------------------------------
+function ChangePasswordScreen({ onBack, profile, onSubmit }) {
+  const { t } = useLang();
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [capsLockOn, setCapsLockOn] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
+  const checkCapsLock = (e) => {
+    if (typeof e.getModifierState === "function") setCapsLockOn(e.getModifierState("CapsLock"));
+  };
+
+  const submit = async () => {
+    if (!currentPassword.trim()) { setError(t.currentPasswordRequiredError); return; }
+    if (newPassword.trim().length < 6) { setError(t.passwordTooShortError); return; }
+    if (newPassword.trim() !== confirmPassword.trim()) { setError(t.passwordMismatchError); return; }
+    setError(""); setSaving(true);
+    try {
+      await onSubmit(currentPassword.trim(), newPassword.trim());
+      setSaving(false);
+      setSaved(true);
+      setTimeout(onBack, 900);
+    } catch (e) {
+      setSaving(false);
+      setError(e.message || t.currentPasswordWrongError);
+    }
+  };
+
+  const eyeToggle = (
+    <button
+      type="button" onClick={() => setShowPassword((v) => !v)}
+      style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", border: "none", background: "none", cursor: "pointer", padding: 4, display: "flex" }}
+    >
+      {showPassword ? <EyeOff size={16} color="var(--ph-text-muted)" /> : <Eye size={16} color="var(--ph-text-muted)" />}
+    </button>
+  );
+
+  return (
+    <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY }}>
+        <button onClick={onBack} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
+          <ChevronLeft size={20} color="#fff" />
+        </button>
+        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{t.changePasswordRow}</span>
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", padding: 18 }}>
+        <SettingsSection title={t.changePasswordRow}>
+          <div style={{ padding: 14 }}>
+            <label style={labelStyle}>{t.currentPasswordLabel}</label>
+            <div style={{ position: "relative", marginBottom: 12 }}>
+              <input
+                style={{ ...inputStyle, paddingRight: 40 }} type={showPassword ? "text" : "password"} value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)} onKeyUp={checkCapsLock} onKeyDown={checkCapsLock}
+                placeholder={t.passwordPlaceholder}
+              />
+              {eyeToggle}
+            </div>
+            <label style={labelStyle}>{t.newPasswordLabel}</label>
+            <input
+              style={{ ...inputStyle, marginBottom: 4 }} type={showPassword ? "text" : "password"} value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)} onKeyUp={checkCapsLock} onKeyDown={checkCapsLock}
+              placeholder={t.passwordPlaceholder}
+            />
+            {capsLockOn && <div style={{ fontSize: 11, color: "#B0473C", marginBottom: 8 }}>{t.capsLockWarning}</div>}
+            <label style={labelStyle}>{t.confirmPasswordLabel}</label>
+            <input
+              style={inputStyle} type={showPassword ? "text" : "password"} value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)} onKeyUp={checkCapsLock} onKeyDown={checkCapsLock}
+              placeholder={t.passwordPlaceholder}
+            />
+          </div>
+        </SettingsSection>
+        {error && <div style={{ color: "#B0473C", fontSize: 12.5 }}>{error}</div>}
+      </div>
+      <div style={{ padding: "12px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "var(--ph-surface)", borderTop: "1px solid var(--ph-border)" }}>
+        <button
+          onClick={submit} disabled={saving || saved}
+          style={{
+            width: "100%", background: saved ? "#2F7A56" : NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "13px 0",
+            fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: (saving || saved) ? "default" : "pointer", opacity: saving ? 0.7 : 1,
+            transition: "background 0.15s",
+          }}
+        >
+          {saved ? t.savedConfirmation : saving ? t.saving : t.setNewPasswordBtn}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 
 // ---------------------------------------------------------------------------
 // Listing card
@@ -3547,7 +3775,7 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
           style={{
             width: "100%", display: "flex", alignItems: "center", gap: 10, textAlign: "left",
             background: `linear-gradient(135deg, ${NAVY} 0%, #4A6FA5 140%)`, border: "none", borderRadius: 14,
-            padding: "12px 14px", cursor: "pointer", minHeight: 66,
+            padding: "12px 14px", cursor: "pointer", height: 66, overflow: "hidden",
           }}
         >
           <div style={{ width: 34, height: 34, borderRadius: 10, background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -3555,7 +3783,7 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
           </div>
           <div>
             <div style={{ color: "#fff", fontSize: 13, fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>{t.propertyScreenTitle}</div>
-            <div style={{ color: "rgba(255,255,255,0.85)", fontSize: 11 }}>{t.propertyOwnerHint}</div>
+            <div style={{ color: "rgba(255,255,255,0.85)", fontSize: 11, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.propertyOwnerHint}</div>
           </div>
         </button>
       </div>
@@ -3566,7 +3794,7 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
           style={{
             width: "100%", display: "flex", alignItems: "center", gap: 10, textAlign: "left",
             background: "linear-gradient(135deg, #7A4A9E 0%, #C6963E 140%)", border: "none", borderRadius: 14,
-            padding: "12px 14px", cursor: "pointer", minHeight: 66,
+            padding: "12px 14px", cursor: "pointer", height: 66, overflow: "hidden",
           }}
         >
           <div style={{ width: 34, height: 34, borderRadius: 10, background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -3574,7 +3802,7 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
           </div>
           <div>
             <div style={{ color: "#fff", fontSize: 13, fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>{t.hotelOwnerBtn}</div>
-            <div style={{ color: "rgba(255,255,255,0.85)", fontSize: 11 }}>{t.hotelOwnerHint}</div>
+            <div style={{ color: "rgba(255,255,255,0.85)", fontSize: 11, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.hotelOwnerHint}</div>
           </div>
         </button>
       </div>
@@ -3585,7 +3813,7 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
           style={{
             width: "100%", display: "flex", alignItems: "center", gap: 10, textAlign: "left",
             background: "linear-gradient(135deg, #2C4270 0%, #4A6FA5 140%)", border: "none", borderRadius: 14,
-            padding: "12px 14px", cursor: "pointer", minHeight: 66,
+            padding: "12px 14px", cursor: "pointer", height: 66, overflow: "hidden",
           }}
         >
           <div style={{ width: 34, height: 34, borderRadius: 10, background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -3593,7 +3821,7 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
           </div>
           <div>
             <div style={{ color: "#fff", fontSize: 13, fontWeight: 700, fontFamily: "'Poppins', sans-serif" }}>{t.agenciesBtn}</div>
-            <div style={{ color: "rgba(255,255,255,0.85)", fontSize: 11 }}>{t.agenciesHint}</div>
+            <div style={{ color: "rgba(255,255,255,0.85)", fontSize: 11, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.agenciesHint}</div>
           </div>
         </button>
       </div>
@@ -4287,6 +4515,7 @@ export default function PronaHomeApp() {
   const [showMyListings, setShowMyListings] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
   const [legalDoc, setLegalDoc] = useState(null);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
@@ -4387,6 +4616,11 @@ export default function PronaHomeApp() {
       bumpListingField(l.id, "views", 1);
       supabaseFetch("rpc/increment_listing_views", { method: "POST", body: JSON.stringify({ listing_id: l.id }) }).catch((e) => console.error("view count failed", e));
     }
+  };
+
+  const changePassword = async (currentPassword, newPassword) => {
+    await passwordSignIn(profile.email, currentPassword);
+    await setAccountPassword(newPassword);
   };
 
   const markNotificationsRead = () => {
@@ -4765,7 +4999,11 @@ export default function PronaHomeApp() {
                   settings={settings} onChange={updateSettings} onBack={() => setShowSettings(false)}
                   onOpenPrivacy={() => setLegalDoc("privacy")} onOpenTerms={() => setLegalDoc("terms")}
                   accentId={accentId} onAccentChange={updateAccent}
+                  onOpenChangePassword={() => setShowChangePassword(true)}
                 />
+              )}
+              {showChangePassword && (
+                <ChangePasswordScreen profile={profile} onBack={() => setShowChangePassword(false)} onSubmit={changePassword} />
               )}
               {legalDoc && <LegalDocScreen docKey={legalDoc} onBack={() => setLegalDoc(null)} />}
               {showGuestPrompt && (

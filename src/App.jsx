@@ -2731,9 +2731,17 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${listing.address} ${listing.addressNumber || ""} ${listing.city || ""}`.trim())}`}
               target="_blank" rel="noopener noreferrer"
-              style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--ph-text-muted)", fontSize: 13, marginBottom: 6, textDecoration: "none" }}
+              style={{
+                display: "flex", alignItems: "center", gap: 10, color: "var(--ph-text)", fontWeight: 600, fontSize: 13,
+                textDecoration: "none", background: "var(--ph-surface)", border: "1px solid var(--ph-border)",
+                borderRadius: 12, padding: "10px 12px", marginBottom: 14,
+              }}
             >
-              <MapPin size={13} /> {listing.address}{listing.addressNumber ? ` ${listing.addressNumber}` : ""}
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <MapPin size={14} color="var(--ph-accent)" />
+              </div>
+              <span style={{ flex: 1 }}>{listing.address}{listing.addressNumber ? ` ${listing.addressNumber}` : ""}</span>
+              <ChevronLeft size={14} color="var(--ph-text-muted)" style={{ transform: "rotate(180deg)", flexShrink: 0 }} />
             </a>
           )}
 
@@ -2885,20 +2893,28 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
         <h1 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 21, fontWeight: 700, color: "var(--ph-text)", margin: "12px 0 4px", lineHeight: 1.25 }}>
           {listing.title}
         </h1>
-        <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--ph-text-muted)", fontSize: 13.5, marginBottom: listing.address ? 2 : 14 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--ph-text-muted)", fontSize: 13.5, marginBottom: 10 }}>
           <MapPin size={13} /> {listing.area}, {listing.city}
         </div>
         {listing.address && (
           <a
             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${listing.address} ${listing.addressNumber || ""} ${listing.city || ""}`.trim())}`}
             target="_blank" rel="noopener noreferrer"
-            style={{ display: "block", color: "var(--ph-accent)", fontWeight: 600, fontSize: 12, marginBottom: 14, paddingLeft: 17, textDecoration: "none" }}
+            style={{
+              display: "flex", alignItems: "center", gap: 10, color: "var(--ph-text)", fontWeight: 600, fontSize: 13,
+              textDecoration: "none", background: "var(--ph-surface)", border: "1px solid var(--ph-border)",
+              borderRadius: 12, padding: "10px 12px", marginBottom: 14,
+            }}
           >
-            {listing.address}{listing.addressNumber ? ` ${listing.addressNumber}` : ""} ›
+            <div style={{ width: 28, height: 28, borderRadius: 8, background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <MapPin size={14} color="var(--ph-accent)" />
+            </div>
+            <span style={{ flex: 1 }}>{listing.address}{listing.addressNumber ? ` ${listing.addressNumber}` : ""}</span>
+            <ChevronLeft size={14} color="var(--ph-text-muted)" style={{ transform: "rotate(180deg)", flexShrink: 0 }} />
           </a>
         )}
 
-        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 18, flexWrap: "wrap", background: "var(--ph-surface)", border: "1px solid var(--ph-border)", borderRadius: 12, padding: "10px 14px" }}>
           {listing.created_at && (
             <span style={{ fontSize: 11.5, color: "var(--ph-text-muted)" }}>
               {t.postedOn(formatShortDate(listing.created_at, lang))}

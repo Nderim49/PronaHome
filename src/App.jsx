@@ -4916,6 +4916,11 @@ export default function PronaHomeApp() {
           .dual-thumb::-moz-range-thumb { border-color: var(--ph-accent) !important; }
           .spin { animation: spin 0.9s linear infinite; }
           @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+          .splash-in { animation: splashIn 0.7s ease-out; }
+          @keyframes splashIn {
+            from { opacity: 0; transform: scale(0.9) translateY(6px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+          }
           .dual-thumb {
             position: absolute; left: 0; top: 0; width: 100%; margin: 0;
             -webkit-appearance: none; appearance: none; background: transparent; pointer-events: none;
@@ -4958,10 +4963,14 @@ export default function PronaHomeApp() {
             </div>
           )}
           {loading || enteringApp ? (
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10 }}>
-              <BrandMark size={34} />
-              <Loader2 size={20} color={"var(--ph-accent)"} className="spin" />
-              <span style={{ fontSize: 12.5, color: "var(--ph-text-muted)" }}>{t.loadingText}</span>
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, background: "var(--ph-bg)" }}>
+              <div className="splash-in" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+                <BrandMark size={62} />
+                <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 25, color: "var(--ph-text)" }}>
+                  Prona<span style={{ color: "var(--ph-accent)" }}>Home</span>
+                </div>
+                <div style={{ fontSize: 13, color: "var(--ph-text-muted)" }}>{t.tagline}</div>
+              </div>
             </div>
           ) : !profile && !guestMode ? (
             <OnboardingScreen onSubmit={completeOnboarding} onLoginWithSession={onLoginWithSession} onContinueAsGuest={continueAsGuest} />

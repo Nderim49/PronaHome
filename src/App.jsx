@@ -2772,7 +2772,8 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           )}
 
           {listing.desc && (
-            <button
+            <div
+              role="button" tabIndex={0}
               onClick={() => setShowBio(true)}
               style={{
                 width: "100%", textAlign: "left", background: "var(--ph-surface)", border: "1px solid var(--ph-border)",
@@ -2786,7 +2787,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
                 {listing.desc}
               </div>
               <div style={{ fontSize: 12, color: "var(--ph-accent)", fontWeight: 600 }}>{t.readMoreLabel} ›</div>
-            </button>
+            </div>
           )}
         </div>
 
@@ -2962,7 +2963,8 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
         </div>
 
         <div style={{ marginBottom: 18 }}>
-          <button
+          <div
+            role="button" tabIndex={0}
             onClick={() => setShowDetails(true)}
             style={{
               width: "100%", textAlign: "left", background: "var(--ph-surface)", border: "1px solid var(--ph-border)",
@@ -2990,7 +2992,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
               </div>
             )}
             <div style={{ fontSize: 12, color: "var(--ph-accent)", fontWeight: 600 }}>{t.readMoreLabel} ›</div>
-          </button>
+          </div>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>

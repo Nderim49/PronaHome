@@ -63,6 +63,7 @@ const STRINGS = {
     onboardNameLabel: "Emri", onboardEmailLabel: "Email",
     onboardNamePlaceholder: "p.sh. Arben Leka", onboardEmailPlaceholder: "p.sh. arben@shembull.com",
     onboardError: "Shkruaj emrin tënd dhe një email të vlefshëm.",
+    requiredMarker: "Pjesë e detyrueshme", optionalMarker: "Opsionale",
     onboardSubmit: "Fillo të kërkosh", onboardSubmitting: "Duke vazhduar...",
     sendCodeBtn: "Regjistrohu", loginBtn: "Kyçu", codeSentTo: (email) => `Dërguam një kod 6-shifror në ${email}`,
     useAnotherEmail: "Përdor një email tjetër", almostDoneHint: "Edhe pak — si të quajmë?",
@@ -218,6 +219,7 @@ const STRINGS = {
     floorLabel: "Kati", floorPlaceholder: "p.sh. 3/6",
     groundFloorLabel: "Përdhesë", basementLabel: "Bodrum", atticLabel: "Papafingo / Mansardë",
     floorNotApplicableLabel: "Shtëpi", chooseOption: "Zgjidh", changeCategoryLabel: "Ndrysho kategorinë",
+    optionalTag: "opsionale", contactRequiredNote: "telefoni ose email-i i detyrueshëm",
     descLabel: "Përshkrimi", descPlaceholder: "Përshkruaj pronën shkurtimisht...",
     tagsLabel: "Karakteristikat", tagsPlaceholder: "p.sh. Parking, Ashensor, Ballkon",
     featureParking: "Parking", featureElevator: "Ashensor", featureBalcony: "Ballkon", featureTerrace: "Tarracë",
@@ -246,6 +248,7 @@ const STRINGS = {
     onboardNameLabel: "Name", onboardEmailLabel: "E-Mail",
     onboardNamePlaceholder: "z. B. Anna Krasniqi", onboardEmailPlaceholder: "z. B. anna@beispiel.de",
     onboardError: "Gib deinen Namen und eine gültige E-Mail-Adresse ein.",
+    requiredMarker: "Pflichtfeld", optionalMarker: "Optional",
     onboardSubmit: "Jetzt starten", onboardSubmitting: "Wird fortgesetzt...",
     sendCodeBtn: "Registrieren", loginBtn: "Anmelden", codeSentTo: (email) => `Wir haben einen 6-stelligen Code an ${email} gesendet`,
     useAnotherEmail: "Andere E-Mail verwenden", almostDoneHint: "Fast fertig — wie sollen wir dich nennen?",
@@ -401,6 +404,7 @@ const STRINGS = {
     floorLabel: "Etage", floorPlaceholder: "z. B. 3/6",
     groundFloorLabel: "Erdgeschoss", basementLabel: "Keller", atticLabel: "Dachgeschoss",
     floorNotApplicableLabel: "Haus", chooseOption: "Auswählen", changeCategoryLabel: "Kategorie ändern",
+    optionalTag: "optional", contactRequiredNote: "Telefon oder E-Mail erforderlich",
     descLabel: "Beschreibung", descPlaceholder: "Beschreibe die Immobilie kurz...",
     tagsLabel: "Merkmale", tagsPlaceholder: "z. B. Parkplatz, Aufzug, Balkon",
     featureParking: "Parkplatz", featureElevator: "Aufzug", featureBalcony: "Balkon", featureTerrace: "Terrasse",
@@ -429,6 +433,7 @@ const STRINGS = {
     onboardNameLabel: "Name", onboardEmailLabel: "Email",
     onboardNamePlaceholder: "e.g. Arben Leka", onboardEmailPlaceholder: "e.g. arben@example.com",
     onboardError: "Enter your name and a valid email address.",
+    requiredMarker: "Required", optionalMarker: "Optional",
     onboardSubmit: "Start searching", onboardSubmitting: "Continuing...",
     sendCodeBtn: "Register", loginBtn: "Log in", codeSentTo: (email) => `We sent a 6-digit code to ${email}`,
     useAnotherEmail: "Use a different email", almostDoneHint: "Almost done — what should we call you?",
@@ -584,6 +589,7 @@ const STRINGS = {
     floorLabel: "Floor", floorPlaceholder: "e.g. 3/6",
     groundFloorLabel: "Ground floor", basementLabel: "Basement", atticLabel: "Attic / Loft",
     floorNotApplicableLabel: "House", chooseOption: "Choose", changeCategoryLabel: "Change category",
+    optionalTag: "optional", contactRequiredNote: "Phone or email required",
     descLabel: "Description", descPlaceholder: "Briefly describe the property...",
     tagsLabel: "Features", tagsPlaceholder: "e.g. Parking, Elevator, Balcony",
     featureParking: "Parking", featureElevator: "Elevator", featureBalcony: "Balcony", featureTerrace: "Terrace",
@@ -1506,6 +1512,19 @@ const inputStyle = {
   fontSize: 16, fontFamily: "'Inter', sans-serif", color: "var(--ph-text)", background: "var(--ph-surface)", outline: "none",
 };
 const labelStyle = { fontSize: 12, fontWeight: 600, color: "var(--ph-text-muted)", marginBottom: 5, display: "block" };
+// Small "Pflichtfeld"/"Optional" tag appended after a field's label text, so
+// every field in every form is unambiguous about whether it must be filled in.
+function FieldMark({ required }) {
+  const { t } = useLang();
+  return (
+    <span style={{
+      marginLeft: 6, fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.2,
+      color: required ? "#B0473C" : "var(--ph-text-muted)",
+    }}>
+      {required ? t.requiredMarker : t.optionalMarker}
+    </span>
+  );
+}
 
 // ---------------------------------------------------------------------------
 // Onboarding / login
@@ -2493,6 +2512,11 @@ function LegalDocScreen({ docKey, onBack }) {
   );
 }
 
+const Req = () => <span style={{ color: "#B0473C", fontWeight: 700 }}> *</span>;
+function Opt() {
+  const { t } = useLang();
+  return <span style={{ color: "var(--ph-text-muted)", fontWeight: 400 }}> ({t.optionalTag})</span>;
+}
 function SettingsSection({ title, children }) {
   return (
     <div style={{ marginBottom: 18 }}>
@@ -3425,7 +3449,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             )}
             {(!form.cat || (!BUSINESS_CARD_CATS.includes(form.cat) && form.cat !== "hotel")) && (
               <div>
-                <label style={labelStyle}>{t.providerGroupRealEstate}</label>
+                <label style={labelStyle}>{t.providerGroupRealEstate}<Req /></label>
                 <select
                   style={inputStyle}
                   value={(!BUSINESS_CARD_CATS.includes(form.cat) && form.cat !== "hotel") ? form.cat : ""}
@@ -3440,7 +3464,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             )}
             {isAgencyAccount && (!form.cat || form.cat === "hotel") && (
               <div>
-                <label style={labelStyle}>{t.catHotel}</label>
+                <label style={labelStyle}>{t.catHotel}<Req /></label>
                 <select
                   style={inputStyle}
                   value={form.cat === "hotel" ? "hotel" : ""}
@@ -3453,7 +3477,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             )}
             {isAgencyAccount && (!form.cat || BUSINESS_CARD_CATS.includes(form.cat)) && (
               <div>
-                <label style={labelStyle}>{t.businessCardCategoryLabel}</label>
+                <label style={labelStyle}>{t.businessCardCategoryLabel}<Req /></label>
                 <select
                   style={inputStyle}
                   value={
@@ -3475,7 +3499,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
 
         {isBusinessCard ? (
         <>
-          <SettingsSection title={t.businessPhotoLabel}>
+          <SettingsSection title={<>{t.businessPhotoLabel}<Opt /></>}>
             <div style={{ padding: 14 }}>
               {images.length > 0 ? (
                 <div style={{ position: "relative", width: 110, aspectRatio: "1", borderRadius: 12, overflow: "hidden" }}>
@@ -3514,16 +3538,16 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
               <div style={{ display: "flex", gap: 10 }}>
                 <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.firstNameLabel}</label>
+                  <label style={labelStyle}>{t.firstNameLabel}<Req /></label>
                   <input style={inputStyle} value={form.contactFirstName} onChange={set("contactFirstName")} placeholder={t.firstNamePlaceholder} />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.lastNameLabel}</label>
+                  <label style={labelStyle}>{t.lastNameLabel}<Req /></label>
                   <input style={inputStyle} value={form.contactLastName} onChange={set("contactLastName")} placeholder={t.lastNamePlaceholder} />
                 </div>
               </div>
               <div>
-                <label style={labelStyle}>{t.companyLabel}</label>
+                <label style={labelStyle}>{t.companyLabel}<Opt /></label>
                 <input style={inputStyle} value={form.agency === "Privat" ? "" : form.agency} onChange={set("agency")} placeholder={t.companyOptionalPlaceholder} />
               </div>
             </div>
@@ -3533,7 +3557,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
               <div style={{ display: "flex", gap: 10 }}>
                 <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.cityLabel}</label>
+                  <label style={labelStyle}>{t.cityLabel}<Opt /></label>
                   <select
                     style={inputStyle} value={form.city}
                     onChange={(e) => setForm((f) => ({ ...f, city: e.target.value, area: "" }))}
@@ -3548,7 +3572,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                   </select>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.areaLabel}</label>
+                  <label style={labelStyle}>{t.areaLabel}<Opt /></label>
                   {SETTLEMENTS_BY_CITY[form.city] ? (
                     <select style={inputStyle} value={form.area} onChange={set("area")}>
                       <option value="">{t.cityCenterLabel}</option>
@@ -3570,7 +3594,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             </div>
           </SettingsSection>
 
-          <SettingsSection title={t.contactInfoLabel}>
+          <SettingsSection title={<>{t.contactInfoLabel} <span style={{ color: "var(--ph-text-muted)", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>({t.contactRequiredNote})</span></>}>
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
               <div>
                 <label style={labelStyle}>{t.phoneLabel}</label>
@@ -3588,13 +3612,13 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             </div>
           </SettingsSection>
 
-          <SettingsSection title={t.businessBioLabel}>
+          <SettingsSection title={<>{t.businessBioLabel}<Opt /></>}>
             <div style={{ padding: 14 }}>
               <textarea style={{ ...inputStyle, minHeight: 90, resize: "vertical" }} value={form.desc} onChange={set("desc")} placeholder={t.businessBioPlaceholder} />
             </div>
           </SettingsSection>
 
-          <SettingsSection title={t.websiteLabel}>
+          <SettingsSection title={<>{t.websiteLabel}<Opt /></>}>
             <div style={{ padding: 14 }}>
               <input style={inputStyle} value={form.website} onChange={set("website")} placeholder={t.websitePlaceholder} />
             </div>
@@ -3602,7 +3626,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
         </>
         ) : (
         <>
-          <SettingsSection title={t.photoLabel}>
+          <SettingsSection title={<>{t.photoLabel}<Opt /></>}>
             <div style={{ padding: 14 }}>
               <div style={{ marginBottom: 4 }}>
                 {images.length > 0 && <span style={{ fontSize: 11, color: "var(--ph-text-muted)" }}>{images.length}/{MAX_IMAGES}</span>}
@@ -3651,7 +3675,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
           </SettingsSection>
 
           {isHotel && (
-            <SettingsSection title={t.sectionProviderInfo}>
+            <SettingsSection title={<>{t.sectionProviderInfo}<Opt /></>}>
               <div style={{ padding: 14 }}>
                 <input
                   style={isAgencyAccount ? inputStyle : { ...inputStyle, opacity: 0.5, background: "var(--ph-border-soft)" }}
@@ -3671,7 +3695,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
           <SettingsSection title={t.sectionBasicInfo}>
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
               <div>
-                <label style={labelStyle}>{t.titleLabel}</label>
+                <label style={labelStyle}>{t.titleLabel}<Req /></label>
                 <input style={inputStyle} value={form.title} onChange={set("title")} placeholder={t.titlePlaceholder} />
               </div>
               <div>
@@ -3683,7 +3707,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
               </div>
               <div style={{ display: "flex", gap: 10 }}>
                 <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.cityLabel}</label>
+                  <label style={labelStyle}>{t.cityLabel}<Req /></label>
                   <select
                     style={inputStyle} value={form.city}
                     onChange={(e) => setForm((f) => ({ ...f, city: e.target.value, area: "" }))}
@@ -3698,7 +3722,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                   </select>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.areaLabel}</label>
+                  <label style={labelStyle}>{t.areaLabel}<Opt /></label>
                   {SETTLEMENTS_BY_CITY[form.city] ? (
                     <select style={inputStyle} value={form.area} onChange={set("area")}>
                       <option value="">{t.cityCenterLabel}</option>
@@ -3711,11 +3735,11 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
               </div>
               <div style={{ display: "flex", gap: 8 }}>
                 <div style={{ flex: 2 }}>
-                  <label style={labelStyle}>{t.listingAddressLabel}</label>
+                  <label style={labelStyle}>{t.listingAddressLabel}<Opt /></label>
                   <GeoTypeahead value={form.address} onChange={(v) => setForm((f) => ({ ...f, address: v }))} placeholder={t.listingAddressPlaceholder} kind="address" />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.houseNumberLabel}</label>
+                  <label style={labelStyle}>{t.houseNumberLabel}<Opt /></label>
                   <input style={inputStyle} value={form.addressNumber} onChange={set("addressNumber")} placeholder={t.houseNumberPlaceholder} />
                 </div>
               </div>
@@ -3728,21 +3752,21 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                 <>
                   <div style={{ display: "flex", gap: 10 }}>
                     <div style={{ flex: 1 }}>
-                      <label style={labelStyle}>{t.priceFromLabel}</label>
+                      <label style={labelStyle}>{t.priceFromLabel}<Req /></label>
                       <input style={inputStyle} type="number" value={form.price} onChange={set("price")} placeholder={t.anyPlaceholder} />
                     </div>
                     <div style={{ flex: 1 }}>
-                      <label style={labelStyle}>{t.priceToLabel}</label>
+                      <label style={labelStyle}>{t.priceToLabel}<Opt /></label>
                       <input style={inputStyle} type="number" value={form.priceMax} onChange={set("priceMax")} placeholder={t.anyPlaceholder} />
                     </div>
                   </div>
                   <div style={{ display: "flex", gap: 10 }}>
                     <div style={{ flex: 1 }}>
-                      <label style={labelStyle}>{t.livingAreaFromLabel}</label>
+                      <label style={labelStyle}>{t.livingAreaFromLabel}<Req /></label>
                       <input style={inputStyle} type="number" min="1" value={form.m2} onChange={set("m2")} placeholder={t.anyPlaceholder} />
                     </div>
                     <div style={{ flex: 1 }}>
-                      <label style={labelStyle}>{t.livingAreaToLabel}</label>
+                      <label style={labelStyle}>{t.livingAreaToLabel}<Opt /></label>
                       <input style={inputStyle} type="number" min="1" value={form.m2Max} onChange={set("m2Max")} placeholder={t.anyPlaceholder} />
                     </div>
                   </div>
@@ -3751,25 +3775,25 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                 <>
                   <div style={{ display: "flex", gap: 10 }}>
                     <div style={{ flex: 1 }}>
-                      <label style={labelStyle}>{t.priceEurLabel}</label>
+                      <label style={labelStyle}>{t.priceEurLabel}<Req /></label>
                       <input style={inputStyle} type="number" value={form.price} onChange={set("price")} placeholder={t.pricePlaceholder} />
                     </div>
                     <div style={{ flex: 1 }}>
-                      <label style={labelStyle}>{t.areaM2Label}</label>
+                      <label style={labelStyle}>{t.areaM2Label}<Req /></label>
                       <input style={inputStyle} type="number" min="1" value={form.m2} onChange={set("m2")} placeholder={t.areaM2Placeholder} />
                     </div>
                   </div>
                   <div>
-                    <label style={labelStyle}>{t.landAreaLabel}</label>
+                    <label style={labelStyle}>{t.landAreaLabel}<Opt /></label>
                     <input style={inputStyle} type="number" min="1" value={form.landArea} onChange={set("landArea")} placeholder={t.landAreaPlaceholder} />
                   </div>
                   <div style={{ display: "flex", gap: 10 }}>
                     <div style={{ flex: 1 }}>
-                      <label style={labelStyle}>{t.yearBuiltLabel}</label>
+                      <label style={labelStyle}>{t.yearBuiltLabel}<Opt /></label>
                       <input style={inputStyle} type="number" value={form.yearBuilt} onChange={set("yearBuilt")} placeholder={t.yearBuiltPlaceholder} />
                     </div>
                     <div style={{ flex: 1 }}>
-                      <label style={labelStyle}>{t.heatingTypeLabel}</label>
+                      <label style={labelStyle}>{t.heatingTypeLabel}<Opt /></label>
                       <select style={inputStyle} value={form.heatingType} onChange={set("heatingType")}>
                         <option value="">{t.chooseOption}</option>
                         <option value={t.heatingCentral}>{t.heatingCentral}</option>
@@ -3788,7 +3812,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
               {(!NON_PROPERTY_CATS.includes(form.cat) || form.cat === "hotel") && !isHotel && (
                 <div style={{ display: "flex", gap: 10 }}>
                   <div style={{ flex: 1 }}>
-                    <label style={labelStyle}>{t.roomsFieldLabel}</label>
+                    <label style={labelStyle}>{t.roomsFieldLabel}<Opt /></label>
                     <select style={inputStyle} value={form.rooms} onChange={set("rooms")}>
                       <option value="">{t.chooseOption}</option>
                       {Array.from({ length: 99 }, (_, i) => i + 1).map((n) => (
@@ -3797,7 +3821,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                     </select>
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label style={labelStyle}>{t.floorLabel}</label>
+                    <label style={labelStyle}>{t.floorLabel}<Opt /></label>
                     <select style={inputStyle} value={form.floor} onChange={set("floor")}>
                       <option value="">{t.chooseOption}</option>
                       <option value={t.floorNotApplicableLabel}>{t.floorNotApplicableLabel}</option>
@@ -3814,11 +3838,11 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
               {isHotel && (
                 <div style={{ display: "flex", gap: 10 }}>
                   <div style={{ flex: 1 }}>
-                    <label style={labelStyle}>{t.roomsFromLabel}</label>
+                    <label style={labelStyle}>{t.roomsFromLabel}<Opt /></label>
                     <input style={inputStyle} type="number" min="1" value={form.rooms} onChange={set("rooms")} placeholder={t.anyPlaceholder} />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label style={labelStyle}>{t.roomsToLabel}</label>
+                    <label style={labelStyle}>{t.roomsToLabel}<Opt /></label>
                     <input style={inputStyle} type="number" min="1" value={form.roomsMax} onChange={set("roomsMax")} placeholder={t.anyPlaceholder} />
                   </div>
                 </div>
@@ -3826,11 +3850,11 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             </div>
           </SettingsSection>
 
-          <SettingsSection title={t.descriptionLabel}>
+          <SettingsSection title={<>{t.descriptionLabel}<Opt /></>}>
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
               <textarea style={{ ...inputStyle, minHeight: 80, resize: "vertical" }} value={form.desc} onChange={set("desc")} placeholder={t.descPlaceholder} />
               <div>
-                <label style={labelStyle}>{t.tagsLabel}</label>
+                <label style={labelStyle}>{t.tagsLabel}<Opt /></label>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 6 }}>
                   {FEATURE_OPTIONS(t).map((label) => {
                     const selectedTags = form.tags.split(",").map((x) => x.trim()).filter(Boolean);
@@ -3858,13 +3882,13 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                 </div>
               </div>
               <div>
-                <label style={labelStyle}>{t.customTagsLabel}</label>
+                <label style={labelStyle}>{t.customTagsLabel}<Opt /></label>
                 <input style={inputStyle} value={form.customTags} onChange={set("customTags")} placeholder={t.customTagsPlaceholder} />
               </div>
             </div>
           </SettingsSection>
 
-          <SettingsSection title={t.contactInfoLabel}>
+          <SettingsSection title={<>{t.contactInfoLabel} <span style={{ color: "var(--ph-text-muted)", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>({t.contactRequiredNote})</span></>}>
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
               <div>
                 <label style={labelStyle}>{t.phoneLabel}</label>
@@ -3883,7 +3907,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
           </SettingsSection>
 
           {!isHotel && (
-            <SettingsSection title={t.sectionProviderInfo}>
+            <SettingsSection title={<>{t.sectionProviderInfo}<Opt /></>}>
               <div style={{ padding: 14 }}>
                 <input
                   style={isAgencyAccount ? inputStyle : { ...inputStyle, opacity: 0.5, background: "var(--ph-border-soft)" }}
@@ -3900,7 +3924,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             </SettingsSection>
           )}
 
-          <SettingsSection title={t.websiteLabel}>
+          <SettingsSection title={<>{t.websiteLabel}<Opt /></>}>
             <div style={{ padding: 14 }}>
               <input style={inputStyle} value={form.website} onChange={set("website")} placeholder={t.websitePlaceholder} />
             </div>

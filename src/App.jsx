@@ -166,6 +166,11 @@ const STRINGS = {
     savedCount: (n) => `${n} prona të ruajtura`, logout: "Dil nga llogaria", languageRow: "Gjuha",
     accountScreenTitle: "Llogaria ime", sectionAccountDetails: "Të dhënat e llogarisë",
     memberSince: "Anëtar që nga", emailVerified: "Email i verifikuar", verified: "I verifikuar", notVerified: "Pa verifikuar",
+    listingsCountLabel: (n) => `${n} shpallje`, reportListingLabel: "Raporto", reportTitle: "Pse po e raporton këtë shpallje?",
+    reportReasonSpam: "Spam ose mashtrim", reportReasonWrongInfo: "Informacion i pasaktë", reportReasonInappropriate: "Përmbajtje e papërshtatshme",
+    reportReasonSold: "Shitur/dhënë me qera tashmë", reportReasonOther: "Diçka tjetër", reportSubmitBtn: "Dërgo raportimin",
+    reportThanks: "Faleminderit! E kemi marrë raportimin tënd.", registrationNumberLabel: "Numri i regjistrimit të biznesit",
+    registrationNumberPlaceholder: "p.sh. Numri i biznesit / TVSH",
     phoneVerification: "Verifikimi i telefonit", noPhoneOnFile: "Nuk ke shtuar numër telefoni",
     sectionSecurity: "Siguria", twoFactorLabel: "Vërtetimi me dy hapa", twoFactorHint: "Shtresë shtesë sigurie për llogarinë",
     sectionMyData: "Të dhënat e mia", downloadDataLabel: "Shkarko të dhënat e mia", downloadDataHint: "Merr një kopje të profilit, shpalljeve dhe të preferuarave në format JSON",
@@ -353,6 +358,11 @@ const STRINGS = {
     savedCount: (n) => `${n} gespeicherte Immobilien`, logout: "Abmelden", languageRow: "Sprache",
     accountScreenTitle: "Mein Konto", sectionAccountDetails: "Kontodaten",
     memberSince: "Mitglied seit", emailVerified: "E-Mail verifiziert", verified: "Verifiziert", notVerified: "Nicht verifiziert",
+    listingsCountLabel: (n) => `${n} Anzeigen`, reportListingLabel: "Melden", reportTitle: "Warum meldest du diese Anzeige?",
+    reportReasonSpam: "Spam oder Betrug", reportReasonWrongInfo: "Falsche Angaben", reportReasonInappropriate: "Unangemessener Inhalt",
+    reportReasonSold: "Bereits verkauft/vermietet", reportReasonOther: "Etwas anderes", reportSubmitBtn: "Meldung senden",
+    reportThanks: "Danke! Deine Meldung ist bei uns eingegangen.", registrationNumberLabel: "Gewerbe-/Handelsregisternummer",
+    registrationNumberPlaceholder: "z. B. Gewerbenummer / USt-IdNr.",
     phoneVerification: "Telefon-Verifizierung", noPhoneOnFile: "Du hast keine Telefonnummer hinterlegt",
     sectionSecurity: "Sicherheit", twoFactorLabel: "Zwei-Faktor-Authentifizierung", twoFactorHint: "Zusätzliche Sicherheitsebene für dein Konto",
     sectionMyData: "Meine Daten", downloadDataLabel: "Meine Daten herunterladen", downloadDataHint: "Erhalte eine Kopie deines Profils, deiner Anzeigen und Favoriten als JSON",
@@ -540,6 +550,11 @@ const STRINGS = {
     savedCount: (n) => `${n} saved properties`, logout: "Log out", languageRow: "Language",
     accountScreenTitle: "My Account", sectionAccountDetails: "Account details",
     memberSince: "Member since", emailVerified: "Email verified", verified: "Verified", notVerified: "Not verified",
+    listingsCountLabel: (n) => `${n} listings`, reportListingLabel: "Report", reportTitle: "Why are you reporting this listing?",
+    reportReasonSpam: "Spam or scam", reportReasonWrongInfo: "Incorrect information", reportReasonInappropriate: "Inappropriate content",
+    reportReasonSold: "Already sold/rented", reportReasonOther: "Something else", reportSubmitBtn: "Send report",
+    reportThanks: "Thanks! Your report has been received.", registrationNumberLabel: "Business Registration Number",
+    registrationNumberPlaceholder: "e.g. Business ID / VAT number",
     phoneVerification: "Phone verification", noPhoneOnFile: "You haven't added a phone number",
     sectionSecurity: "Security", twoFactorLabel: "Two-factor authentication", twoFactorHint: "Extra layer of security for your account",
     sectionMyData: "My data", downloadDataLabel: "Download my data", downloadDataHint: "Get a copy of your profile, listings, and favorites as JSON",
@@ -1446,6 +1461,14 @@ async function saveListingRemote(listing) {
     method: "POST",
     headers: { Prefer: "resolution=merge-duplicates,return=representation" },
     body: JSON.stringify([listingToRow(listing)]),
+  });
+}
+async function submitListingReport(listingId, reporterId, reason) {
+  if (!SUPABASE_CONFIGURED) return;
+  await supabaseFetch("reports", {
+    method: "POST",
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify([{ listing_id: listingId, reporter_id: reporterId || null, reason, created_at: new Date().toISOString() }]),
   });
 }
 async function deleteListingRemote(id) {
@@ -2829,7 +2852,7 @@ function ListingCard({ listing, isFav, onToggleFav, onOpen }) {
 // ---------------------------------------------------------------------------
 // Detail screen
 // ---------------------------------------------------------------------------
-function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, onContactAgent, onMessageOwner }) {
+function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, onContactAgent, onMessageOwner, listings, onReport }) {
   const { t, lang } = useLang();
   const Icon = CAT_ICON[listing.cat] || Building2;
   const categories = CATEGORIES(t);
@@ -2840,10 +2863,43 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
   const [lightboxIdx, setLightboxIdx] = useState(0);
   const [showBio, setShowBio] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [showReport, setShowReport] = useState(false);
+  const [reportSent, setReportSent] = useState(false);
+  const ownerListingCount = listings ? listings.filter((l) => l.owner_id === listing.owner_id).length : 0;
   const onGalleryScroll = (e) => {
     const w = e.currentTarget.clientWidth;
     if (w) setPhotoIdx(Math.round(e.currentTarget.scrollLeft / w));
   };
+  const sendReport = async (reason) => {
+    setReportSent(true);
+    try { await onReport?.(listing.id, reason); } catch (e) { /* best-effort, still show thanks */ }
+  };
+  const ReportModal = () => (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.5)", zIndex: 60, display: "flex", alignItems: "flex-end" }} onClick={() => setShowReport(false)}>
+      <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", background: "var(--ph-bg)", borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: "18px 18px calc(env(safe-area-inset-bottom, 0px) + 18px)" }}>
+        {reportSent ? (
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <Check size={28} color="#2F7A56" style={{ marginBottom: 8 }} />
+            <div style={{ fontSize: 14, color: "var(--ph-text)" }}>{t.reportThanks}</div>
+          </div>
+        ) : (
+          <>
+            <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 15.5, color: "var(--ph-text)", marginBottom: 14 }}>{t.reportTitle}</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {[t.reportReasonSpam, t.reportReasonWrongInfo, t.reportReasonInappropriate, t.reportReasonSold, t.reportReasonOther].map((reason) => (
+                <button
+                  key={reason} onClick={() => sendReport(reason)}
+                  style={{ textAlign: "left", padding: "13px 14px", borderRadius: 12, border: "1px solid var(--ph-border)", background: "var(--ph-surface)", fontSize: 13.5, color: "var(--ph-text)", cursor: "pointer" }}
+                >
+                  {reason}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
 
   if (BUSINESS_CARD_CATS.includes(listing.cat)) {
     const fullName = `${listing.contactFirstName || ""} ${listing.contactLastName || ""}`.trim();
@@ -2904,9 +2960,31 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             </a>
           )}
 
-          {listing.created_at && (
-            <div style={{ fontSize: 11.5, color: "var(--ph-text-muted)", marginBottom: 18 }}>{t.postedOn(formatShortDate(listing.created_at, lang))}</div>
+          {(listing.ownerEmailVerified || listing.ownerMemberSince) && (
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, marginBottom: 10 }}>
+              {listing.ownerEmailVerified && (
+                <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, color: "#2F7A56" }}>
+                  <Check size={13} /> {t.emailVerified}
+                </div>
+              )}
+              {listing.ownerMemberSince && (
+                <div style={{ fontSize: 12, color: "var(--ph-text-muted)" }}>
+                  {t.memberSince} {new Date(listing.ownerMemberSince).toLocaleDateString(lang === "de" ? "de-DE" : lang === "en" ? "en-GB" : "sq-AL", { year: "numeric", month: "long" })}
+                  {ownerListingCount > 0 ? ` · ${t.listingsCountLabel(ownerListingCount)}` : ""}
+                </div>
+              )}
+            </div>
           )}
+
+          {listing.created_at && (
+            <div style={{ fontSize: 11.5, color: "var(--ph-text-muted)", marginBottom: 8 }}>{t.postedOn(formatShortDate(listing.created_at, lang))}</div>
+          )}
+          <button
+            onClick={() => setShowReport(true)}
+            style={{ border: "none", background: "none", color: "var(--ph-text-muted)", fontSize: 12, textDecoration: "underline", cursor: "pointer", padding: 0, marginBottom: 18 }}
+          >
+            {t.reportListingLabel}
+          </button>
 
           {listing.desc && (
             <div
@@ -2948,6 +3026,12 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
               </div>
               <ChevronLeft size={14} color="var(--ph-text-muted)" style={{ transform: "rotate(180deg)", flexShrink: 0 }} />
             </a>
+          )}
+
+          {listing.registrationNumber && (
+            <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12.5, color: "var(--ph-text-muted)", marginTop: 12, padding: "0 2px" }}>
+              <Briefcase size={13} /> {t.registrationNumberLabel}: {listing.registrationNumber}
+            </div>
           )}
         </div>
 
@@ -3007,6 +3091,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             </button>
           </div>
         )}
+        {showReport && <ReportModal />}
       </div>
     );
   }
@@ -3201,6 +3286,22 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           </a>
         )}
 
+        {(listing.ownerEmailVerified || listing.ownerMemberSince) && (
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, marginBottom: 10 }}>
+            {listing.ownerEmailVerified && (
+              <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, color: "#2F7A56" }}>
+                <Check size={13} /> {t.emailVerified}
+              </div>
+            )}
+            {listing.ownerMemberSince && (
+              <div style={{ fontSize: 12, color: "var(--ph-text-muted)" }}>
+                {t.memberSince} {new Date(listing.ownerMemberSince).toLocaleDateString(lang === "de" ? "de-DE" : lang === "en" ? "en-GB" : "sq-AL", { year: "numeric", month: "long" })}
+                {ownerListingCount > 0 ? ` · ${t.listingsCountLabel(ownerListingCount)}` : ""}
+              </div>
+            )}
+          </div>
+        )}
+
         <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
           {listing.created_at && (
             <span style={{ fontSize: 11, color: "var(--ph-text-muted)" }}>
@@ -3214,6 +3315,12 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             <Heart size={12} /> {listing.saves || 0}
           </span>
         </div>
+        <button
+          onClick={() => setShowReport(true)}
+          style={{ border: "none", background: "none", color: "var(--ph-text-muted)", fontSize: 12, textDecoration: "underline", cursor: "pointer", padding: 0, marginTop: 10 }}
+        >
+          {t.reportListingLabel}
+        </button>
       </div>
 
       {showDetails && (
@@ -3304,6 +3411,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           </button>
         </div>
       )}
+      {showReport && <ReportModal />}
     </div>
   );
 }
@@ -3343,7 +3451,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
         desc: editingListing.desc || "", agency: editingListing.agency || "Privat",
         tags: existingTags.filter((x) => featureLabels.includes(x)).join(", "),
         customTags: existingTags.filter((x) => !featureLabels.includes(x)).join(", "),
-        website: editingListing.website || "",
+        website: editingListing.website || "", registrationNumber: editingListing.registrationNumber || "",
         contactFirstName: editingListing.contactFirstName || "", contactLastName: editingListing.contactLastName || "",
         contactPhone: splitPhone.local, contactEmail: editingListing.contactEmail || "", contactCountry: splitPhone.code,
       };
@@ -3355,7 +3463,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
     const prefillPhone = splitPhoneByDialCode(profile?.phone, profile?.country);
     return {
       title: "", cat: "", type: "Shitje", city: CITIES_LIST[0], area: "", address: "", addressNumber: "",
-      price: "", m2: "", priceMax: "", m2Max: "", rooms: "", floor: "", roomsMax: "", yearBuilt: "", heatingType: "", yearBuiltMax: "", landArea: "", landAreaMax: "", desc: "", tags: "", customTags: "", website: "",
+      price: "", m2: "", priceMax: "", m2Max: "", rooms: "", floor: "", roomsMax: "", yearBuilt: "", heatingType: "", yearBuiltMax: "", landArea: "", landAreaMax: "", desc: "", tags: "", customTags: "", website: "", registrationNumber: "",
       agency: (profile?.accountType === "agency" && profile?.company?.trim()) ? profile.company.trim() : "Privat",
       contactFirstName: "", contactLastName: "",
       contactPhone: prefillPhone.local, contactEmail: profile?.email || "", contactCountry: prefillPhone.code,
@@ -3410,7 +3518,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
       address: form.address.trim(), addressNumber: form.addressNumber.trim(),
       price: 0, m2: 0, rooms: 0, floor: "-", desc: form.desc.trim(), tags: [],
       images, image: images[0] || null, agency: form.agency.trim() || "Privat",
-      website: form.website.trim(),
+      website: form.website.trim(), registrationNumber: form.registrationNumber.trim(),
       contactFirstName: form.contactFirstName.trim(), contactLastName: form.contactLastName.trim(),
       contactPhone: form.contactPhone.trim() ? `${selectedContactCountry.dial} ${form.contactPhone.trim()}` : "", contactEmail: form.contactEmail.trim(),
       contactCountry: selectedContactCountry.code,
@@ -3637,6 +3745,12 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
           <SettingsSection title={<>{t.websiteLabel}<Opt /></>}>
             <div style={{ padding: 14 }}>
               <input style={inputStyle} value={form.website} onChange={set("website")} placeholder={t.websitePlaceholder} />
+            </div>
+          </SettingsSection>
+
+          <SettingsSection title={<>{t.registrationNumberLabel}<Opt /></>}>
+            <div style={{ padding: 14 }}>
+              <input style={inputStyle} value={form.registrationNumber} onChange={set("registrationNumber")} placeholder={t.registrationNumberPlaceholder} />
             </div>
           </SettingsSection>
         </>
@@ -5735,6 +5849,8 @@ export default function PronaHomeApp() {
                 <DetailScreen
                   listing={openListing} isFav={favorites.has(openListing.id)} onToggleFav={toggleFav}
                   onBack={() => setOpenListing(null)} isMine={myIds.has(openListing.id)} onDelete={deleteListing}
+                  listings={listings}
+                  onReport={(listingId, reason) => submitListingReport(listingId, userId, reason)}
                   onContactAgent={() => requireAuth(() => {
                     if (!openListing.owner_id || openListing.owner_id === userId) return;
                     const otherName = openListing.contactFirstName

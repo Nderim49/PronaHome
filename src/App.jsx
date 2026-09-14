@@ -108,10 +108,10 @@ const STRINGS = {
     settlementLabel: "Vendbanimi", anySettlement: "Çdo vendbanim",
     locationBtn: "Vendndodhja", chooseLocation: "Zgjidh qytetin & vendbanimin", anyLocation: "Çdo vendndodhje", clearLocation: "Fshi vendndodhjen", applyLocation: "Zbato",
     catAll: "Të gjitha", catShitje: "Blerje & Shitje", catQera: "Qera & Qiradhënie",
-    catBanesa: "Banesa", catShtepi: "Shtëpi", catLokale: "Lokale Afariste", catTruall: "Truall", catHotel: "Hotele & Fjetje",
+    catBanesa: "Banesë", catShtepi: "Shtëpi", catLokale: "Lokal Afarist", catTruall: "Truall", catHotel: "Hotele & Fjetje",
     catMobilje: "Mobilje", catKuzhina: "Kuzhina", catZejtar: "Zejtar", catArkitekt: "Arkitekt", catStatike: "Statikë",
     catNotar: "Noter", catFinancim: "Financim",
-    catGarazhe: "Garazhë / Vende Parkimi", catZyre: "Zyre", catShitjePakice: "Shitje me Pakicë",
+    catGarazhe: "Garazh / Vend Parkimi", catZyre: "Zyre", catShitjePakice: "Shitje me Pakicë",
     catHale: "Halle / Prodhimi", catGastronomi: "Gastronomi / Hotel", catBiznesSpecial: "Biznes i Veçantë",
     hotelOwnerBtn: "Hotele & Fjetje", hotelOwnerHint: "Shiko të gjitha hotelet, motelet dhe shtëpitë e pushimit",
     propertyOwnerHint: "Nga privatë dhe agjenci",
@@ -267,7 +267,7 @@ const STRINGS = {
     settlementLabel: "Ortschaft", anySettlement: "Jede Ortschaft",
     locationBtn: "Standort", chooseLocation: "Stadt & Ortschaft wählen", anyLocation: "Beliebiger Standort", clearLocation: "Standort löschen", applyLocation: "Übernehmen",
     catAll: "Alle", catShitje: "Kauf & Verkauf", catQera: "Miete & Vermietung",
-    catBanesa: "Wohnungen", catShtepi: "Häuser", catLokale: "Gewerbeflächen", catTruall: "Grundstücke", catHotel: "Hotels & Unterkünfte",
+    catBanesa: "Wohnung", catShtepi: "Haus", catLokale: "Gewerbefläche", catTruall: "Grundstück", catHotel: "Hotels & Unterkünfte",
     catMobilje: "Möbel", catKuzhina: "Küchen", catZejtar: "Handwerker", catArkitekt: "Architekt", catStatike: "Statiker",
     catNotar: "Notar", catFinancim: "Finanzierung",
     catGarazhe: "Garage/Stellplatz", catZyre: "Büro", catShitjePakice: "Einzelhandel",
@@ -426,7 +426,7 @@ const STRINGS = {
     settlementLabel: "Settlement", anySettlement: "Any settlement",
     locationBtn: "Location", chooseLocation: "Choose city & settlement", anyLocation: "Any location", clearLocation: "Clear location", applyLocation: "Apply",
     catAll: "All", catShitje: "Buy & Sell", catQera: "Rent & Renting",
-    catBanesa: "Apartments", catShtepi: "Houses", catLokale: "Business Premises", catTruall: "Land", catHotel: "Hotels & Stays",
+    catBanesa: "Apartment", catShtepi: "House", catLokale: "Business Premises", catTruall: "Land", catHotel: "Hotels & Stays",
     catMobilje: "Furniture", catKuzhina: "Kitchens", catZejtar: "Tradesperson", catArkitekt: "Architect", catStatike: "Structural Engineer",
     catNotar: "Notary", catFinancim: "Financing",
     catGarazhe: "Garage/Parking Space", catZyre: "Office", catShitjePakice: "Retail",
@@ -1045,6 +1045,24 @@ const AGENCIES = [
   "ALP Real Estate", "Prona Ime",
 ];
 
+// Splits a fully-formatted phone number (e.g. "+49 1766094929") back into a
+// country code and the local number, for editing an existing listing/profile.
+// Prefers the country stored alongside the number; falls back to matching
+// the longest known dial code prefix for older records saved before the
+// country was tracked separately.
+function splitPhoneByDialCode(fullPhone, storedCountryCode) {
+  if (!fullPhone) return { code: storedCountryCode || "XK", local: "" };
+  if (storedCountryCode) {
+    const stored = WORLD_COUNTRIES.find((c) => c.code === storedCountryCode);
+    if (stored && fullPhone.startsWith(stored.dial)) {
+      return { code: stored.code, local: fullPhone.slice(stored.dial.length).trim() };
+    }
+  }
+  const byLongestDial = [...WORLD_COUNTRIES].sort((a, b) => b.dial.length - a.dial.length);
+  const match = byLongestDial.find((c) => fullPhone.startsWith(c.dial));
+  if (match) return { code: match.code, local: fullPhone.slice(match.dial.length).trim() };
+  return { code: storedCountryCode || "XK", local: fullPhone };
+}
 function formatPrice(listing, t) {
   const n = Number(listing.price).toLocaleString("de-DE");
   if (listing.type !== "Qera") return `${n} €`;
@@ -1411,6 +1429,7 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
   const [company, setCompany] = useState("");
   const [dob, setDob] = useState("");
   const [country, setCountry] = useState("XK");
+  const [phoneCountry, setPhoneCountry] = useState("XK");
   const [city, setCity] = useState("");
   const [homeAddress, setHomeAddress] = useState("");
   const [homeAddressNumber, setHomeAddressNumber] = useState("");
@@ -1427,6 +1446,7 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const selectedCountry = WORLD_COUNTRIES.find((c) => c.code === country) || WORLD_COUNTRIES[0];
+  const selectedPhoneCountry = WORLD_COUNTRIES.find((c) => c.code === phoneCountry) || WORLD_COUNTRIES[0];
 
   const sendCode = async () => {
     if (!email.trim().includes("@")) { setError(t.onboardError); return; }
@@ -1486,7 +1506,7 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
       const profile = {
         name: `${firstName.trim()} ${lastName.trim()}`.trim(), email: email.trim(),
         company: accountType === "agency" ? company.trim() : "", dateOfBirth: dob || "", country, city: city.trim(), homeAddress: homeAddress.trim(), homeAddressNumber: homeAddressNumber.trim(),
-        phone: phone.trim() ? `${selectedCountry.dial} ${phone.trim()}` : "",
+        phone: phone.trim() ? `${selectedPhoneCountry.dial} ${phone.trim()}` : "",
         emailVerified: true, accountType,
       };
       await saveProfileRemote(currentSession.user.id, profile);
@@ -1749,7 +1769,7 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
 
           <div style={{ marginBottom: 12 }}>
             <label style={labelStyle}>{t.countryLabel}</label>
-            <CountryTypeahead value={country} onChange={setCountry} placeholder={t.countryLabel} />
+            <CountryTypeahead value={country} onChange={setCountry} placeholder={t.countryLabel} countries={CORE_COUNTRIES} />
           </div>
 
           <div style={{ marginBottom: 12 }}>
@@ -1771,11 +1791,8 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
           <div style={{ marginBottom: 12 }}>
             <label style={labelStyle}>{t.phoneLabel}</label>
             <div style={{ display: "flex", gap: 8 }}>
-              <div style={{
-                display: "flex", alignItems: "center", gap: 5, padding: "0 12px", borderRadius: 12,
-                border: "1px solid var(--ph-border)", background: "var(--ph-surface)", color: "var(--ph-text)", fontSize: 13.5, flexShrink: 0,
-              }}>
-                {flagEmoji(selectedCountry.code)} {selectedCountry.dial}
+              <div style={{ width: 132, flexShrink: 0 }}>
+                <CountryTypeahead value={phoneCountry} onChange={setPhoneCountry} placeholder={t.countryLabel} />
               </div>
               <input style={{ ...inputStyle, flex: 1 }} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t.phoneLocalPlaceholder} />
             </div>
@@ -1888,7 +1905,9 @@ function EditProfileScreen({ profile, onBack, onSave }) {
   const [firstName, setFirstName] = useState(nameParts[0] || "");
   const [lastName, setLastName] = useState(nameParts.slice(1).join(" ") || "");
   const [email, setEmail] = useState(profile.email);
-  const [phone, setPhone] = useState(profile.phone || "");
+  const initialPhone = splitPhoneByDialCode(profile.phone, profile.country);
+  const [phone, setPhone] = useState(initialPhone.local);
+  const [phoneCountry, setPhoneCountry] = useState(initialPhone.code);
   const [accountType, setAccountType] = useState(profile.accountType || "individual");
   const [company, setCompany] = useState(profile.company || "");
   const [dob, setDob] = useState(profile.dateOfBirth || "");
@@ -1900,6 +1919,7 @@ function EditProfileScreen({ profile, onBack, onSave }) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+  const selectedPhoneCountry = WORLD_COUNTRIES.find((c) => c.code === phoneCountry) || WORLD_COUNTRIES[0];
 
   const submit = async () => {
     if (!firstName.trim() || !lastName.trim() || !email.trim().includes("@")) { setError(t.onboardError); return; }
@@ -1908,7 +1928,8 @@ function EditProfileScreen({ profile, onBack, onSave }) {
     try {
       await onSave({
         ...profile,
-        name: `${firstName.trim()} ${lastName.trim()}`.trim(), email: email.trim(), phone: phone.trim(),
+        name: `${firstName.trim()} ${lastName.trim()}`.trim(), email: email.trim(),
+        phone: phone.trim() ? `${selectedPhoneCountry.dial} ${phone.trim()}` : "",
         accountType, company: accountType === "agency" ? company.trim() : "", dateOfBirth: dob, country, city: city.trim(), homeAddress: homeAddress.trim(), homeAddressNumber: homeAddressNumber.trim(), bio: bio.trim(),
       });
       setSaving(false);
@@ -1977,7 +1998,12 @@ function EditProfileScreen({ profile, onBack, onSave }) {
             <label style={labelStyle}>{t.onboardEmailLabel}</label>
             <input style={{ ...inputStyle, marginBottom: 12 }} type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             <label style={labelStyle}>{t.phoneLabel}</label>
-            <input style={inputStyle} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t.phonePlaceholder} />
+            <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ width: 132, flexShrink: 0 }}>
+                <CountryTypeahead value={phoneCountry} onChange={setPhoneCountry} placeholder={t.countryLabel} />
+              </div>
+              <input style={{ ...inputStyle, flex: 1 }} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t.phoneLocalPlaceholder} />
+            </div>
           </div>
         </SettingsSection>
 
@@ -1987,7 +2013,7 @@ function EditProfileScreen({ profile, onBack, onSave }) {
             <input style={{ ...inputStyle, marginBottom: 12 }} type="date" value={dob} onChange={(e) => setDob(e.target.value)} max={new Date().toISOString().slice(0, 10)} />
             <label style={labelStyle}>{t.countryLabel}</label>
             <div style={{ marginBottom: 12 }}>
-              <CountryTypeahead value={country} onChange={setCountry} placeholder={t.countryLabel} />
+              <CountryTypeahead value={country} onChange={setCountry} placeholder={t.countryLabel} countries={CORE_COUNTRIES} />
             </div>
             <label style={labelStyle}>{t.cityFieldLabel}</label>
             <div style={{ marginBottom: 12 }}>
@@ -3094,6 +3120,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
   ];
   const [form, setForm] = useState(() => {
     if (editingListing) {
+      const splitPhone = splitPhoneByDialCode(editingListing.contactPhone, editingListing.contactCountry);
       return {
         title: editingListing.title || "", cat: editingListing.cat || "banesa", type: editingListing.type || "Shitje",
         city: editingListing.city || CITIES_LIST[0], area: editingListing.area === "-" ? "" : (editingListing.area || ""),
@@ -3102,22 +3129,20 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
         rooms: editingListing.rooms != null ? String(editingListing.rooms) : "", floor: editingListing.floor === "-" ? "" : (editingListing.floor || ""),
         desc: editingListing.desc || "", tags: (editingListing.tags || []).join(", "), agency: editingListing.agency || "Privat",
         contactFirstName: editingListing.contactFirstName || "", contactLastName: editingListing.contactLastName || "",
-        contactPhone: editingListing.contactPhone || "", contactEmail: editingListing.contactEmail || "", contactCountry: editingListing.contactCountry || "XK",
+        contactPhone: splitPhone.local, contactEmail: editingListing.contactEmail || "", contactCountry: splitPhone.code,
       };
     }
     // New listing: prefill contact phone/email from the user's own account
     // profile, so they don't have to retype it on every single listing —
-    // still fully editable below.
-    const prefillCountryCode = profile?.country || "XK";
-    const prefillCountry = WORLD_COUNTRIES.find((c) => c.code === prefillCountryCode) || WORLD_COUNTRIES[0];
-    const prefillPhone = profile?.phone && profile.phone.startsWith(prefillCountry.dial)
-      ? profile.phone.slice(prefillCountry.dial.length).trim()
-      : (profile?.phone || "");
+    // still fully editable below. Agency accounts also get their company
+    // name prefilled as the provider, editable if they want a different name.
+    const prefillPhone = splitPhoneByDialCode(profile?.phone, profile?.country);
     return {
       title: "", cat: "", type: "Shitje", city: CITIES_LIST[0], area: "", address: "", addressNumber: "",
-      price: "", m2: "", rooms: "", floor: "", desc: "", tags: "", agency: "Privat",
+      price: "", m2: "", rooms: "", floor: "", desc: "", tags: "",
+      agency: (profile?.accountType === "agency" && profile?.company?.trim()) ? profile.company.trim() : "Privat",
       contactFirstName: "", contactLastName: "",
-      contactPhone: prefillPhone, contactEmail: profile?.email || "", contactCountry: prefillCountry.code,
+      contactPhone: prefillPhone.local, contactEmail: profile?.email || "", contactCountry: prefillPhone.code,
     };
   });
   const [saving, setSaving] = useState(false);
@@ -3166,6 +3191,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
       images, image: images[0] || null, agency: form.agency.trim() || "Privat",
       contactFirstName: form.contactFirstName.trim(), contactLastName: form.contactLastName.trim(),
       contactPhone: form.contactPhone.trim() ? `${selectedContactCountry.dial} ${form.contactPhone.trim()}` : "", contactEmail: form.contactEmail.trim(),
+      contactCountry: selectedContactCountry.code,
     } : {
       id: isEditing ? editingListing.id : `local-${Date.now()}`,
       title: form.title.trim(), cat: form.cat, type: form.type, city: form.city,
@@ -3174,6 +3200,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
       desc: form.desc.trim() || "", tags: form.tags.split(",").map((x) => x.trim()).filter(Boolean),
       images, image: images[0] || null, agency: isAgencyAccount ? (form.agency.trim() || "Privat") : "Privat",
       contactPhone: form.contactPhone.trim() ? `${selectedContactCountry.dial} ${form.contactPhone.trim()}` : "", contactEmail: form.contactEmail.trim(),
+      contactCountry: selectedContactCountry.code,
     };
     if (isEditing) newListing.owner_id = editingListing.owner_id;
     try {
@@ -3358,17 +3385,10 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
           <SettingsSection title={t.contactInfoLabel}>
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
               <div>
-                <label style={labelStyle}>{t.countryLabel}</label>
-                <div style={{ marginBottom: 8 }}>
-                  <CountryTypeahead value={form.contactCountry} onChange={(v) => setForm((f) => ({ ...f, contactCountry: v }))} placeholder={t.countryLabel} />
-                </div>
                 <label style={labelStyle}>{t.phoneLabel}</label>
                 <div style={{ display: "flex", gap: 8 }}>
-                  <div style={{
-                    display: "flex", alignItems: "center", gap: 5, padding: "0 12px", borderRadius: 12,
-                    border: "1px solid var(--ph-border)", background: "var(--ph-surface)", color: "var(--ph-text)", fontSize: 13.5, flexShrink: 0,
-                  }}>
-                    {flagEmoji(selectedContactCountry.code)} {selectedContactCountry.dial}
+                  <div style={{ width: 132, flexShrink: 0 }}>
+                    <CountryTypeahead value={form.contactCountry} onChange={(v) => setForm((f) => ({ ...f, contactCountry: v }))} placeholder={t.countryLabel} />
                   </div>
                   <input style={{ ...inputStyle, flex: 1 }} type="tel" value={form.contactPhone} onChange={set("contactPhone")} placeholder={t.phoneLocalPlaceholder} />
                 </div>
@@ -3541,6 +3561,24 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             </div>
           </SettingsSection>
 
+          <SettingsSection title={t.contactInfoLabel}>
+            <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
+              <div>
+                <label style={labelStyle}>{t.phoneLabel}</label>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <div style={{ width: 132, flexShrink: 0 }}>
+                    <CountryTypeahead value={form.contactCountry} onChange={(v) => setForm((f) => ({ ...f, contactCountry: v }))} placeholder={t.countryLabel} />
+                  </div>
+                  <input style={{ ...inputStyle, flex: 1 }} type="tel" value={form.contactPhone} onChange={set("contactPhone")} placeholder={t.phoneLocalPlaceholder} />
+                </div>
+              </div>
+              <div>
+                <label style={labelStyle}>{t.onboardEmailLabel}</label>
+                <input style={inputStyle} type="email" value={form.contactEmail} onChange={set("contactEmail")} placeholder={t.onboardEmailPlaceholder} />
+              </div>
+            </div>
+          </SettingsSection>
+
           <SettingsSection title={t.sectionProviderInfo}>
             <div style={{ padding: 14 }}>
               <input
@@ -3553,31 +3591,6 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
               </datalist>
               <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)", marginTop: 8 }}>
                 {isAgencyAccount ? t.agencyFieldHint : t.agencyFieldLockedHint}
-              </div>
-            </div>
-          </SettingsSection>
-
-          <SettingsSection title={t.contactInfoLabel}>
-            <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
-              <div>
-                <label style={labelStyle}>{t.countryLabel}</label>
-                <div style={{ marginBottom: 8 }}>
-                  <CountryTypeahead value={form.contactCountry} onChange={(v) => setForm((f) => ({ ...f, contactCountry: v }))} placeholder={t.countryLabel} />
-                </div>
-                <label style={labelStyle}>{t.phoneLabel}</label>
-                <div style={{ display: "flex", gap: 8 }}>
-                  <div style={{
-                    display: "flex", alignItems: "center", gap: 5, padding: "0 12px", borderRadius: 12,
-                    border: "1px solid var(--ph-border)", background: "var(--ph-surface)", color: "var(--ph-text)", fontSize: 13.5, flexShrink: 0,
-                  }}>
-                    {flagEmoji(selectedContactCountry.code)} {selectedContactCountry.dial}
-                  </div>
-                  <input style={{ ...inputStyle, flex: 1 }} type="tel" value={form.contactPhone} onChange={set("contactPhone")} placeholder={t.phoneLocalPlaceholder} />
-                </div>
-              </div>
-              <div>
-                <label style={labelStyle}>{t.onboardEmailLabel}</label>
-                <input style={inputStyle} type="email" value={form.contactEmail} onChange={set("contactEmail")} placeholder={t.onboardEmailPlaceholder} />
               </div>
             </div>
           </SettingsSection>
@@ -4670,8 +4683,8 @@ function ProfileScreen({ profile, favCount, myCount, unreadMessages, onOpenMyLis
   const rows = [
     { label: t.myListingsRow(myCount), action: onOpenMyListings },
     { label: t.messagesRow, action: onOpenMessages, icon: Mail, badge: unreadMessages },
+    { label: t.publishRow, action: onAddNew, icon: Plus },
     { label: t.myAccountRow, action: onOpenAccount, icon: User },
-    { label: t.publishRow, action: onAddNew },
     { label: t.editProfileRow, action: onEditProfile, icon: Pencil },
     { label: t.settingsRow, action: onOpenSettings },
     { label: t.helpRow, action: null },
@@ -5092,7 +5105,7 @@ export default function PronaHomeApp() {
       // that may differ from the account holder's own profile.
       const myOwnPropertyListings = listings.filter((l) => l.owner_id === userId && !BUSINESS_CARD_CATS.includes(l.cat));
       if (myOwnPropertyListings.length) {
-        const updated = myOwnPropertyListings.map((l) => ({ ...l, contactPhone: p.phone || "", contactEmail: p.email || "" }));
+        const updated = myOwnPropertyListings.map((l) => ({ ...l, contactPhone: p.phone || "", contactEmail: p.email || "", contactCountry: p.country || l.contactCountry }));
         setListings((prev) => prev.map((l) => updated.find((u) => u.id === l.id) || l));
         Promise.all(updated.map((l) => saveListingRemote(l))).catch((e) => console.error("sync listing contact failed", e));
       }

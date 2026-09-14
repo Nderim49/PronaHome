@@ -3085,26 +3085,19 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             </a>
           )}
 
-          {(listing.ownerEmailVerified || listing.ownerMemberSince) && (
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, marginBottom: 10 }}>
-              {listing.ownerEmailVerified && (
-                <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, color: "#2F7A56" }}>
-                  <Check size={13} /> {t.emailVerified}
-                </div>
-              )}
-              {listing.ownerMemberSince && (
-                <div style={{ fontSize: 12, color: "var(--ph-text-muted)" }}>
-                  {t.memberSince} {new Date(listing.ownerMemberSince).toLocaleDateString(lang === "de" ? "de-DE" : lang === "en" ? "en-GB" : "sq-AL", { year: "numeric", month: "long" })}
-                  {ownerListingCount > 0 && (
-                    <> · <button
-                      onClick={() => onViewOwnerListings?.(listing.owner_id)}
-                      style={{ border: "none", background: "none", padding: 0, color: "var(--ph-accent)", fontWeight: 600, fontSize: 12, textDecoration: "underline", cursor: "pointer" }}
-                    >
-                      {t.listingsCountLabel(ownerListingCount)}
-                    </button></>
-                  )}
-                </div>
-              )}
+          {listing.ownerMemberSince && (
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontSize: 12, color: "var(--ph-text-muted)" }}>
+                {t.memberSince} {new Date(listing.ownerMemberSince).toLocaleDateString(lang === "de" ? "de-DE" : lang === "en" ? "en-GB" : "sq-AL", { year: "numeric", month: "long" })}
+                {ownerListingCount > 0 && (
+                  <> · <button
+                    onClick={() => onViewOwnerListings?.(listing.owner_id)}
+                    style={{ border: "none", background: "none", padding: 0, color: "var(--ph-accent)", fontWeight: 600, fontSize: 12, textDecoration: "underline", cursor: "pointer" }}
+                  >
+                    {t.listingsCountLabel(ownerListingCount)}
+                  </button></>
+                )}
+              </div>
             </div>
           )}
 
@@ -3163,6 +3156,12 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           {listing.registrationNumber && (
             <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12.5, color: "var(--ph-text-muted)", marginTop: 12, padding: "0 2px" }}>
               <Briefcase size={13} /> {t.registrationNumberLabel}: {listing.registrationNumber}
+            </div>
+          )}
+
+          {listing.ownerEmailVerified && (
+            <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10.5, fontWeight: 600, color: "#2F7A56", marginTop: 16 }}>
+              <Check size={11} /> {t.emailVerified}
             </div>
           )}
         </div>
@@ -3419,26 +3418,19 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           </a>
         )}
 
-        {(listing.ownerEmailVerified || listing.ownerMemberSince) && (
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, marginBottom: 10 }}>
-            {listing.ownerEmailVerified && (
-              <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, color: "#2F7A56" }}>
-                <Check size={13} /> {t.emailVerified}
-              </div>
-            )}
-            {listing.ownerMemberSince && (
-              <div style={{ fontSize: 12, color: "var(--ph-text-muted)" }}>
-                {t.memberSince} {new Date(listing.ownerMemberSince).toLocaleDateString(lang === "de" ? "de-DE" : lang === "en" ? "en-GB" : "sq-AL", { year: "numeric", month: "long" })}
-                {ownerListingCount > 0 && (
-                  <> · <button
-                    onClick={() => onViewOwnerListings?.(listing.owner_id)}
-                    style={{ border: "none", background: "none", padding: 0, color: "var(--ph-accent)", fontWeight: 600, fontSize: 12, textDecoration: "underline", cursor: "pointer" }}
-                  >
-                    {t.listingsCountLabel(ownerListingCount)}
-                  </button></>
-                )}
-              </div>
-            )}
+        {listing.ownerMemberSince && (
+          <div style={{ marginBottom: 10 }}>
+            <div style={{ fontSize: 12, color: "var(--ph-text-muted)" }}>
+              {t.memberSince} {new Date(listing.ownerMemberSince).toLocaleDateString(lang === "de" ? "de-DE" : lang === "en" ? "en-GB" : "sq-AL", { year: "numeric", month: "long" })}
+              {ownerListingCount > 0 && (
+                <> · <button
+                  onClick={() => onViewOwnerListings?.(listing.owner_id)}
+                  style={{ border: "none", background: "none", padding: 0, color: "var(--ph-accent)", fontWeight: 600, fontSize: 12, textDecoration: "underline", cursor: "pointer" }}
+                >
+                  {t.listingsCountLabel(ownerListingCount)}
+                </button></>
+              )}
+            </div>
           </div>
         )}
 
@@ -3461,6 +3453,12 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
         >
           {t.reportListingLabel}
         </button>
+
+        {listing.ownerEmailVerified && (
+          <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10.5, fontWeight: 600, color: "#2F7A56", marginTop: 16 }}>
+            <Check size={11} /> {t.emailVerified}
+          </div>
+        )}
       </div>
 
       {showDetails && (

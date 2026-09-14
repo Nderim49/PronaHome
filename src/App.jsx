@@ -4127,6 +4127,21 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
 // ---------------------------------------------------------------------------
 // Advanced filter panel
 // ---------------------------------------------------------------------------
+// Preset step values for the filter dropdowns — dropdowns are faster to tap
+// through on mobile than typing a number, and these cover the realistic
+// range for the region without the list getting unreasonably long.
+const PRICE_STEPS = [5000, 10000, 15000, 20000, 25000, 30000, 40000, 50000, 75000, 100000, 150000, 200000, 300000, 500000, 750000, 1000000];
+const AREA_STEPS = [20, 30, 40, 50, 60, 75, 90, 100, 125, 150, 200, 250, 300, 400, 500];
+const LAND_AREA_STEPS = [100, 200, 300, 500, 750, 1000, 1500, 2000, 3000, 5000, 10000, 20000];
+const YEAR_BUILT_STEPS = Array.from({ length: new Date().getFullYear() - 1949 }, (_, i) => new Date().getFullYear() - i);
+function RangeSelect({ value, onChange, options, placeholder }) {
+  return (
+    <select style={inputStyle} value={value} onChange={onChange}>
+      <option value="">{placeholder}</option>
+      {options.map((n) => <option key={n} value={n}>{n.toLocaleString("de-DE")}</option>)}
+    </select>
+  );
+}
 const DEFAULT_FILTERS = {
   dealType: "all", propertyType: "all", city: "", area: "",
   priceMin: "", priceMax: "", m2Min: "", m2Max: "",
@@ -4253,11 +4268,11 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
           <div style={{ padding: 14, display: "flex", gap: 14 }}>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>{t.minimumLabel}</label>
-              <input style={inputStyle} type="number" placeholder={t.anyPlaceholder} value={local.priceMin} onChange={set("priceMin")} />
+              <RangeSelect options={PRICE_STEPS} value={local.priceMin} onChange={set("priceMin")} placeholder={t.anyPlaceholder} />
             </div>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>{t.maximumLabel}</label>
-              <input style={inputStyle} type="number" placeholder={t.anyPlaceholder} value={local.priceMax} onChange={set("priceMax")} />
+              <RangeSelect options={PRICE_STEPS} value={local.priceMax} onChange={set("priceMax")} placeholder={t.anyPlaceholder} />
             </div>
           </div>
         </SettingsSection>
@@ -4284,11 +4299,11 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
           <div style={{ padding: 14, display: "flex", gap: 14 }}>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>{t.minimumLabel}</label>
-              <input style={inputStyle} type="number" placeholder={t.anyPlaceholder} value={local.m2Min} onChange={set("m2Min")} />
+              <RangeSelect options={AREA_STEPS} value={local.m2Min} onChange={set("m2Min")} placeholder={t.anyPlaceholder} />
             </div>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>{t.maximumLabel}</label>
-              <input style={inputStyle} type="number" placeholder={t.anyPlaceholder} value={local.m2Max} onChange={set("m2Max")} />
+              <RangeSelect options={AREA_STEPS} value={local.m2Max} onChange={set("m2Max")} placeholder={t.anyPlaceholder} />
             </div>
           </div>
         </SettingsSection>
@@ -4297,11 +4312,11 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
           <div style={{ padding: 14, display: "flex", gap: 14 }}>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>{t.minimumLabel}</label>
-              <input style={inputStyle} type="number" placeholder={t.anyPlaceholder} value={local.landAreaMin} onChange={set("landAreaMin")} />
+              <RangeSelect options={LAND_AREA_STEPS} value={local.landAreaMin} onChange={set("landAreaMin")} placeholder={t.anyPlaceholder} />
             </div>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>{t.maximumLabel}</label>
-              <input style={inputStyle} type="number" placeholder={t.anyPlaceholder} value={local.landAreaMax} onChange={set("landAreaMax")} />
+              <RangeSelect options={LAND_AREA_STEPS} value={local.landAreaMax} onChange={set("landAreaMax")} placeholder={t.anyPlaceholder} />
             </div>
           </div>
         </SettingsSection>
@@ -4310,11 +4325,11 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
           <div style={{ padding: 14, display: "flex", gap: 14 }}>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>{t.minimumLabel}</label>
-              <input style={inputStyle} type="number" placeholder={t.anyPlaceholder} value={local.yearBuiltMin} onChange={set("yearBuiltMin")} />
+              <RangeSelect options={YEAR_BUILT_STEPS} value={local.yearBuiltMin} onChange={set("yearBuiltMin")} placeholder={t.anyPlaceholder} />
             </div>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>{t.maximumLabel}</label>
-              <input style={inputStyle} type="number" placeholder={t.anyPlaceholder} value={local.yearBuiltMax} onChange={set("yearBuiltMax")} />
+              <RangeSelect options={YEAR_BUILT_STEPS} value={local.yearBuiltMax} onChange={set("yearBuiltMax")} placeholder={t.anyPlaceholder} />
             </div>
           </div>
         </SettingsSection>

@@ -389,7 +389,7 @@ const STRINGS = {
     landAreaFromPlaceholder: "z. B. 300", landAreaToPlaceholder: "z. B. 500",
     yearBuiltFromLabel: "Baujahr von", yearBuiltToLabel: "Baujahr bis", yearBuiltToPlaceholder: "z. B. 2020",
     roomsFromLabel: "Zimmer von", roomsToLabel: "Zimmer bis", roomsToPlaceholder: "z. B. 20",
-    areaM2Label: "Fläche (m²)", areaM2Placeholder: "z. B. 75",
+    areaM2Label: "Wohnfläche (m²)", areaM2Placeholder: "z. B. 75",
     roomsFieldLabel: "Zimmer", roomsPlaceholder: "z. B. 3",
     yearBuiltLabel: "Baujahr", yearBuiltPlaceholder: "z. B. 2015", landAreaStat: "Grundstücksfläche",
     heatingTypeLabel: "Heizungsart",
@@ -3861,14 +3861,6 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             </div>
           </SettingsSection>
 
-          {!isHotel && (
-            <SettingsSection title={t.websiteLabel}>
-              <div style={{ padding: 14 }}>
-                <input style={inputStyle} value={form.website} onChange={set("website")} placeholder={t.websitePlaceholder} />
-              </div>
-            </SettingsSection>
-          )}
-
           <SettingsSection title={t.contactInfoLabel}>
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
               <div>
@@ -3905,13 +3897,11 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             </SettingsSection>
           )}
 
-          {isHotel && (
-            <SettingsSection title={t.websiteLabel}>
-              <div style={{ padding: 14 }}>
-                <input style={inputStyle} value={form.website} onChange={set("website")} placeholder={t.websitePlaceholder} />
-              </div>
-            </SettingsSection>
-          )}
+          <SettingsSection title={t.websiteLabel}>
+            <div style={{ padding: 14 }}>
+              <input style={inputStyle} value={form.website} onChange={set("website")} placeholder={t.websitePlaceholder} />
+            </div>
+          </SettingsSection>
         </>
         )}
         {error && <div style={{ color: "#B0473C", fontSize: 12.5 }}>{error}</div>}

@@ -2553,18 +2553,27 @@ function Opt() {
 }
 function DobPicker({ value, onChange }) {
   const { t } = useLang();
-  const [y, m, d] = value ? value.split("-") : ["", "", ""];
+  const parsedParts = value ? value.split("-") : ["", "", ""];
+  const [y, setY] = useState(parsedParts[0] || "");
+  const [m, setM] = useState(parsedParts[1] || "");
+  const [d, setD] = useState(parsedParts[2] || "");
+  useEffect(() => {
+    const parts = value ? value.split("-") : ["", "", ""];
+    setY(parts[0] || ""); setM(parts[1] || ""); setD(parts[2] || "");
+  }, [value]);
   const maxYear = new Date().getFullYear();
   const years = Array.from({ length: 100 }, (_, i) => maxYear - i);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
   const daysInMonth = y && m ? new Date(Number(y), Number(m), 0).getDate() : 31;
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  // Each dropdown remembers its own pick right away (even if the other two
+  // are still empty) — we only bubble a complete date up to the parent once
+  // all three are filled in, whatever order the person picks them in.
   const update = (part, val) => {
     const next = { y, m, d, [part]: val };
+    setY(next.y); setM(next.m); setD(next.d);
     if (next.y && next.m && next.d) {
       onChange(`${next.y}-${String(next.m).padStart(2, "0")}-${String(next.d).padStart(2, "0")}`);
-    } else {
-      onChange("");
     }
   };
   return (

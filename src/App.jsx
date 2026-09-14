@@ -1863,9 +1863,11 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
 
           <div style={{ marginBottom: 12 }}>
             <label style={labelStyle}>{t.phoneLabel}</label>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <CountryTypeahead value={phoneCountry} onChange={setPhoneCountry} placeholder={t.countryLabel} />
-              <input style={inputStyle} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t.phoneLocalPlaceholder} />
+            <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ width: 132, flexShrink: 0 }}>
+                <CountryTypeahead value={phoneCountry} onChange={setPhoneCountry} placeholder={t.countryLabel} />
+              </div>
+              <input style={{ ...inputStyle, flex: 1 }} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t.phoneLocalPlaceholder} />
             </div>
           </div>
 
@@ -2069,9 +2071,11 @@ function EditProfileScreen({ profile, onBack, onSave }) {
             <label style={labelStyle}>{t.onboardEmailLabel}</label>
             <input style={{ ...inputStyle, marginBottom: 12 }} type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             <label style={labelStyle}>{t.phoneLabel}</label>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <CountryTypeahead value={phoneCountry} onChange={setPhoneCountry} placeholder={t.countryLabel} />
-              <input style={inputStyle} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t.phoneLocalPlaceholder} />
+            <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ width: 132, flexShrink: 0 }}>
+                <CountryTypeahead value={phoneCountry} onChange={setPhoneCountry} placeholder={t.countryLabel} />
+              </div>
+              <input style={{ ...inputStyle, flex: 1 }} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t.phoneLocalPlaceholder} />
             </div>
           </div>
         </SettingsSection>
@@ -3539,9 +3543,11 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
               <div>
                 <label style={labelStyle}>{t.phoneLabel}</label>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  <CountryTypeahead value={form.contactCountry} onChange={(v) => setForm((f) => ({ ...f, contactCountry: v }))} placeholder={t.countryLabel} />
-                  <input style={inputStyle} type="tel" value={form.contactPhone} onChange={set("contactPhone")} placeholder={t.phoneLocalPlaceholder} />
+                <div style={{ display: "flex", gap: 8 }}>
+                  <div style={{ width: 132, flexShrink: 0 }}>
+                    <CountryTypeahead value={form.contactCountry} onChange={(v) => setForm((f) => ({ ...f, contactCountry: v }))} placeholder={t.countryLabel} />
+                  </div>
+                  <input style={{ ...inputStyle, flex: 1 }} type="tel" value={form.contactPhone} onChange={set("contactPhone")} placeholder={t.phoneLocalPlaceholder} />
                 </div>
               </div>
               <div>
@@ -3832,9 +3838,11 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
               <div>
                 <label style={labelStyle}>{t.phoneLabel}</label>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  <CountryTypeahead value={form.contactCountry} onChange={(v) => setForm((f) => ({ ...f, contactCountry: v }))} placeholder={t.countryLabel} />
-                  <input style={inputStyle} type="tel" value={form.contactPhone} onChange={set("contactPhone")} placeholder={t.phoneLocalPlaceholder} />
+                <div style={{ display: "flex", gap: 8 }}>
+                  <div style={{ width: 132, flexShrink: 0 }}>
+                    <CountryTypeahead value={form.contactCountry} onChange={(v) => setForm((f) => ({ ...f, contactCountry: v }))} placeholder={t.countryLabel} />
+                  </div>
+                  <input style={{ ...inputStyle, flex: 1 }} type="tel" value={form.contactPhone} onChange={set("contactPhone")} placeholder={t.phoneLocalPlaceholder} />
                 </div>
               </div>
               <div>

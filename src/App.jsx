@@ -3,7 +3,7 @@ import {
   Search, Heart, Bell, User, MapPin, ChevronLeft, SlidersHorizontal,
   BedDouble, Maximize2, Phone, Building2, Home as HomeIcon, KeyRound,
   Warehouse, Trees, Landmark, X, Check, Plus, Trash2, Loader2, Mail, LogOut, Pencil,
-  Camera, Globe, Hotel, Briefcase, Users, Car, Building, Store, Factory, UtensilsCrossed, Wrench, Download, Eye, Send, EyeOff, Wallet
+  Camera, Globe, Hotel, Briefcase, Users, Car, Building, Store, Factory, UtensilsCrossed, Wrench, Download, Eye, Send, EyeOff, Wallet, Hammer, Handshake
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -111,7 +111,7 @@ const STRINGS = {
     catAll: "Të gjitha", catShitje: "Blerje & Shitje", catQera: "Qera & Qiradhënie",
     catBanesa: "Banesë", catShtepi: "Shtëpi", catLokale: "Lokal Afarist", catTruall: "Truall", catHotel: "Hotele & Fjetje",
     catMobilje: "Mobilje", catKuzhina: "Kuzhina", catZejtar: "Zejtar", catArkitekt: "Arkitekt", catStatike: "Statikë",
-    catNotar: "Noter", catFinancim: "Financim",
+    catNotar: "Noter", catFinancim: "Financim", catMakler: "Ndërmjetësues Imobiliar", catBautrager: "Zhvillues Ndërtimi",
     catGarazhe: "Garazh / Vend Parkimi", catZyre: "Zyre", catShitjePakice: "Shitje me Pakicë",
     catHale: "Halle / Prodhimi", catGastronomi: "Gastronomi / Hotel", catBiznesSpecial: "Biznes i Veçantë",
     hotelOwnerBtn: "Hotele & Fjetje", hotelOwnerHint: "Shiko të gjitha hotelet, motelet dhe shtëpitë e pushimit",
@@ -123,6 +123,7 @@ const STRINGS = {
     providerGroupRealEstate: "Patundshmëri", providerGroupFurniture: "Mobilje & Kuzhina",
     providerGroupCraftsmen: "Zejtarë", providerGroupArchitects: "Arkitektë & Statikë",
     providerGroupNotary: "Noterë", providerGroupFinancing: "Financim",
+    providerGroupMakler: "Ndërmjetësues Imobiliar", providerGroupBautrager: "Zhvillues Ndërtimi",
     businessCardCategoryLabel: "Karta e Vizitës",
     noProvidersYet: "Ende pa ofertues aktivë në këtë kategori.",
     privateSeller: "Privat", listingsCount: (n) => `${n} shpallje`, backToAgencies: "Kthehu te ofertuesit",
@@ -296,7 +297,7 @@ const STRINGS = {
     catAll: "Alle", catShitje: "Kauf & Verkauf", catQera: "Miete & Vermietung",
     catBanesa: "Wohnung", catShtepi: "Haus", catLokale: "Gewerbefläche", catTruall: "Grundstück", catHotel: "Hotels & Unterkünfte",
     catMobilje: "Möbel", catKuzhina: "Küchen", catZejtar: "Handwerker", catArkitekt: "Architekt", catStatike: "Statiker",
-    catNotar: "Notar", catFinancim: "Finanzierung",
+    catNotar: "Notar", catFinancim: "Finanzierung", catMakler: "Makler", catBautrager: "Bauträger",
     catGarazhe: "Garage/Stellplatz", catZyre: "Büro", catShitjePakice: "Einzelhandel",
     catHale: "Halle/Produktion", catGastronomi: "Gastronomie/Hotel", catBiznesSpecial: "Spezialgewerbe",
     hotelOwnerBtn: "Hotels & Unterkünfte", hotelOwnerHint: "Alle Hotels, Motels und Ferienhäuser ansehen",
@@ -308,6 +309,7 @@ const STRINGS = {
     providerGroupRealEstate: "Immobilien", providerGroupFurniture: "Möbel & Küchen",
     providerGroupCraftsmen: "Handwerker", providerGroupArchitects: "Architekten & Statiker",
     providerGroupNotary: "Notare", providerGroupFinancing: "Finanzierung",
+    providerGroupMakler: "Makler", providerGroupBautrager: "Bauträger",
     businessCardCategoryLabel: "Visitenkarte",
     noProvidersYet: "Noch keine aktiven Anbieter in dieser Kategorie.",
     privateSeller: "Privat", listingsCount: (n) => `${n} Anzeigen`, backToAgencies: "Zurück zu den Anbietern",
@@ -481,7 +483,7 @@ const STRINGS = {
     catAll: "All", catShitje: "Buy & Sell", catQera: "Rent & Renting",
     catBanesa: "Apartment", catShtepi: "House", catLokale: "Business Premises", catTruall: "Land", catHotel: "Hotels & Stays",
     catMobilje: "Furniture", catKuzhina: "Kitchens", catZejtar: "Tradesperson", catArkitekt: "Architect", catStatike: "Structural Engineer",
-    catNotar: "Notary", catFinancim: "Financing",
+    catNotar: "Notary", catFinancim: "Financing", catMakler: "Real Estate Agent", catBautrager: "Property Developer",
     catGarazhe: "Garage/Parking Space", catZyre: "Office", catShitjePakice: "Retail",
     catHale: "Warehouse/Production", catGastronomi: "Gastronomy/Hotel", catBiznesSpecial: "Special-Purpose Commercial",
     hotelOwnerBtn: "Hotels & Stays", hotelOwnerHint: "See all hotels, motels and vacation homes",
@@ -493,6 +495,7 @@ const STRINGS = {
     providerGroupRealEstate: "Real Estate", providerGroupFurniture: "Furniture & Kitchens",
     providerGroupCraftsmen: "Tradespeople", providerGroupArchitects: "Architects & Structural Engineers",
     providerGroupNotary: "Notaries", providerGroupFinancing: "Financing",
+    providerGroupMakler: "Real Estate Agents", providerGroupBautrager: "Property Developers",
     businessCardCategoryLabel: "Business Card",
     noProvidersYet: "No active providers in this category yet.",
     privateSeller: "Private", listingsCount: (n) => `${n} listings`, backToAgencies: "Back to providers",
@@ -665,6 +668,8 @@ const CATEGORIES = (t) => [
   { id: "statike", label: t.catStatike, icon: Building },
   { id: "notar", label: t.catNotar, icon: Briefcase },
   { id: "financim", label: t.catFinancim, icon: Wallet },
+  { id: "makler", label: t.catMakler, icon: Handshake },
+  { id: "bautrager", label: t.catBautrager, icon: Hammer },
 ];
 const FEATURE_OPTIONS = (t) => [
   t.featureParking, t.featureElevator, t.featureBalcony, t.featureTerrace,
@@ -677,10 +682,10 @@ const FEATURE_OPTIONS = (t) => [
 // Categories that are NOT regular real-estate property listings — excluded
 // from the main property search/filters, and routed into their own
 // dedicated group on the Anbieter (Providers) page instead.
-const NON_PROPERTY_CATS = ["hotel", "mobilje", "kuzhina", "zejtar", "arkitekt", "statike", "notar", "financim"];
+const NON_PROPERTY_CATS = ["hotel", "mobilje", "kuzhina", "zejtar", "arkitekt", "statike", "notar", "financim", "makler", "bautrager"];
 // These providers are marketed as a simple contact/business-card profile
 // instead of a full property-style listing form.
-const BUSINESS_CARD_CATS = ["mobilje", "kuzhina", "zejtar", "arkitekt", "statike", "notar", "financim"];
+const BUSINESS_CARD_CATS = ["mobilje", "kuzhina", "zejtar", "arkitekt", "statike", "notar", "financim", "makler", "bautrager"];
 // Which Anbieter-page tab a listing's category belongs to.
 function providerGroupOfCat(cat) {
   if (cat === "mobilje" || cat === "kuzhina") return "furniture";
@@ -688,6 +693,8 @@ function providerGroupOfCat(cat) {
   if (cat === "arkitekt" || cat === "statike") return "architects";
   if (cat === "notar") return "notary";
   if (cat === "financim") return "financing";
+  if (cat === "makler") return "makler";
+  if (cat === "bautrager") return "bautrager";
   return "real_estate";
 }
 // Converts a 2-letter ISO country code into its flag emoji (native Unicode,
@@ -3306,6 +3313,8 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
   const isEditing = !!editingListing;
   const categories = CATEGORIES(t).filter((c) => c.id !== "all" && c.id !== "shitje" && c.id !== "qera");
   const VISITENKARTE_OPTIONS = [
+    { id: "makler", label: t.catMakler },
+    { id: "bautrager", label: t.catBautrager },
     { id: "mobilje", label: t.providerGroupFurniture },
     { id: "zejtar", label: t.catZejtar },
     { id: "arkitekt", label: t.providerGroupArchitects },
@@ -4901,6 +4910,8 @@ function HotelScreen({ listings, favorites, toggleFav, onOpen, onBack }) {
 function AgenciesScreen({ onBack, onOpenGroup }) {
   const { t } = useLang();
   const GROUPS = [
+    { id: "makler", label: t.providerGroupMakler, icon: Handshake, gradient: "linear-gradient(135deg, #6E3B2E 0%, #B87A5C 140%)" },
+    { id: "bautrager", label: t.providerGroupBautrager, icon: Hammer, gradient: "linear-gradient(135deg, #3A2E4A 0%, #7A5C9A 140%)" },
     { id: "furniture", label: t.providerGroupFurniture, icon: BedDouble, gradient: "linear-gradient(135deg, #6B4A2E 0%, #B08554 140%)" },
     { id: "craftsmen", label: t.providerGroupCraftsmen, icon: Wrench, gradient: "linear-gradient(135deg, #4A4238 0%, #8A7A5E 140%)" },
     { id: "architects", label: t.providerGroupArchitects, icon: Landmark, gradient: "linear-gradient(135deg, #2E3A4A 0%, #5C7290 140%)" },
@@ -4946,6 +4957,8 @@ function AgenciesScreen({ onBack, onOpenGroup }) {
 }
 
 const PROVIDER_GROUP_META = {
+  makler: { icon: Handshake, gradient: "linear-gradient(135deg, #6E3B2E 0%, #B87A5C 140%)" },
+  bautrager: { icon: Hammer, gradient: "linear-gradient(135deg, #3A2E4A 0%, #7A5C9A 140%)" },
   furniture: { icon: BedDouble, gradient: "linear-gradient(135deg, #6B4A2E 0%, #B08554 140%)" },
   craftsmen: { icon: Wrench, gradient: "linear-gradient(135deg, #4A4238 0%, #8A7A5E 140%)" },
   architects: { icon: Landmark, gradient: "linear-gradient(135deg, #2E3A4A 0%, #5C7290 140%)" },
@@ -4960,6 +4973,7 @@ function ProviderGroupScreen({ group, listings, favorites, toggleFav, onOpen, on
   const meta = PROVIDER_GROUP_META[group] || PROVIDER_GROUP_META.furniture;
   const GIcon = meta.icon;
   const labelMap = {
+    makler: t.providerGroupMakler, bautrager: t.providerGroupBautrager,
     furniture: t.providerGroupFurniture, craftsmen: t.providerGroupCraftsmen, architects: t.providerGroupArchitects,
     notary: t.providerGroupNotary, financing: t.providerGroupFinancing,
   };

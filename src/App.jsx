@@ -3031,6 +3031,29 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           </div>
         </div>
 
+        {listing.website && (
+          <a
+            href={/^https?:\/\//i.test(listing.website) ? listing.website : `https://${listing.website}`}
+            target="_blank" rel="noopener noreferrer"
+            style={{
+              display: "flex", alignItems: "center", gap: 10, color: "var(--ph-text)", fontWeight: 500, fontSize: 13,
+              textDecoration: "none", background: "var(--ph-surface)", border: "1px solid var(--ph-border)",
+              borderRadius: 14, padding: 14, marginBottom: 18,
+            }}
+          >
+            <div style={{ width: 28, height: 28, borderRadius: 8, background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Globe size={14} color="var(--ph-accent)" />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "var(--ph-text-muted)", textTransform: "uppercase", letterSpacing: 0.4, marginBottom: 2 }}>
+                {t.websiteLabel}
+              </div>
+              <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{listing.website}</div>
+            </div>
+            <ChevronLeft size={14} color="var(--ph-text-muted)" style={{ transform: "rotate(180deg)", flexShrink: 0 }} />
+          </a>
+        )}
+
         <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
           {listing.created_at && (
             <span style={{ fontSize: 11, color: "var(--ph-text-muted)" }}>
@@ -3235,6 +3258,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
       rooms: Number(form.rooms) || 0, floor: form.floor.trim() || "-",
       desc: form.desc.trim() || "", tags: form.tags.split(",").map((x) => x.trim()).filter(Boolean),
       images, image: images[0] || null, agency: isAgencyAccount ? (form.agency.trim() || "Privat") : "Privat",
+      website: form.website.trim(),
       contactPhone: form.contactPhone.trim() ? `${selectedContactCountry.dial} ${form.contactPhone.trim()}` : "", contactEmail: form.contactEmail.trim(),
       contactCountry: selectedContactCountry.code,
     };
@@ -3598,6 +3622,12 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                 <label style={labelStyle}>{t.tagsLabel}</label>
                 <input style={inputStyle} value={form.tags} onChange={set("tags")} placeholder={t.tagsPlaceholder} />
               </div>
+            </div>
+          </SettingsSection>
+
+          <SettingsSection title={t.websiteLabel}>
+            <div style={{ padding: 14 }}>
+              <input style={inputStyle} value={form.website} onChange={set("website")} placeholder={t.websitePlaceholder} />
             </div>
           </SettingsSection>
 

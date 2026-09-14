@@ -136,6 +136,7 @@ const STRINGS = {
     anyPlaceholder: "Çdo vlerë", propertyTypeLabel: "Lloji i pronës",
     priceRangeLabel: "Diapazoni i çmimit (€)", minimumLabel: "Minimumi", maximumLabel: "Maksimumi",
     roomsRangeLabel: "Numri i dhomave", areaRangeLabel: "Sipërfaqja në m²", landAreaRangeLabel: "Sipërfaqja e truallit (m²)",
+    yearBuiltRangeLabel: "Viti i ndërtimit",
     resetLabel: "Rivendos", showResultsCount: (n) => `Shfaq ${n} rezultate`,
     postedOn: (d) => `Postuar më ${d}`,
     tabSearch: "Kërko", tabFavorites: "Të preferuara", tabNotifications: "Njoftime", tabProfile: "Profili",
@@ -202,6 +203,7 @@ const STRINGS = {
     areaFromLabel: "Sipërfaqja (m²)", areaToPlaceholder: "p.sh. 60",
     livingAreaFromLabel: "Sipërfaqja e banimit nga (m²)", livingAreaToLabel: "Sipërfaqja e banimit deri (m²)",
     landAreaFromLabel: "Sipërfaqja e truallit nga (m²)", landAreaToLabel: "Sipërfaqja e truallit deri (m²)",
+    landAreaLabel: "Sipërfaqja e truallit (m²)", landAreaPlaceholder: "p.sh. 500",
     landAreaFromPlaceholder: "p.sh. 300", landAreaToPlaceholder: "p.sh. 500",
     yearBuiltFromLabel: "Viti i ndërtimit nga", yearBuiltToLabel: "Viti i ndërtimit deri", yearBuiltToPlaceholder: "p.sh. 2020",
     roomsFromLabel: "Dhoma nga", roomsToLabel: "Dhoma deri", roomsToPlaceholder: "p.sh. 20",
@@ -316,6 +318,7 @@ const STRINGS = {
     anyPlaceholder: "Egal", propertyTypeLabel: "Immobilientyp",
     priceRangeLabel: "Preisspanne in €", minimumLabel: "Minimum", maximumLabel: "Maximum",
     roomsRangeLabel: "Anzahl der Zimmer", areaRangeLabel: "Wohnfläche in m²", landAreaRangeLabel: "Grundstücksfläche in m²",
+    yearBuiltRangeLabel: "Baujahr",
     resetLabel: "Zurücksetzen", showResultsCount: (n) => `${n} Treffer anzeigen`,
     postedOn: (d) => `Veröffentlicht am ${d}`,
     tabSearch: "Suchen", tabFavorites: "Favoriten", tabNotifications: "Mitteilungen", tabProfile: "Profil",
@@ -382,6 +385,7 @@ const STRINGS = {
     areaFromLabel: "Wohnfläche (m²)", areaToPlaceholder: "z. B. 60",
     livingAreaFromLabel: "Wohnfläche von (m²)", livingAreaToLabel: "Wohnfläche bis (m²)",
     landAreaFromLabel: "Grundstücksfläche von (m²)", landAreaToLabel: "Grundstücksfläche bis (m²)",
+    landAreaLabel: "Grundstücksfläche (m²)", landAreaPlaceholder: "z. B. 500",
     landAreaFromPlaceholder: "z. B. 300", landAreaToPlaceholder: "z. B. 500",
     yearBuiltFromLabel: "Baujahr von", yearBuiltToLabel: "Baujahr bis", yearBuiltToPlaceholder: "z. B. 2020",
     roomsFromLabel: "Zimmer von", roomsToLabel: "Zimmer bis", roomsToPlaceholder: "z. B. 20",
@@ -496,6 +500,7 @@ const STRINGS = {
     anyPlaceholder: "Any", propertyTypeLabel: "Property type",
     priceRangeLabel: "Price range (€)", minimumLabel: "Minimum", maximumLabel: "Maximum",
     roomsRangeLabel: "Number of rooms", areaRangeLabel: "Living area in m²", landAreaRangeLabel: "Land area in m²",
+    yearBuiltRangeLabel: "Year Built",
     resetLabel: "Reset", showResultsCount: (n) => `Show ${n} results`,
     postedOn: (d) => `Posted on ${d}`,
     tabSearch: "Search", tabFavorites: "Favorites", tabNotifications: "Notifications", tabProfile: "Profile",
@@ -562,6 +567,7 @@ const STRINGS = {
     areaFromLabel: "Living Area (m²)", areaToPlaceholder: "e.g. 60",
     livingAreaFromLabel: "Living Area from (m²)", livingAreaToLabel: "Living Area to (m²)",
     landAreaFromLabel: "Land Area from (m²)", landAreaToLabel: "Land Area to (m²)",
+    landAreaLabel: "Land Area (m²)", landAreaPlaceholder: "e.g. 500",
     landAreaFromPlaceholder: "e.g. 300", landAreaToPlaceholder: "e.g. 500",
     yearBuiltFromLabel: "Year Built from", yearBuiltToLabel: "Year Built to", yearBuiltToPlaceholder: "e.g. 2020",
     roomsFromLabel: "Rooms from", roomsToLabel: "Rooms to", roomsToPlaceholder: "e.g. 20",
@@ -3715,67 +3721,94 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
 
           <SettingsSection title={t.sectionPriceSize}>
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
-              <div style={{ display: "flex", gap: 10 }}>
-                <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.priceFromLabel}</label>
-                  <input style={inputStyle} type="number" value={form.price} onChange={set("price")} placeholder={t.anyPlaceholder} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.priceToLabel}</label>
-                  <input style={inputStyle} type="number" value={form.priceMax} onChange={set("priceMax")} placeholder={t.anyPlaceholder} />
-                </div>
-              </div>
-              <div style={{ display: "flex", gap: 10 }}>
-                <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.livingAreaFromLabel}</label>
-                  <input style={inputStyle} type="number" min="1" value={form.m2} onChange={set("m2")} placeholder={t.anyPlaceholder} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.livingAreaToLabel}</label>
-                  <input style={inputStyle} type="number" min="1" value={form.m2Max} onChange={set("m2Max")} placeholder={t.anyPlaceholder} />
-                </div>
-              </div>
-              {!isHotel && (
+              {isHotel ? (
+                <>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>{t.priceFromLabel}</label>
+                      <input style={inputStyle} type="number" value={form.price} onChange={set("price")} placeholder={t.anyPlaceholder} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>{t.priceToLabel}</label>
+                      <input style={inputStyle} type="number" value={form.priceMax} onChange={set("priceMax")} placeholder={t.anyPlaceholder} />
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>{t.livingAreaFromLabel}</label>
+                      <input style={inputStyle} type="number" min="1" value={form.m2} onChange={set("m2")} placeholder={t.anyPlaceholder} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>{t.livingAreaToLabel}</label>
+                      <input style={inputStyle} type="number" min="1" value={form.m2Max} onChange={set("m2Max")} placeholder={t.anyPlaceholder} />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>{t.priceEurLabel}</label>
+                      <input style={inputStyle} type="number" value={form.price} onChange={set("price")} placeholder={t.pricePlaceholder} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>{t.areaM2Label}</label>
+                      <input style={inputStyle} type="number" min="1" value={form.m2} onChange={set("m2")} placeholder={t.areaM2Placeholder} />
+                    </div>
+                  </div>
+                  <div>
+                    <label style={labelStyle}>{t.landAreaLabel}</label>
+                    <input style={inputStyle} type="number" min="1" value={form.landArea} onChange={set("landArea")} placeholder={t.landAreaPlaceholder} />
+                  </div>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>{t.yearBuiltLabel}</label>
+                      <input style={inputStyle} type="number" value={form.yearBuilt} onChange={set("yearBuilt")} placeholder={t.yearBuiltPlaceholder} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>{t.heatingTypeLabel}</label>
+                      <select style={inputStyle} value={form.heatingType} onChange={set("heatingType")}>
+                        <option value="">{t.chooseOption}</option>
+                        <option value={t.heatingCentral}>{t.heatingCentral}</option>
+                        <option value={t.heatingGas}>{t.heatingGas}</option>
+                        <option value={t.heatingOil}>{t.heatingOil}</option>
+                        <option value={t.heatingDistrict}>{t.heatingDistrict}</option>
+                        <option value={t.heatingHeatPump}>{t.heatingHeatPump}</option>
+                        <option value={t.heatingElectric}>{t.heatingElectric}</option>
+                        <option value={t.heatingWoodPellet}>{t.heatingWoodPellet}</option>
+                        <option value={t.heatingNone}>{t.heatingNone}</option>
+                      </select>
+                    </div>
+                  </div>
+                </>
+              )}
+              {(!NON_PROPERTY_CATS.includes(form.cat) || form.cat === "hotel") && !isHotel && (
                 <div style={{ display: "flex", gap: 10 }}>
                   <div style={{ flex: 1 }}>
-                    <label style={labelStyle}>{t.landAreaFromLabel}</label>
-                    <input style={inputStyle} type="number" min="1" value={form.landArea} onChange={set("landArea")} placeholder={t.anyPlaceholder} />
+                    <label style={labelStyle}>{t.roomsFieldLabel}</label>
+                    <select style={inputStyle} value={form.rooms} onChange={set("rooms")}>
+                      <option value="">{t.chooseOption}</option>
+                      {Array.from({ length: 99 }, (_, i) => i + 1).map((n) => (
+                        <option key={n} value={n}>{n}</option>
+                      ))}
+                    </select>
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label style={labelStyle}>{t.landAreaToLabel}</label>
-                    <input style={inputStyle} type="number" min="1" value={form.landAreaMax} onChange={set("landAreaMax")} placeholder={t.anyPlaceholder} />
+                    <label style={labelStyle}>{t.floorLabel}</label>
+                    <select style={inputStyle} value={form.floor} onChange={set("floor")}>
+                      <option value="">{t.chooseOption}</option>
+                      <option value={t.floorNotApplicableLabel}>{t.floorNotApplicableLabel}</option>
+                      <option value={t.basementLabel}>{t.basementLabel}</option>
+                      <option value={t.groundFloorLabel}>{t.groundFloorLabel}</option>
+                      {Array.from({ length: 20 }, (_, i) => i + 1).map((n) => (
+                        <option key={n} value={`${n}`}>{n}</option>
+                      ))}
+                      <option value={t.atticLabel}>{t.atticLabel}</option>
+                    </select>
                   </div>
                 </div>
               )}
-              {!isHotel && (
-                <div style={{ display: "flex", gap: 10 }}>
-                  <div style={{ flex: 1 }}>
-                    <label style={labelStyle}>{t.yearBuiltFromLabel}</label>
-                    <input style={inputStyle} type="number" value={form.yearBuilt} onChange={set("yearBuilt")} placeholder={t.anyPlaceholder} />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <label style={labelStyle}>{t.yearBuiltToLabel}</label>
-                    <input style={inputStyle} type="number" value={form.yearBuiltMax} onChange={set("yearBuiltMax")} placeholder={t.anyPlaceholder} />
-                  </div>
-                </div>
-              )}
-              {!isHotel && (
-                <div>
-                  <label style={labelStyle}>{t.heatingTypeLabel}</label>
-                  <select style={inputStyle} value={form.heatingType} onChange={set("heatingType")}>
-                    <option value="">{t.chooseOption}</option>
-                    <option value={t.heatingCentral}>{t.heatingCentral}</option>
-                    <option value={t.heatingGas}>{t.heatingGas}</option>
-                    <option value={t.heatingOil}>{t.heatingOil}</option>
-                    <option value={t.heatingDistrict}>{t.heatingDistrict}</option>
-                    <option value={t.heatingHeatPump}>{t.heatingHeatPump}</option>
-                    <option value={t.heatingElectric}>{t.heatingElectric}</option>
-                    <option value={t.heatingWoodPellet}>{t.heatingWoodPellet}</option>
-                    <option value={t.heatingNone}>{t.heatingNone}</option>
-                  </select>
-                </div>
-              )}
-              {(!NON_PROPERTY_CATS.includes(form.cat) || form.cat === "hotel") && (
+              {isHotel && (
                 <div style={{ display: "flex", gap: 10 }}>
                   <div style={{ flex: 1 }}>
                     <label style={labelStyle}>{t.roomsFromLabel}</label>
@@ -3785,21 +3818,6 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                     <label style={labelStyle}>{t.roomsToLabel}</label>
                     <input style={inputStyle} type="number" min="1" value={form.roomsMax} onChange={set("roomsMax")} placeholder={t.anyPlaceholder} />
                   </div>
-                </div>
-              )}
-              {!isHotel && (
-                <div>
-                  <label style={labelStyle}>{t.floorLabel}</label>
-                  <select style={inputStyle} value={form.floor} onChange={set("floor")}>
-                    <option value="">{t.chooseOption}</option>
-                    <option value={t.floorNotApplicableLabel}>{t.floorNotApplicableLabel}</option>
-                    <option value={t.basementLabel}>{t.basementLabel}</option>
-                    <option value={t.groundFloorLabel}>{t.groundFloorLabel}</option>
-                    {Array.from({ length: 20 }, (_, i) => i + 1).map((n) => (
-                      <option key={n} value={`${n}`}>{n}</option>
-                    ))}
-                    <option value={t.atticLabel}>{t.atticLabel}</option>
-                  </select>
                 </div>
               )}
             </div>
@@ -3922,6 +3940,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
 const DEFAULT_FILTERS = {
   dealType: "all", propertyType: "all", city: "", area: "",
   priceMin: "", priceMax: "", m2Min: "", m2Max: "",
+  landAreaMin: "", landAreaMax: "", yearBuiltMin: "", yearBuiltMax: "", heatingType: "",
   roomsMin: 0, roomsMax: 6, sort: "newest",
 };
 
@@ -3936,9 +3955,16 @@ function matchesFilters(l, f) {
   const matchesPriceMax = !f.priceMax || l.price <= Number(f.priceMax);
   const matchesM2Min = !f.m2Min || l.m2 >= Number(f.m2Min);
   const matchesM2Max = !f.m2Max || l.m2 <= Number(f.m2Max);
+  const matchesLandAreaMin = !f.landAreaMin || (l.landArea && l.landArea >= Number(f.landAreaMin));
+  const matchesLandAreaMax = !f.landAreaMax || (l.landArea && l.landArea <= Number(f.landAreaMax));
+  const matchesYearBuiltMin = !f.yearBuiltMin || (l.yearBuilt && l.yearBuilt >= Number(f.yearBuiltMin));
+  const matchesYearBuiltMax = !f.yearBuiltMax || (l.yearBuilt && l.yearBuilt <= Number(f.yearBuiltMax));
+  const matchesHeatingType = !f.heatingType || l.heatingType === f.heatingType;
   const matchesRoomsMin = f.roomsMin <= 0 || l.rooms >= f.roomsMin;
   const matchesRoomsMax = f.roomsMax >= 6 || l.rooms <= f.roomsMax;
-  return matchesDeal && matchesPropertyType && matchesCity && matchesArea && matchesPriceMin && matchesPriceMax && matchesM2Min && matchesM2Max && matchesRoomsMin && matchesRoomsMax;
+  return matchesDeal && matchesPropertyType && matchesCity && matchesArea && matchesPriceMin && matchesPriceMax && matchesM2Min && matchesM2Max
+    && matchesLandAreaMin && matchesLandAreaMax && matchesYearBuiltMin && matchesYearBuiltMax && matchesHeatingType
+    && matchesRoomsMin && matchesRoomsMax;
 }
 
 function FilterScreen({ filters, listings, onBack, onApply }) {
@@ -4077,6 +4103,48 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
           </div>
         </SettingsSection>
 
+        <SettingsSection title={t.landAreaRangeLabel}>
+          <div style={{ padding: 14, display: "flex", gap: 14 }}>
+            <div style={{ flex: 1 }}>
+              <label style={labelStyle}>{t.minimumLabel}</label>
+              <input style={inputStyle} type="number" placeholder={t.anyPlaceholder} value={local.landAreaMin} onChange={set("landAreaMin")} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={labelStyle}>{t.maximumLabel}</label>
+              <input style={inputStyle} type="number" placeholder={t.anyPlaceholder} value={local.landAreaMax} onChange={set("landAreaMax")} />
+            </div>
+          </div>
+        </SettingsSection>
+
+        <SettingsSection title={t.yearBuiltRangeLabel}>
+          <div style={{ padding: 14, display: "flex", gap: 14 }}>
+            <div style={{ flex: 1 }}>
+              <label style={labelStyle}>{t.minimumLabel}</label>
+              <input style={inputStyle} type="number" placeholder={t.anyPlaceholder} value={local.yearBuiltMin} onChange={set("yearBuiltMin")} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={labelStyle}>{t.maximumLabel}</label>
+              <input style={inputStyle} type="number" placeholder={t.anyPlaceholder} value={local.yearBuiltMax} onChange={set("yearBuiltMax")} />
+            </div>
+          </div>
+        </SettingsSection>
+
+        <SettingsSection title={t.heatingTypeLabel}>
+          <div style={{ padding: 14 }}>
+            <select style={inputStyle} value={local.heatingType} onChange={set("heatingType")}>
+              <option value="">{t.anyPlaceholder}</option>
+              <option value={t.heatingCentral}>{t.heatingCentral}</option>
+              <option value={t.heatingGas}>{t.heatingGas}</option>
+              <option value={t.heatingOil}>{t.heatingOil}</option>
+              <option value={t.heatingDistrict}>{t.heatingDistrict}</option>
+              <option value={t.heatingHeatPump}>{t.heatingHeatPump}</option>
+              <option value={t.heatingElectric}>{t.heatingElectric}</option>
+              <option value={t.heatingWoodPellet}>{t.heatingWoodPellet}</option>
+              <option value={t.heatingNone}>{t.heatingNone}</option>
+            </select>
+          </div>
+        </SettingsSection>
+
         <SettingsSection title={t.sortLabel}>
           <div style={{ padding: 14 }}>
             <select style={inputStyle} value={local.sort} onChange={set("sort")}>
@@ -4155,6 +4223,7 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
 
   const activeFilterCount = [
     filters.city, filters.area, filters.priceMin, filters.priceMax, filters.m2Min, filters.m2Max,
+    filters.landAreaMin, filters.landAreaMax, filters.yearBuiltMin, filters.yearBuiltMax, filters.heatingType,
     filters.roomsMin > 0, filters.roomsMax < 6,
   ].filter(Boolean).length;
 

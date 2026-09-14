@@ -178,6 +178,7 @@ const STRINGS = {
     sectionMyData: "Të dhënat e mia", downloadDataLabel: "Shkarko të dhënat e mia", downloadDataHint: "Merr një kopje të profilit, shpalljeve dhe të preferuarave në format JSON",
     deleteAccountLabel: "Fshi llogarinë", deleteAccountHint: "Kjo do të fshijë përgjithmonë profilin dhe të dhënat e tua",
     deleteAccountConfirm: "Je i sigurt? Kjo veprim nuk mund të kthehet mbrapsht.", deleteAccountConfirmBtn: "Po, fshije llogarinë", cancel: "Anulo",
+    contactMethodTitle: "Si dëshiron të kontaktosh?",
     verifyBtn: "Verifiko", codeLabel: "Kodi i verifikimit", confirmBtn: "Konfirmo", wrongCode: "Kodi është i pasaktë.",
     emailNotRegisteredError: "Nuk ka llogari të regjistruar me këtë email. Ju lutemi regjistrohuni fillimisht.",
     verifyCodeSentEmail: (email) => `Një kod verifikimi u "dërgua" në ${email}`,
@@ -372,6 +373,7 @@ const STRINGS = {
     sectionMyData: "Meine Daten", downloadDataLabel: "Meine Daten herunterladen", downloadDataHint: "Erhalte eine Kopie deines Profils, deiner Anzeigen und Favoriten als JSON",
     deleteAccountLabel: "Konto löschen", deleteAccountHint: "Löscht dein Profil und deine Daten dauerhaft",
     deleteAccountConfirm: "Bist du sicher? Diese Aktion kann nicht rückgängig gemacht werden.", deleteAccountConfirmBtn: "Ja, Konto löschen", cancel: "Abbrechen",
+    contactMethodTitle: "Wie möchtest du kontaktieren?",
     verifyBtn: "Verifizieren", codeLabel: "Bestätigungscode", confirmBtn: "Bestätigen", wrongCode: "Falscher Code.",
     emailNotRegisteredError: "Für diese E-Mail-Adresse existiert kein Konto. Bitte registriere dich zuerst.",
     verifyCodeSentEmail: (email) => `Ein Bestätigungscode wurde an ${email} „gesendet"`,
@@ -566,6 +568,7 @@ const STRINGS = {
     sectionMyData: "My data", downloadDataLabel: "Download my data", downloadDataHint: "Get a copy of your profile, listings, and favorites as JSON",
     deleteAccountLabel: "Delete account", deleteAccountHint: "Permanently deletes your profile and data",
     deleteAccountConfirm: "Are you sure? This action cannot be undone.", deleteAccountConfirmBtn: "Yes, delete my account", cancel: "Cancel",
+    contactMethodTitle: "How would you like to get in touch?",
     verifyBtn: "Verify", codeLabel: "Verification code", confirmBtn: "Confirm", wrongCode: "Incorrect code.",
     emailNotRegisteredError: "No account exists for this email. Please register first.",
     verifyCodeSentEmail: (email) => `A verification code was "sent" to ${email}`,
@@ -2920,26 +2923,53 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
   const [showCallOptions, setShowCallOptions] = useState(false);
   const ownerListingCount = listings ? listings.filter((l) => l.owner_id === listing.owner_id).length : 0;
   const CallOptionsSheet = () => (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.5)", zIndex: 60, display: "flex", alignItems: "flex-end" }} onClick={() => setShowCallOptions(false)}>
-      <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", background: "var(--ph-bg)", borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: "18px 18px calc(env(safe-area-inset-bottom, 0px) + 18px)", display: "flex", flexDirection: "column", gap: 8 }}>
-        <button
-          onClick={() => { window.location.href = `tel:${listing.contactPhone}`; setShowCallOptions(false); }}
-          style={{ display: "flex", alignItems: "center", gap: 10, padding: "13px 14px", borderRadius: 12, border: "none", background: NAVY, color: "#fff", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14, cursor: "pointer" }}
-        >
-          <Phone size={16} /> {t.callBtn}
-        </button>
-        <a
-          href={`https://wa.me/${phoneDigitsOnly(listing.contactPhone)}`} target="_blank" rel="noopener noreferrer" onClick={() => setShowCallOptions(false)}
-          style={{ display: "flex", alignItems: "center", gap: 10, padding: "13px 14px", borderRadius: 12, background: "#25D366", color: "#fff", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14, cursor: "pointer", textDecoration: "none" }}
-        >
-          <MessageCircle size={16} /> {t.whatsappBtn}
-        </a>
-        <a
-          href={`viber://chat?number=${encodeURIComponent(phoneDigitsOnly(listing.contactPhone, true))}`} onClick={() => setShowCallOptions(false)}
-          style={{ display: "flex", alignItems: "center", gap: 10, padding: "13px 14px", borderRadius: 12, background: "#7360F2", color: "#fff", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14, cursor: "pointer", textDecoration: "none" }}
-        >
-          <MessageCircle size={16} /> {t.viberBtn}
-        </a>
+    <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 60, display: "flex", alignItems: "flex-end" }} onClick={() => setShowCallOptions(false)}>
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: "100%", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26,
+          padding: "10px 18px calc(env(safe-area-inset-bottom, 0px) + 18px)", boxShadow: "0 -8px 30px rgba(15,23,41,0.18)",
+        }}
+      >
+        <div style={{ width: 40, height: 5, borderRadius: 999, background: "var(--ph-border)", margin: "0 auto 16px" }} />
+        <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 15.5, color: "var(--ph-text)", textAlign: "center", marginBottom: 16 }}>
+          {t.contactMethodTitle}
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <button
+            onClick={() => { window.location.href = `tel:${listing.contactPhone}`; setShowCallOptions(false); }}
+            style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", borderRadius: 16, border: "none", background: NAVY, color: "#fff", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: "pointer" }}
+          >
+            <div style={{ width: 34, height: 34, borderRadius: "50%", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Phone size={16} />
+            </div>
+            {t.callBtn}
+          </button>
+          <a
+            href={`https://wa.me/${phoneDigitsOnly(listing.contactPhone)}`} target="_blank" rel="noopener noreferrer" onClick={() => setShowCallOptions(false)}
+            style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", borderRadius: 16, background: "#25D366", color: "#fff", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: "pointer", textDecoration: "none" }}
+          >
+            <div style={{ width: 34, height: 34, borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <MessageCircle size={16} />
+            </div>
+            {t.whatsappBtn}
+          </a>
+          <a
+            href={`viber://chat?number=${encodeURIComponent(phoneDigitsOnly(listing.contactPhone, true))}`} onClick={() => setShowCallOptions(false)}
+            style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", borderRadius: 16, background: "#7360F2", color: "#fff", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: "pointer", textDecoration: "none" }}
+          >
+            <div style={{ width: 34, height: 34, borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <MessageCircle size={16} />
+            </div>
+            {t.viberBtn}
+          </a>
+          <button
+            onClick={() => setShowCallOptions(false)}
+            style={{ padding: "14px 16px", borderRadius: 16, border: "none", background: "var(--ph-surface)", color: "var(--ph-text-muted)", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: "pointer", marginTop: 4 }}
+          >
+            {t.cancel}
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -198,6 +198,9 @@ const STRINGS = {
     categoryLabel: "Kategoria", typeLabel: "Lloji", typeSale: "Blerje", typeRent: "Qera",
     areaLabel: "Lagjja", areaPlaceholder: "p.sh. Dardania", cityCenterLabel: "Qendra e qytetit",
     priceEurLabel: "Çmimi (€)", pricePlaceholder: "p.sh. 95000",
+    priceFromLabel: "Çmimi nga (€)", priceToLabel: "Çmimi deri (€)", priceToPlaceholder: "p.sh. 200",
+    areaFromLabel: "Sipërfaqja (m²)", areaToPlaceholder: "p.sh. 60",
+    roomsFromLabel: "Dhoma nga", roomsToLabel: "Dhoma deri", roomsToPlaceholder: "p.sh. 20",
     areaM2Label: "Sipërfaqja (m²)", areaM2Placeholder: "p.sh. 75",
     roomsFieldLabel: "Dhoma", roomsPlaceholder: "p.sh. 3",
     yearBuiltLabel: "Viti i ndërtimit", yearBuiltPlaceholder: "p.sh. 2015",
@@ -371,6 +374,9 @@ const STRINGS = {
     categoryLabel: "Kategorie", typeLabel: "Typ", typeSale: "Kaufen", typeRent: "Mieten",
     areaLabel: "Viertel", areaPlaceholder: "z. B. Dardania", cityCenterLabel: "Stadtzentrum",
     priceEurLabel: "Preis (€)", pricePlaceholder: "z. B. 95000",
+    priceFromLabel: "Preis von (€)", priceToLabel: "Preis bis (€)", priceToPlaceholder: "z. B. 200",
+    areaFromLabel: "Fläche (m²)", areaToPlaceholder: "z. B. 60",
+    roomsFromLabel: "Zimmer von", roomsToLabel: "Zimmer bis", roomsToPlaceholder: "z. B. 20",
     areaM2Label: "Fläche (m²)", areaM2Placeholder: "z. B. 75",
     roomsFieldLabel: "Zimmer", roomsPlaceholder: "z. B. 3",
     yearBuiltLabel: "Baujahr", yearBuiltPlaceholder: "z. B. 2015",
@@ -544,6 +550,9 @@ const STRINGS = {
     categoryLabel: "Category", typeLabel: "Type", typeSale: "Buy", typeRent: "Rent",
     areaLabel: "Neighborhood", areaPlaceholder: "e.g. Dardania", cityCenterLabel: "City center",
     priceEurLabel: "Price (€)", pricePlaceholder: "e.g. 95000",
+    priceFromLabel: "Price from (€)", priceToLabel: "Price to (€)", priceToPlaceholder: "e.g. 200",
+    areaFromLabel: "Area (m²)", areaToPlaceholder: "e.g. 60",
+    roomsFromLabel: "Rooms from", roomsToLabel: "Rooms to", roomsToPlaceholder: "e.g. 20",
     areaM2Label: "Area (m²)", areaM2Placeholder: "e.g. 75",
     roomsFieldLabel: "Rooms", roomsPlaceholder: "e.g. 3",
     yearBuiltLabel: "Year Built", yearBuiltPlaceholder: "e.g. 2015",
@@ -1120,8 +1129,17 @@ function splitPhoneByDialCode(fullPhone, storedCountryCode) {
   if (match) return { code: match.code, local: fullPhone.slice(match.dial.length).trim() };
   return { code: storedCountryCode || "XK", local: fullPhone };
 }
+// Shows "50" or, when a hotel listing has a max value too, "50–200".
+function formatRangeValue(min, max) {
+  if (max != null && max !== "" && Number(max) !== Number(min)) return `${min}–${max}`;
+  return `${min}`;
+}
 function formatPrice(listing, t) {
   const n = Number(listing.price).toLocaleString("de-DE");
+  if (listing.cat === "hotel" && listing.priceMax) {
+    const nMax = Number(listing.priceMax).toLocaleString("de-DE");
+    return `${n} – ${nMax} € ${t.perNight}`;
+  }
   if (listing.type !== "Qera") return `${n} €`;
   return listing.cat === "hotel" ? `${n} € ${t.perNight}` : `${n} € ${t.perMonth}`;
 }
@@ -2739,8 +2757,8 @@ function ListingCard({ listing, isFav, onToggleFav, onOpen }) {
               <span>{listing.area}, {listing.city}</span>
             </div>
             <div style={{ display: "flex", gap: 12, fontSize: 12, color: "var(--ph-text-muted)", borderTop: "1px solid var(--ph-border-soft)", paddingTop: 8 }}>
-              <span style={{ display: "flex", alignItems: "center", gap: 4 }}><Maximize2 size={12} /> {listing.m2} m²</span>
-              {listing.rooms > 0 && <span style={{ display: "flex", alignItems: "center", gap: 4 }}><BedDouble size={12} /> {listing.rooms} {t.roomsUnit}</span>}
+              <span style={{ display: "flex", alignItems: "center", gap: 4 }}><Maximize2 size={12} /> {formatRangeValue(listing.m2, listing.m2Max)} m²</span>
+              {listing.rooms > 0 && <span style={{ display: "flex", alignItems: "center", gap: 4 }}><BedDouble size={12} /> {formatRangeValue(listing.rooms, listing.roomsMax)} {t.roomsUnit}</span>}
             </div>
           </>
         )}
@@ -3028,13 +3046,13 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
         <div style={{ display: "flex", gap: 10, marginBottom: 18 }}>
           <div style={{ flex: 1, background: "var(--ph-surface)", borderRadius: 12, padding: "10px 8px", textAlign: "center", border: "1px solid var(--ph-border)" }}>
             <Maximize2 size={16} color="var(--ph-text)" style={{ marginBottom: 4 }} />
-            <div style={{ fontSize: 13, fontWeight: 700, color: "var(--ph-text)" }}>{listing.m2} m²</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "var(--ph-text)" }}>{formatRangeValue(listing.m2, listing.m2Max)} m²</div>
             <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)" }}>{t.areaStat}</div>
           </div>
           {listing.rooms > 0 && (
             <div style={{ flex: 1, background: "var(--ph-surface)", borderRadius: 12, padding: "10px 8px", textAlign: "center", border: "1px solid var(--ph-border)" }}>
               <BedDouble size={16} color="var(--ph-text)" style={{ marginBottom: 4 }} />
-              <div style={{ fontSize: 13, fontWeight: 700, color: "var(--ph-text)" }}>{listing.rooms}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "var(--ph-text)" }}>{formatRangeValue(listing.rooms, listing.roomsMax)}</div>
               <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)" }}>{t.roomsStat}</div>
             </div>
           )}
@@ -3249,7 +3267,9 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
         city: editingListing.city || CITIES_LIST[0], area: editingListing.area === "-" ? "" : (editingListing.area || ""),
         address: editingListing.address || "", addressNumber: editingListing.addressNumber || "",
         price: editingListing.price != null ? String(editingListing.price) : "", m2: editingListing.m2 != null ? String(editingListing.m2) : "",
+        priceMax: editingListing.priceMax != null ? String(editingListing.priceMax) : "", m2Max: editingListing.m2Max != null ? String(editingListing.m2Max) : "",
         rooms: editingListing.rooms != null ? String(editingListing.rooms) : "", floor: editingListing.floor === "-" ? "" : (editingListing.floor || ""),
+        roomsMax: editingListing.roomsMax != null ? String(editingListing.roomsMax) : "",
         yearBuilt: editingListing.yearBuilt != null ? String(editingListing.yearBuilt) : "", heatingType: editingListing.heatingType || "",
         desc: editingListing.desc || "", agency: editingListing.agency || "Privat",
         tags: existingTags.filter((x) => featureLabels.includes(x)).join(", "),
@@ -3266,7 +3286,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
     const prefillPhone = splitPhoneByDialCode(profile?.phone, profile?.country);
     return {
       title: "", cat: "", type: "Shitje", city: CITIES_LIST[0], area: "", address: "", addressNumber: "",
-      price: "", m2: "", rooms: "", floor: "", yearBuilt: "", heatingType: "", desc: "", tags: "", customTags: "", website: "",
+      price: "", m2: "", priceMax: "", m2Max: "", rooms: "", floor: "", roomsMax: "", yearBuilt: "", heatingType: "", desc: "", tags: "", customTags: "", website: "",
       agency: (profile?.accountType === "agency" && profile?.company?.trim()) ? profile.company.trim() : "Privat",
       contactFirstName: "", contactLastName: "",
       contactPhone: prefillPhone.local, contactEmail: profile?.email || "", contactCountry: prefillPhone.code,
@@ -3325,7 +3345,9 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
       id: isEditing ? editingListing.id : `local-${Date.now()}`,
       title: form.title.trim(), cat: form.cat, type: form.type, city: form.city,
       area: form.area.trim() || "-", address: form.address.trim(), addressNumber: form.addressNumber.trim(), price: Number(form.price), m2: Number(form.m2),
+      priceMax: form.priceMax ? Number(form.priceMax) : null, m2Max: form.m2Max ? Number(form.m2Max) : null,
       rooms: Number(form.rooms) || 0, floor: form.floor.trim() || "-",
+      roomsMax: form.roomsMax ? Number(form.roomsMax) : null,
       yearBuilt: form.yearBuilt ? Number(form.yearBuilt) : null, heatingType: form.heatingType.trim(),
       desc: form.desc.trim() || "", tags: [...form.tags.split(",").map((x) => x.trim()).filter(Boolean), ...form.customTags.split(",").map((x) => x.trim()).filter(Boolean)],
       images, image: images[0] || null, agency: isAgencyAccount ? (form.agency.trim() || "Privat") : "Privat",
@@ -3665,16 +3687,38 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
 
           <SettingsSection title={t.sectionPriceSize}>
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
-              <div style={{ display: "flex", gap: 10 }}>
-                <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.priceEurLabel}</label>
-                  <input style={inputStyle} type="number" value={form.price} onChange={set("price")} placeholder={t.pricePlaceholder} />
+              {isHotel ? (
+                <>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>{t.priceFromLabel}</label>
+                      <input style={inputStyle} type="number" value={form.price} onChange={set("price")} placeholder={t.pricePlaceholder} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>{t.priceToLabel}</label>
+                      <input style={inputStyle} type="number" value={form.priceMax} onChange={set("priceMax")} placeholder={t.priceToPlaceholder} />
+                    </div>
+                  </div>
+                  <div>
+                    <label style={labelStyle}>{t.areaFromLabel}</label>
+                    <div style={{ display: "flex", gap: 10 }}>
+                      <input style={{ ...inputStyle, flex: 1 }} type="number" min="1" value={form.m2} onChange={set("m2")} placeholder={t.areaM2Placeholder} />
+                      <input style={{ ...inputStyle, flex: 1 }} type="number" min="1" value={form.m2Max} onChange={set("m2Max")} placeholder={t.areaToPlaceholder} />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div style={{ display: "flex", gap: 10 }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={labelStyle}>{t.priceEurLabel}</label>
+                    <input style={inputStyle} type="number" value={form.price} onChange={set("price")} placeholder={t.pricePlaceholder} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={labelStyle}>{t.areaM2Label}</label>
+                    <input style={inputStyle} type="number" min="1" value={form.m2} onChange={set("m2")} placeholder={t.areaM2Placeholder} />
+                  </div>
                 </div>
-                <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.areaM2Label}</label>
-                  <input style={inputStyle} type="number" min="1" value={form.m2} onChange={set("m2")} placeholder={t.areaM2Placeholder} />
-                </div>
-              </div>
+              )}
               {(!NON_PROPERTY_CATS.includes(form.cat) || form.cat === "hotel") && !isHotel && (
                 <div style={{ display: "flex", gap: 10 }}>
                   <div style={{ flex: 1 }}>
@@ -3697,7 +3741,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                   </div>
                 </div>
               )}
-              {(!NON_PROPERTY_CATS.includes(form.cat) || form.cat === "hotel") && (
+              {(!NON_PROPERTY_CATS.includes(form.cat) || form.cat === "hotel") && !isHotel && (
                 <div style={{ display: "flex", gap: 10 }}>
                   <div style={{ flex: 1 }}>
                     <label style={labelStyle}>{t.roomsFieldLabel}</label>
@@ -3720,6 +3764,18 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                       ))}
                       <option value={t.atticLabel}>{t.atticLabel}</option>
                     </select>
+                  </div>
+                </div>
+              )}
+              {isHotel && (
+                <div style={{ display: "flex", gap: 10 }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={labelStyle}>{t.roomsFromLabel}</label>
+                    <input style={inputStyle} type="number" min="1" value={form.rooms} onChange={set("rooms")} placeholder={t.roomsPlaceholder} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={labelStyle}>{t.roomsToLabel}</label>
+                    <input style={inputStyle} type="number" min="1" value={form.roomsMax} onChange={set("roomsMax")} placeholder={t.roomsToPlaceholder} />
                   </div>
                 </div>
               )}

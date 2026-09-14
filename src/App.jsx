@@ -3280,6 +3280,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
   const MAX_IMAGES = 10;
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const isBusinessCard = BUSINESS_CARD_CATS.includes(form.cat);
+  const isHotel = form.cat === "hotel";
   const isAgencyAccount = profile?.accountType === "agency";
   const selectedContactCountry = WORLD_COUNTRIES.find((c) => c.code === form.contactCountry) || WORLD_COUNTRIES[0];
   const NO_M2_CATS = ["mobilje", "zejtar", "arkitekt", "statike"];
@@ -3590,6 +3591,24 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             </div>
           </SettingsSection>
 
+          {isHotel && (
+            <SettingsSection title={t.sectionProviderInfo}>
+              <div style={{ padding: 14 }}>
+                <input
+                  style={isAgencyAccount ? inputStyle : { ...inputStyle, opacity: 0.5, background: "var(--ph-border-soft)" }}
+                  value={isAgencyAccount ? form.agency : "Privat"} onChange={set("agency")} disabled={!isAgencyAccount}
+                  placeholder={t.agencyFieldPlaceholder} list="prona-agency-suggestions"
+                />
+                <datalist id="prona-agency-suggestions">
+                  {(agencies || []).map((a) => <option key={a} value={a} />)}
+                </datalist>
+                <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)", marginTop: 8 }}>
+                  {isAgencyAccount ? t.agencyFieldHint : t.agencyFieldLockedHint}
+                </div>
+              </div>
+            </SettingsSection>
+          )}
+
           <SettingsSection title={t.sectionBasicInfo}>
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
               <div>
@@ -3656,7 +3675,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                   <input style={inputStyle} type="number" min="1" value={form.m2} onChange={set("m2")} placeholder={t.areaM2Placeholder} />
                 </div>
               </div>
-              {(!NON_PROPERTY_CATS.includes(form.cat) || form.cat === "hotel") && (
+              {(!NON_PROPERTY_CATS.includes(form.cat) || form.cat === "hotel") && !isHotel && (
                 <div style={{ display: "flex", gap: 10 }}>
                   <div style={{ flex: 1 }}>
                     <label style={labelStyle}>{t.yearBuiltLabel}</label>
@@ -3745,11 +3764,13 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             </div>
           </SettingsSection>
 
-          <SettingsSection title={t.websiteLabel}>
-            <div style={{ padding: 14 }}>
-              <input style={inputStyle} value={form.website} onChange={set("website")} placeholder={t.websitePlaceholder} />
-            </div>
-          </SettingsSection>
+          {!isHotel && (
+            <SettingsSection title={t.websiteLabel}>
+              <div style={{ padding: 14 }}>
+                <input style={inputStyle} value={form.website} onChange={set("website")} placeholder={t.websitePlaceholder} />
+              </div>
+            </SettingsSection>
+          )}
 
           <SettingsSection title={t.contactInfoLabel}>
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
@@ -3767,21 +3788,31 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             </div>
           </SettingsSection>
 
-          <SettingsSection title={t.sectionProviderInfo}>
-            <div style={{ padding: 14 }}>
-              <input
-                style={isAgencyAccount ? inputStyle : { ...inputStyle, opacity: 0.5, background: "var(--ph-border-soft)" }}
-                value={isAgencyAccount ? form.agency : "Privat"} onChange={set("agency")} disabled={!isAgencyAccount}
-                placeholder={t.agencyFieldPlaceholder} list="prona-agency-suggestions"
-              />
-              <datalist id="prona-agency-suggestions">
-                {(agencies || []).map((a) => <option key={a} value={a} />)}
-              </datalist>
-              <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)", marginTop: 8 }}>
-                {isAgencyAccount ? t.agencyFieldHint : t.agencyFieldLockedHint}
+          {!isHotel && (
+            <SettingsSection title={t.sectionProviderInfo}>
+              <div style={{ padding: 14 }}>
+                <input
+                  style={isAgencyAccount ? inputStyle : { ...inputStyle, opacity: 0.5, background: "var(--ph-border-soft)" }}
+                  value={isAgencyAccount ? form.agency : "Privat"} onChange={set("agency")} disabled={!isAgencyAccount}
+                  placeholder={t.agencyFieldPlaceholder} list="prona-agency-suggestions"
+                />
+                <datalist id="prona-agency-suggestions">
+                  {(agencies || []).map((a) => <option key={a} value={a} />)}
+                </datalist>
+                <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)", marginTop: 8 }}>
+                  {isAgencyAccount ? t.agencyFieldHint : t.agencyFieldLockedHint}
+                </div>
               </div>
-            </div>
-          </SettingsSection>
+            </SettingsSection>
+          )}
+
+          {isHotel && (
+            <SettingsSection title={t.websiteLabel}>
+              <div style={{ padding: 14 }}>
+                <input style={inputStyle} value={form.website} onChange={set("website")} placeholder={t.websitePlaceholder} />
+              </div>
+            </SettingsSection>
+          )}
         </>
         )}
         {error && <div style={{ color: "#B0473C", fontSize: 12.5 }}>{error}</div>}

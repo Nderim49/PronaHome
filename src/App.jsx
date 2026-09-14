@@ -189,6 +189,7 @@ const STRINGS = {
     photoTapToUpload: "Shtyp për të ngarkuar foto", photoChange: "Ndrysho fotografinë",
     businessPhotoLabel: "Foto (opsionale)", businessPhotoHint: "Logo ose një foto që promovon biznesin tënd",
     businessBioLabel: "Rreth meje / biznesit tim (opsionale)", businessBioPlaceholder: "Prezantohu shkurt — përvoja, shërbimet, pse të zgjedhin ty...",
+    websiteLabel: "Faqja e Internetit", websitePlaceholder: "p.sh. www.firma.com",
     readMoreLabel: "Lexo më shumë",
     photoAddMore: "Shto më shumë", coverPhotoLabel: "Kryesore",
     photoHint: "Fotografia ruhet bashkë me shpalljen dhe u shfaqet të gjithë përdoruesve.",
@@ -348,6 +349,7 @@ const STRINGS = {
     photoTapToUpload: "Tippen, um Fotos hochzuladen", photoChange: "Foto ändern",
     businessPhotoLabel: "Foto (optional)", businessPhotoHint: "Logo oder ein Foto, das für dein Geschäft wirbt",
     businessBioLabel: "Über mich / mein Geschäft (optional)", businessBioPlaceholder: "Stell dich kurz vor — Erfahrung, Leistungen, warum man dich wählen sollte...",
+    websiteLabel: "Website", websitePlaceholder: "z. B. www.firma.de",
     readMoreLabel: "Mehr lesen",
     photoAddMore: "Weitere hinzufügen", coverPhotoLabel: "Titelbild",
     photoHint: "Das Foto wird zusammen mit der Anzeige gespeichert und allen Nutzern angezeigt.",
@@ -507,6 +509,7 @@ const STRINGS = {
     photoTapToUpload: "Tap to upload photos", photoChange: "Change photo",
     businessPhotoLabel: "Photo (optional)", businessPhotoHint: "A logo or photo advertising your business",
     businessBioLabel: "About me / my business (optional)", businessBioPlaceholder: "Introduce yourself briefly — experience, services, why choose you...",
+    websiteLabel: "Website", websitePlaceholder: "e.g. www.company.com",
     readMoreLabel: "Read more",
     photoAddMore: "Add more", coverPhotoLabel: "Cover",
     photoHint: "The photo is saved with the listing and shown to all users.",
@@ -2754,6 +2757,11 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           {fullName && listing.title !== fullName && (
             <div style={{ color: "var(--ph-text-muted)", fontSize: 13.5, marginBottom: 6 }}>{fullName}</div>
           )}
+          {(listing.city || (listing.area && listing.area !== "-")) && (
+            <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--ph-text-muted)", fontSize: 13.5, marginBottom: 10 }}>
+              <MapPin size={13} /> {listing.area && listing.area !== "-" ? `${listing.area}, ` : ""}{listing.city}
+            </div>
+          )}
           {listing.address && (
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${listing.address} ${listing.addressNumber || ""} ${listing.city || ""}`.trim())}`}
@@ -2793,6 +2801,29 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
               </div>
               <div style={{ fontSize: 12, color: "var(--ph-accent)", fontWeight: 600 }}>{t.readMoreLabel} ›</div>
             </div>
+          )}
+
+          {listing.website && (
+            <a
+              href={/^https?:\/\//i.test(listing.website) ? listing.website : `https://${listing.website}`}
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                display: "flex", alignItems: "center", gap: 10, color: "var(--ph-text)", fontWeight: 500, fontSize: 13,
+                textDecoration: "none", background: "var(--ph-surface)", border: "1px solid var(--ph-border)",
+                borderRadius: 14, padding: 14, marginTop: 12,
+              }}
+            >
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: "var(--ph-accent-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <Globe size={14} color="var(--ph-accent)" />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "var(--ph-text-muted)", textTransform: "uppercase", letterSpacing: 0.4, marginBottom: 2 }}>
+                  {t.websiteLabel}
+                </div>
+                <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{listing.website}</div>
+              </div>
+              <ChevronLeft size={14} color="var(--ph-text-muted)" style={{ transform: "rotate(180deg)", flexShrink: 0 }} />
+            </a>
           )}
         </div>
 
@@ -3131,6 +3162,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
         price: editingListing.price != null ? String(editingListing.price) : "", m2: editingListing.m2 != null ? String(editingListing.m2) : "",
         rooms: editingListing.rooms != null ? String(editingListing.rooms) : "", floor: editingListing.floor === "-" ? "" : (editingListing.floor || ""),
         desc: editingListing.desc || "", tags: (editingListing.tags || []).join(", "), agency: editingListing.agency || "Privat",
+        website: editingListing.website || "",
         contactFirstName: editingListing.contactFirstName || "", contactLastName: editingListing.contactLastName || "",
         contactPhone: splitPhone.local, contactEmail: editingListing.contactEmail || "", contactCountry: splitPhone.code,
       };
@@ -3142,7 +3174,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
     const prefillPhone = splitPhoneByDialCode(profile?.phone, profile?.country);
     return {
       title: "", cat: "", type: "Shitje", city: CITIES_LIST[0], area: "", address: "", addressNumber: "",
-      price: "", m2: "", rooms: "", floor: "", desc: "", tags: "",
+      price: "", m2: "", rooms: "", floor: "", desc: "", tags: "", website: "",
       agency: (profile?.accountType === "agency" && profile?.company?.trim()) ? profile.company.trim() : "Privat",
       contactFirstName: "", contactLastName: "",
       contactPhone: prefillPhone.local, contactEmail: profile?.email || "", contactCountry: prefillPhone.code,
@@ -3192,6 +3224,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
       address: form.address.trim(), addressNumber: form.addressNumber.trim(),
       price: 0, m2: 0, rooms: 0, floor: "-", desc: form.desc.trim(), tags: [],
       images, image: images[0] || null, agency: form.agency.trim() || "Privat",
+      website: form.website.trim(),
       contactFirstName: form.contactFirstName.trim(), contactLastName: form.contactLastName.trim(),
       contactPhone: form.contactPhone.trim() ? `${selectedContactCountry.dial} ${form.contactPhone.trim()}` : "", contactEmail: form.contactEmail.trim(),
       contactCountry: selectedContactCountry.code,
@@ -3404,6 +3437,12 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
           <SettingsSection title={t.businessBioLabel}>
             <div style={{ padding: 14 }}>
               <textarea style={{ ...inputStyle, minHeight: 90, resize: "vertical" }} value={form.desc} onChange={set("desc")} placeholder={t.businessBioPlaceholder} />
+            </div>
+          </SettingsSection>
+
+          <SettingsSection title={t.websiteLabel}>
+            <div style={{ padding: 14 }}>
+              <input style={inputStyle} value={form.website} onChange={set("website")} placeholder={t.websitePlaceholder} />
             </div>
           </SettingsSection>
         </>

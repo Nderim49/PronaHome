@@ -169,6 +169,7 @@ const STRINGS = {
     deleteAccountLabel: "Fshi llogarinë", deleteAccountHint: "Kjo do të fshijë përgjithmonë profilin dhe të dhënat e tua",
     deleteAccountConfirm: "Je i sigurt? Kjo veprim nuk mund të kthehet mbrapsht.", deleteAccountConfirmBtn: "Po, fshije llogarinë", cancel: "Anulo",
     verifyBtn: "Verifiko", codeLabel: "Kodi i verifikimit", confirmBtn: "Konfirmo", wrongCode: "Kodi është i pasaktë.",
+    emailNotRegisteredError: "Nuk ka llogari të regjistruar me këtë email. Ju lutemi regjistrohuni fillimisht.",
     verifyCodeSentEmail: (email) => `Një kod verifikimi u "dërgua" në ${email}`,
     verifyCodeSentPhone: (phone) => `Një kod verifikimi u "dërgua" në ${phone}`,
     demoModeNote: "Modaliteti demo: në një aplikacion të vërtetë kodi do të dërgohej me email/SMS. Në këtë prototip po e shohim kodin këtu poshtë.",
@@ -329,6 +330,7 @@ const STRINGS = {
     deleteAccountLabel: "Konto löschen", deleteAccountHint: "Löscht dein Profil und deine Daten dauerhaft",
     deleteAccountConfirm: "Bist du sicher? Diese Aktion kann nicht rückgängig gemacht werden.", deleteAccountConfirmBtn: "Ja, Konto löschen", cancel: "Abbrechen",
     verifyBtn: "Verifizieren", codeLabel: "Bestätigungscode", confirmBtn: "Bestätigen", wrongCode: "Falscher Code.",
+    emailNotRegisteredError: "Für diese E-Mail-Adresse existiert kein Konto. Bitte registriere dich zuerst.",
     verifyCodeSentEmail: (email) => `Ein Bestätigungscode wurde an ${email} „gesendet"`,
     verifyCodeSentPhone: (phone) => `Ein Bestätigungscode wurde an ${phone} „gesendet"`,
     demoModeNote: "Demo-Modus: In einer echten App würde der Code per E-Mail/SMS verschickt. In diesem Prototyp zeigen wir ihn direkt hier an.",
@@ -489,6 +491,7 @@ const STRINGS = {
     deleteAccountLabel: "Delete account", deleteAccountHint: "Permanently deletes your profile and data",
     deleteAccountConfirm: "Are you sure? This action cannot be undone.", deleteAccountConfirmBtn: "Yes, delete my account", cancel: "Cancel",
     verifyBtn: "Verify", codeLabel: "Verification code", confirmBtn: "Confirm", wrongCode: "Incorrect code.",
+    emailNotRegisteredError: "No account exists for this email. Please register first.",
     verifyCodeSentEmail: (email) => `A verification code was "sent" to ${email}`,
     verifyCodeSentPhone: (phone) => `A verification code was "sent" to ${phone}`,
     demoModeNote: "Demo mode: in a real app the code would be sent by email/SMS. In this prototype we show it directly here.",
@@ -1484,6 +1487,10 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
         } else {
           await onLoginWithSession(session, existingProfile);
         }
+      } else if (forgotPasswordFlow) {
+        // "Forgot password" must only work for accounts that already exist —
+        // it should never double as a back door into registration.
+        setError(t.emailNotRegisteredError);
       } else {
         setStep("reg-finish");
       }
@@ -1633,14 +1640,8 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
             {saving ? t.onboardSubmitting : t.loginBtn}
           </button>
           <button
-            onClick={() => { setForgotPasswordFlow(false); setStep("reg-email"); setError(""); }}
-            style={{ width: "100%", border: "none", background: "none", color: "var(--ph-text-muted)", fontSize: 12, marginTop: 10, cursor: "pointer" }}
-          >
-            {t.forgotCodeLink}
-          </button>
-          <button
             onClick={() => { setForgotPasswordFlow(true); setStep("reg-email"); setError(""); }}
-            style={{ width: "100%", border: "none", background: "none", color: "var(--ph-accent)", fontSize: 12, fontWeight: 600, marginTop: 6, cursor: "pointer" }}
+            style={{ width: "100%", border: "none", background: "none", color: "var(--ph-accent)", fontSize: 12, fontWeight: 600, marginTop: 10, cursor: "pointer" }}
           >
             {t.forgotPasswordLink}
           </button>

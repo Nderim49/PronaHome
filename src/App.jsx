@@ -1769,7 +1769,7 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
 
           <div style={{ marginBottom: 12 }}>
             <label style={labelStyle}>{t.countryLabel}</label>
-            <CountryTypeahead value={country} onChange={setCountry} placeholder={t.countryLabel} countries={CORE_COUNTRIES} />
+            <CountryTypeahead value={country} onChange={setCountry} placeholder={t.countryLabel} />
           </div>
 
           <div style={{ marginBottom: 12 }}>
@@ -2009,7 +2009,7 @@ function EditProfileScreen({ profile, onBack, onSave }) {
             <input style={{ ...inputStyle, marginBottom: 12 }} type="date" value={dob} onChange={(e) => setDob(e.target.value)} max={new Date().toISOString().slice(0, 10)} />
             <label style={labelStyle}>{t.countryLabel}</label>
             <div style={{ marginBottom: 12 }}>
-              <CountryTypeahead value={country} onChange={setCountry} placeholder={t.countryLabel} countries={CORE_COUNTRIES} />
+              <CountryTypeahead value={country} onChange={setCountry} placeholder={t.countryLabel} />
             </div>
             <label style={labelStyle}>{t.cityFieldLabel}</label>
             <div style={{ marginBottom: 12 }}>

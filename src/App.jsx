@@ -94,9 +94,9 @@ const STRINGS = {
     sectionProfessionalInfo: "Informacione profesionale", sectionMoreAboutYou: "Më shumë rreth jush",
     companyLabel: "Emri i kompanisë / agjencisë", companyPlaceholder: "p.sh. PRO Real Estate",
     companyOptionalPlaceholder: "Opsionale — nëse përfaqëson një kompani",
-    homeAddressLabel: "Adresa e banimit (opsionale)", homeAddressPlaceholder: "p.sh. Rruga Ilaz Kodra",
+    homeAddressLabel: "Adresa e banimit", homeAddressPlaceholder: "p.sh. Rruga Ilaz Kodra",
     houseNumberLabel: "Numri", houseNumberPlaceholder: "p.sh. 12",
-    listingAddressLabel: "Adresa e saktë (opsionale)", listingAddressPlaceholder: "p.sh. Rruga Nëna Terezë",
+    listingAddressLabel: "Adresa e saktë", listingAddressPlaceholder: "p.sh. Rruga Nëna Terezë",
     cityFieldLabel: "Qyteti", bioLabel: "Prezantim i shkurtër", bioPlaceholder: "Shkruaj disa fjalë rreth vetes ose punës tënde...",
     myAccountRow: "Llogaria ime",
     heroTitle1: "Gjej pronën tënde", heroTitle2: "të radhës.",
@@ -189,10 +189,10 @@ const STRINGS = {
     analyticsLabel: "Analitika për përmirësim", analyticsHint: "Ndihmon PronaHome të përmirësohet",
     privacyPolicyLink: "Politika e Privatësisë", termsLink: "Kushtet e Përdorimit",
     newListingTitle: "Shpall një pronë", editListingTitle: "Ndrysho shpalljen",
-    photoLabel: "Fotografia kryesore (opsionale)", photoPreparing: "Duke përgatitur...",
+    photoLabel: "Fotografia kryesore", photoPreparing: "Duke përgatitur...",
     photoTapToUpload: "Shtyp për të ngarkuar foto", photoChange: "Ndrysho fotografinë",
-    businessPhotoLabel: "Foto (opsionale)", businessPhotoHint: "Logo ose një foto që promovon biznesin tënd",
-    businessBioLabel: "Rreth meje / biznesit tim (opsionale)", businessBioPlaceholder: "Prezantohu shkurt — përvoja, shërbimet, pse të zgjedhin ty...",
+    businessPhotoLabel: "Foto", businessPhotoHint: "Logo ose një foto që promovon biznesin tënd",
+    businessBioLabel: "Rreth meje / biznesit tim", businessBioPlaceholder: "Prezantohu shkurt — përvoja, shërbimet, pse të zgjedhin ty...",
     websiteLabel: "Faqja e Internetit", websitePlaceholder: "p.sh. www.firma.com",
     readMoreLabel: "Lexo më shumë",
     photoAddMore: "Shto më shumë", coverPhotoLabel: "Kryesore",
@@ -281,9 +281,9 @@ const STRINGS = {
     sectionProfessionalInfo: "Berufliche Angaben", sectionMoreAboutYou: "Mehr über dich",
     companyLabel: "Name der Firma / Agentur", companyPlaceholder: "z. B. PRO Real Estate",
     companyOptionalPlaceholder: "Optional — falls du ein Unternehmen vertrittst",
-    homeAddressLabel: "Wohnanschrift (optional)", homeAddressPlaceholder: "z. B. Musterstraße",
+    homeAddressLabel: "Wohnanschrift", homeAddressPlaceholder: "z. B. Musterstraße",
     houseNumberLabel: "Hausnummer", houseNumberPlaceholder: "z. B. 12",
-    listingAddressLabel: "Genaue Adresse (optional)", listingAddressPlaceholder: "z. B. Musterstraße",
+    listingAddressLabel: "Genaue Adresse", listingAddressPlaceholder: "z. B. Musterstraße",
     cityFieldLabel: "Stadt", bioLabel: "Kurzvorstellung", bioPlaceholder: "Schreib ein paar Worte über dich oder deine Arbeit...",
     myAccountRow: "Mein Konto",
     heroTitle1: "Finde deine", heroTitle2: "nächste Immobilie.",
@@ -376,10 +376,10 @@ const STRINGS = {
     analyticsLabel: "Analytik zur Verbesserung", analyticsHint: "Hilft PronaHome, sich zu verbessern",
     privacyPolicyLink: "Datenschutzerklärung", termsLink: "Nutzungsbedingungen",
     newListingTitle: "Eine Immobilie veröffentlichen", editListingTitle: "Anzeige bearbeiten",
-    photoLabel: "Hauptfoto (optional)", photoPreparing: "Wird vorbereitet...",
+    photoLabel: "Hauptfoto", photoPreparing: "Wird vorbereitet...",
     photoTapToUpload: "Tippen, um Fotos hochzuladen", photoChange: "Foto ändern",
-    businessPhotoLabel: "Foto (optional)", businessPhotoHint: "Logo oder ein Foto, das für dein Geschäft wirbt",
-    businessBioLabel: "Über mich / mein Geschäft (optional)", businessBioPlaceholder: "Stell dich kurz vor — Erfahrung, Leistungen, warum man dich wählen sollte...",
+    businessPhotoLabel: "Foto", businessPhotoHint: "Logo oder ein Foto, das für dein Geschäft wirbt",
+    businessBioLabel: "Über mich / mein Geschäft", businessBioPlaceholder: "Stell dich kurz vor — Erfahrung, Leistungen, warum man dich wählen sollte...",
     websiteLabel: "Website", websitePlaceholder: "z. B. www.firma.de",
     readMoreLabel: "Mehr lesen",
     photoAddMore: "Weitere hinzufügen", coverPhotoLabel: "Titelbild",
@@ -468,9 +468,9 @@ const STRINGS = {
     sectionProfessionalInfo: "Professional information", sectionMoreAboutYou: "More about you",
     companyLabel: "Company / agency name", companyPlaceholder: "e.g. PRO Real Estate",
     companyOptionalPlaceholder: "Optional — if you represent a company",
-    homeAddressLabel: "Home address (optional)", homeAddressPlaceholder: "e.g. Main Street",
+    homeAddressLabel: "Home address", homeAddressPlaceholder: "e.g. Main Street",
     houseNumberLabel: "House number", houseNumberPlaceholder: "e.g. 12",
-    listingAddressLabel: "Exact address (optional)", listingAddressPlaceholder: "e.g. Main Street",
+    listingAddressLabel: "Exact address", listingAddressPlaceholder: "e.g. Main Street",
     cityFieldLabel: "City", bioLabel: "Short bio", bioPlaceholder: "Write a few words about yourself or your work...",
     myAccountRow: "My account",
     heroTitle1: "Find your", heroTitle2: "next property.",
@@ -563,10 +563,10 @@ const STRINGS = {
     analyticsLabel: "Analytics to improve the app", analyticsHint: "Helps PronaHome get better",
     privacyPolicyLink: "Privacy Policy", termsLink: "Terms of Use",
     newListingTitle: "Publish a property", editListingTitle: "Edit listing",
-    photoLabel: "Main photo (optional)", photoPreparing: "Preparing...",
+    photoLabel: "Main photo", photoPreparing: "Preparing...",
     photoTapToUpload: "Tap to upload photos", photoChange: "Change photo",
-    businessPhotoLabel: "Photo (optional)", businessPhotoHint: "A logo or photo advertising your business",
-    businessBioLabel: "About me / my business (optional)", businessBioPlaceholder: "Introduce yourself briefly — experience, services, why choose you...",
+    businessPhotoLabel: "Photo", businessPhotoHint: "A logo or photo advertising your business",
+    businessBioLabel: "About me / my business", businessBioPlaceholder: "Introduce yourself briefly — experience, services, why choose you...",
     websiteLabel: "Website", websitePlaceholder: "e.g. www.company.com",
     readMoreLabel: "Read more",
     photoAddMore: "Add more", coverPhotoLabel: "Cover",
@@ -3375,11 +3375,11 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
   const NO_M2_CATS = ["mobilje", "zejtar", "arkitekt", "statike"];
   const canSubmit = isBusinessCard
     ? form.contactFirstName.trim() && form.contactLastName.trim() && form.contactPhone.trim() && form.contactEmail.trim()
-      && form.city.trim() && images.length > 0 && form.desc.trim()
+      && form.city.trim() && form.area.trim() && images.length > 0 && form.desc.trim()
     : isHotel
-    ? form.title.trim() && form.price && form.city && form.m2 && images.length > 0 && form.desc.trim()
+    ? form.title.trim() && form.price && form.city && form.area.trim() && form.m2 && images.length > 0 && form.desc.trim()
       && form.contactPhone.trim() && form.contactEmail.trim()
-    : form.cat.trim() && form.title.trim() && form.price && form.city && (NO_M2_CATS.includes(form.cat) || form.m2) && (form.contactPhone.trim() || form.contactEmail.trim());
+    : form.cat.trim() && form.title.trim() && form.price && form.city && form.area.trim() && (NO_M2_CATS.includes(form.cat) || form.m2) && (form.contactPhone.trim() || form.contactEmail.trim());
 
   const handleImagePick = async (e) => {
     const files = Array.from(e.target.files || []).slice(0, isBusinessCard ? 1 : MAX_IMAGES - images.length);
@@ -3588,7 +3588,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                   </select>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.areaLabel}<Opt /></label>
+                  <label style={labelStyle}>{t.areaLabel}<Req /></label>
                   {SETTLEMENTS_BY_CITY[form.city] ? (
                     <select style={inputStyle} value={form.area} onChange={set("area")}>
                       <option value="">{t.cityCenterLabel}</option>
@@ -3738,7 +3738,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                   </select>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.areaLabel}<Opt /></label>
+                  <label style={labelStyle}>{t.areaLabel}<Req /></label>
                   {SETTLEMENTS_BY_CITY[form.city] ? (
                     <select style={inputStyle} value={form.area} onChange={set("area")}>
                       <option value="">{t.cityCenterLabel}</option>

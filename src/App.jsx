@@ -1910,7 +1910,7 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
 
           <div style={{ marginBottom: 12 }}>
             <label style={labelStyle}>{t.dobLabel}</label>
-            <input style={inputStyle} type="date" value={dob} onChange={(e) => setDob(e.target.value)} max={new Date().toISOString().slice(0, 10)} />
+            <input style={{ ...inputStyle, display: "block", minWidth: 0, maxWidth: "100%", boxSizing: "border-box" }} type="date" value={dob} onChange={(e) => setDob(e.target.value)} max={new Date().toISOString().slice(0, 10)} />
           </div>
 
           <div style={{ marginBottom: 12 }}>
@@ -2156,7 +2156,7 @@ function EditProfileScreen({ profile, onBack, onSave }) {
         <SettingsSection title={t.sectionMoreAboutYou}>
           <div style={{ padding: 14 }}>
             <label style={labelStyle}>{t.dobLabel}</label>
-            <input style={{ ...inputStyle, marginBottom: 12 }} type="date" value={dob} onChange={(e) => setDob(e.target.value)} max={new Date().toISOString().slice(0, 10)} />
+            <input style={{ ...inputStyle, marginBottom: 12, display: "block", minWidth: 0, maxWidth: "100%", boxSizing: "border-box" }} type="date" value={dob} onChange={(e) => setDob(e.target.value)} max={new Date().toISOString().slice(0, 10)} />
             <label style={labelStyle}>{t.countryLabel}</label>
             <div style={{ marginBottom: 12 }}>
               <CountryTypeahead value={country} onChange={setCountry} placeholder={t.countryLabel} />

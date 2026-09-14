@@ -3718,32 +3718,32 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
               <div style={{ display: "flex", gap: 10 }}>
                 <div style={{ flex: 1 }}>
                   <label style={labelStyle}>{t.priceFromLabel}</label>
-                  <input style={inputStyle} type="number" value={form.price} onChange={set("price")} placeholder={t.pricePlaceholder} />
+                  <input style={inputStyle} type="number" value={form.price} onChange={set("price")} placeholder={t.anyPlaceholder} />
                 </div>
                 <div style={{ flex: 1 }}>
                   <label style={labelStyle}>{t.priceToLabel}</label>
-                  <input style={inputStyle} type="number" value={form.priceMax} onChange={set("priceMax")} placeholder={t.priceToPlaceholder} />
+                  <input style={inputStyle} type="number" value={form.priceMax} onChange={set("priceMax")} placeholder={t.anyPlaceholder} />
                 </div>
               </div>
               <div style={{ display: "flex", gap: 10 }}>
                 <div style={{ flex: 1 }}>
                   <label style={labelStyle}>{t.livingAreaFromLabel}</label>
-                  <input style={inputStyle} type="number" min="1" value={form.m2} onChange={set("m2")} placeholder={t.areaM2Placeholder} />
+                  <input style={inputStyle} type="number" min="1" value={form.m2} onChange={set("m2")} placeholder={t.anyPlaceholder} />
                 </div>
                 <div style={{ flex: 1 }}>
                   <label style={labelStyle}>{t.livingAreaToLabel}</label>
-                  <input style={inputStyle} type="number" min="1" value={form.m2Max} onChange={set("m2Max")} placeholder={t.areaToPlaceholder} />
+                  <input style={inputStyle} type="number" min="1" value={form.m2Max} onChange={set("m2Max")} placeholder={t.anyPlaceholder} />
                 </div>
               </div>
               {!isHotel && (
                 <div style={{ display: "flex", gap: 10 }}>
                   <div style={{ flex: 1 }}>
                     <label style={labelStyle}>{t.landAreaFromLabel}</label>
-                    <input style={inputStyle} type="number" min="1" value={form.landArea} onChange={set("landArea")} placeholder={t.landAreaFromPlaceholder} />
+                    <input style={inputStyle} type="number" min="1" value={form.landArea} onChange={set("landArea")} placeholder={t.anyPlaceholder} />
                   </div>
                   <div style={{ flex: 1 }}>
                     <label style={labelStyle}>{t.landAreaToLabel}</label>
-                    <input style={inputStyle} type="number" min="1" value={form.landAreaMax} onChange={set("landAreaMax")} placeholder={t.landAreaToPlaceholder} />
+                    <input style={inputStyle} type="number" min="1" value={form.landAreaMax} onChange={set("landAreaMax")} placeholder={t.anyPlaceholder} />
                   </div>
                 </div>
               )}
@@ -3751,11 +3751,11 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                 <div style={{ display: "flex", gap: 10 }}>
                   <div style={{ flex: 1 }}>
                     <label style={labelStyle}>{t.yearBuiltFromLabel}</label>
-                    <input style={inputStyle} type="number" value={form.yearBuilt} onChange={set("yearBuilt")} placeholder={t.yearBuiltPlaceholder} />
+                    <input style={inputStyle} type="number" value={form.yearBuilt} onChange={set("yearBuilt")} placeholder={t.anyPlaceholder} />
                   </div>
                   <div style={{ flex: 1 }}>
                     <label style={labelStyle}>{t.yearBuiltToLabel}</label>
-                    <input style={inputStyle} type="number" value={form.yearBuiltMax} onChange={set("yearBuiltMax")} placeholder={t.yearBuiltToPlaceholder} />
+                    <input style={inputStyle} type="number" value={form.yearBuiltMax} onChange={set("yearBuiltMax")} placeholder={t.anyPlaceholder} />
                   </div>
                 </div>
               )}
@@ -3779,11 +3779,11 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                 <div style={{ display: "flex", gap: 10 }}>
                   <div style={{ flex: 1 }}>
                     <label style={labelStyle}>{t.roomsFromLabel}</label>
-                    <input style={inputStyle} type="number" min="1" value={form.rooms} onChange={set("rooms")} placeholder={t.roomsPlaceholder} />
+                    <input style={inputStyle} type="number" min="1" value={form.rooms} onChange={set("rooms")} placeholder={t.anyPlaceholder} />
                   </div>
                   <div style={{ flex: 1 }}>
                     <label style={labelStyle}>{t.roomsToLabel}</label>
-                    <input style={inputStyle} type="number" min="1" value={form.roomsMax} onChange={set("roomsMax")} placeholder={t.roomsToPlaceholder} />
+                    <input style={inputStyle} type="number" min="1" value={form.roomsMax} onChange={set("roomsMax")} placeholder={t.anyPlaceholder} />
                   </div>
                 </div>
               )}
@@ -3800,18 +3800,6 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                     ))}
                     <option value={t.atticLabel}>{t.atticLabel}</option>
                   </select>
-                </div>
-              )}
-              {isHotel && (
-                <div style={{ display: "flex", gap: 10 }}>
-                  <div style={{ flex: 1 }}>
-                    <label style={labelStyle}>{t.roomsFromLabel}</label>
-                    <input style={inputStyle} type="number" min="1" value={form.rooms} onChange={set("rooms")} placeholder={t.roomsPlaceholder} />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <label style={labelStyle}>{t.roomsToLabel}</label>
-                    <input style={inputStyle} type="number" min="1" value={form.roomsMax} onChange={set("roomsMax")} placeholder={t.roomsToPlaceholder} />
-                  </div>
                 </div>
               )}
             </div>

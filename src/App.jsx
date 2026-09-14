@@ -129,7 +129,7 @@ const STRINGS = {
     noProvidersYet: "Ende pa ofertues aktivë në këtë kategori.",
     privateSeller: "Privat", listingsCount: (n) => `${n} shpallje`, backToAgencies: "Kthehu te ofertuesit",
     perNight: "/ natë",
-    allCities: "Të gjitha qytetet",
+    allCities: "Të gjitha qytetet", allPropertyTypes: "Të gjitha llojet", dealTypeSectionLabel: "Lloji i ofertës",
     sortNewest: "Më të fundit", sortPriceAsc: "Çmimi: I ulët → i lartë",
     sortPriceDesc: "Çmimi: I lartë → i ulët", sortM2Desc: "Sipërfaqja: më e madhe",
     filterTitle: "Filtro kërkimin", cityLabel: "Qyteti", priceLabel: "Çmimi (€)",
@@ -322,7 +322,7 @@ const STRINGS = {
     noProvidersYet: "Noch keine aktiven Anbieter in dieser Kategorie.",
     privateSeller: "Privat", listingsCount: (n) => `${n} Anzeigen`, backToAgencies: "Zurück zu den Anbietern",
     perNight: "/ Nacht",
-    allCities: "Alle Städte",
+    allCities: "Alle Städte", allPropertyTypes: "Alle Typen", dealTypeSectionLabel: "Angebotsart",
     sortNewest: "Neueste", sortPriceAsc: "Preis: aufsteigend",
     sortPriceDesc: "Preis: absteigend", sortM2Desc: "Fläche: größte zuerst",
     filterTitle: "Suche filtern", cityLabel: "Stadt", priceLabel: "Preis (€)",
@@ -515,7 +515,7 @@ const STRINGS = {
     noProvidersYet: "No active providers in this category yet.",
     privateSeller: "Private", listingsCount: (n) => `${n} listings`, backToAgencies: "Back to providers",
     perNight: "/ night",
-    allCities: "All cities",
+    allCities: "All cities", allPropertyTypes: "All types", dealTypeSectionLabel: "Offer Type",
     sortNewest: "Newest", sortPriceAsc: "Price: low to high",
     sortPriceDesc: "Price: high to low", sortM2Desc: "Area: largest first",
     filterTitle: "Filter search", cityLabel: "City", priceLabel: "Price (€)",
@@ -4134,11 +4134,11 @@ const PRICE_STEPS = [5000, 10000, 15000, 20000, 25000, 30000, 40000, 50000, 7500
 const AREA_STEPS = [20, 30, 40, 50, 60, 75, 90, 100, 125, 150, 200, 250, 300, 400, 500];
 const LAND_AREA_STEPS = [100, 200, 300, 500, 750, 1000, 1500, 2000, 3000, 5000, 10000, 20000];
 const YEAR_BUILT_STEPS = Array.from({ length: new Date().getFullYear() - 1949 }, (_, i) => new Date().getFullYear() - i);
-function RangeSelect({ value, onChange, options, placeholder }) {
+function RangeSelect({ value, onChange, options, placeholder, plain }) {
   return (
     <select style={inputStyle} value={value} onChange={onChange}>
       <option value="">{placeholder}</option>
-      {options.map((n) => <option key={n} value={n}>{n.toLocaleString("de-DE")}</option>)}
+      {options.map((n) => <option key={n} value={n}>{plain ? n : n.toLocaleString("de-DE")}</option>)}
     </select>
   );
 }
@@ -4199,9 +4199,9 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "18px 18px 8px", display: "flex", flexDirection: "column", gap: 16 }}>
-        <SettingsSection title={t.propertyTypeLabel}>
+        <SettingsSection title={t.dealTypeSectionLabel}>
           <div style={{ padding: 14 }}>
-            <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+            <div style={{ display: "flex", gap: 8 }}>
               {dealTabs.map((tabOpt) => {
                 const active = local.dealType === tabOpt.id;
                 return (
@@ -4221,24 +4221,18 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
                 );
               })}
             </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              {propertyTypes.map((pt) => {
-                const active = local.propertyType === pt.id;
-                return (
-                  <button
-                    key={pt.id}
-                    onClick={() => setLocal((f) => ({ ...f, propertyType: active ? "all" : pt.id }))}
-                    style={{
-                      border: active ? "1.5px solid var(--ph-accent)" : "1px solid var(--ph-border)",
-                      background: active ? "var(--ph-accent-light)" : "var(--ph-bg)", borderRadius: 999, padding: "9px 15px",
-                      fontSize: 13, fontWeight: 500, color: active ? "var(--ph-text)" : "var(--ph-text-muted)", cursor: "pointer",
-                    }}
-                  >
-                    {pt.label}
-                  </button>
-                );
-              })}
-            </div>
+          </div>
+        </SettingsSection>
+
+        <SettingsSection title={t.propertyTypeLabel}>
+          <div style={{ padding: 14 }}>
+            <select
+              style={inputStyle} value={local.propertyType}
+              onChange={(e) => setLocal((f) => ({ ...f, propertyType: e.target.value }))}
+            >
+              <option value="all">{t.allPropertyTypes}</option>
+              {propertyTypes.map((pt) => <option key={pt.id} value={pt.id}>{pt.label}</option>)}
+            </select>
           </div>
         </SettingsSection>
 
@@ -4325,11 +4319,11 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
           <div style={{ padding: 14, display: "flex", gap: 14 }}>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>{t.minimumLabel}</label>
-              <RangeSelect options={YEAR_BUILT_STEPS} value={local.yearBuiltMin} onChange={set("yearBuiltMin")} placeholder={t.anyPlaceholder} />
+              <RangeSelect options={YEAR_BUILT_STEPS} value={local.yearBuiltMin} onChange={set("yearBuiltMin")} placeholder={t.anyPlaceholder} plain />
             </div>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>{t.maximumLabel}</label>
-              <RangeSelect options={YEAR_BUILT_STEPS} value={local.yearBuiltMax} onChange={set("yearBuiltMax")} placeholder={t.anyPlaceholder} />
+              <RangeSelect options={YEAR_BUILT_STEPS} value={local.yearBuiltMax} onChange={set("yearBuiltMax")} placeholder={t.anyPlaceholder} plain />
             </div>
           </div>
         </SettingsSection>

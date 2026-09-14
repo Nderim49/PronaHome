@@ -200,6 +200,11 @@ const STRINGS = {
     priceEurLabel: "Çmimi (€)", pricePlaceholder: "p.sh. 95000",
     areaM2Label: "Sipërfaqja (m²)", areaM2Placeholder: "p.sh. 75",
     roomsFieldLabel: "Dhoma", roomsPlaceholder: "p.sh. 3",
+    yearBuiltLabel: "Viti i ndërtimit", yearBuiltPlaceholder: "p.sh. 2015",
+    heatingTypeLabel: "Lloji i ngrohjes",
+    heatingCentral: "Ngrohje qendrore", heatingGas: "Gaz", heatingOil: "Naftë",
+    heatingDistrict: "Ngrohje e largët", heatingHeatPump: "Pompë nxehtësie",
+    heatingElectric: "Rrymë", heatingWoodPellet: "Dru/Peletë", heatingNone: "Pa ngrohje",
     floorLabel: "Kati", floorPlaceholder: "p.sh. 3/6",
     groundFloorLabel: "Përdhesë", basementLabel: "Bodrum", atticLabel: "Papafingo / Mansardë",
     floorNotApplicableLabel: "Shtëpi", chooseOption: "Zgjidh", changeCategoryLabel: "Ndrysho kategorinë",
@@ -368,6 +373,11 @@ const STRINGS = {
     priceEurLabel: "Preis (€)", pricePlaceholder: "z. B. 95000",
     areaM2Label: "Fläche (m²)", areaM2Placeholder: "z. B. 75",
     roomsFieldLabel: "Zimmer", roomsPlaceholder: "z. B. 3",
+    yearBuiltLabel: "Baujahr", yearBuiltPlaceholder: "z. B. 2015",
+    heatingTypeLabel: "Heizungsart",
+    heatingCentral: "Zentralheizung", heatingGas: "Gasheizung", heatingOil: "Ölheizung",
+    heatingDistrict: "Fernwärme", heatingHeatPump: "Wärmepumpe",
+    heatingElectric: "Elektroheizung", heatingWoodPellet: "Holz/Pellet", heatingNone: "Keine Heizung",
     floorLabel: "Etage", floorPlaceholder: "z. B. 3/6",
     groundFloorLabel: "Erdgeschoss", basementLabel: "Keller", atticLabel: "Dachgeschoss",
     floorNotApplicableLabel: "Haus", chooseOption: "Auswählen", changeCategoryLabel: "Kategorie ändern",
@@ -536,6 +546,11 @@ const STRINGS = {
     priceEurLabel: "Price (€)", pricePlaceholder: "e.g. 95000",
     areaM2Label: "Area (m²)", areaM2Placeholder: "e.g. 75",
     roomsFieldLabel: "Rooms", roomsPlaceholder: "e.g. 3",
+    yearBuiltLabel: "Year Built", yearBuiltPlaceholder: "e.g. 2015",
+    heatingTypeLabel: "Heating Type",
+    heatingCentral: "Central Heating", heatingGas: "Gas Heating", heatingOil: "Oil Heating",
+    heatingDistrict: "District Heating", heatingHeatPump: "Heat Pump",
+    heatingElectric: "Electric Heating", heatingWoodPellet: "Wood/Pellet", heatingNone: "No Heating",
     floorLabel: "Floor", floorPlaceholder: "e.g. 3/6",
     groundFloorLabel: "Ground floor", basementLabel: "Basement", atticLabel: "Attic / Loft",
     floorNotApplicableLabel: "House", chooseOption: "Choose", changeCategoryLabel: "Change category",
@@ -3030,6 +3045,23 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           </div>
         </div>
 
+        {(listing.yearBuilt || listing.heatingType) && (
+          <div style={{ display: "flex", gap: 10, marginBottom: 18 }}>
+            {listing.yearBuilt && (
+              <div style={{ flex: 1, background: "var(--ph-surface)", borderRadius: 12, padding: "10px 8px", textAlign: "center", border: "1px solid var(--ph-border)" }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "var(--ph-text)" }}>{listing.yearBuilt}</div>
+                <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)" }}>{t.yearBuiltLabel}</div>
+              </div>
+            )}
+            {listing.heatingType && (
+              <div style={{ flex: 1, background: "var(--ph-surface)", borderRadius: 12, padding: "10px 8px", textAlign: "center", border: "1px solid var(--ph-border)" }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "var(--ph-text)" }}>{listing.heatingType}</div>
+                <div style={{ fontSize: 10.5, color: "var(--ph-text-muted)" }}>{t.heatingTypeLabel}</div>
+              </div>
+            )}
+          </div>
+        )}
+
         <div style={{ marginBottom: 18 }}>
           <div
             role="button" tabIndex={0}
@@ -3218,6 +3250,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
         address: editingListing.address || "", addressNumber: editingListing.addressNumber || "",
         price: editingListing.price != null ? String(editingListing.price) : "", m2: editingListing.m2 != null ? String(editingListing.m2) : "",
         rooms: editingListing.rooms != null ? String(editingListing.rooms) : "", floor: editingListing.floor === "-" ? "" : (editingListing.floor || ""),
+        yearBuilt: editingListing.yearBuilt != null ? String(editingListing.yearBuilt) : "", heatingType: editingListing.heatingType || "",
         desc: editingListing.desc || "", agency: editingListing.agency || "Privat",
         tags: existingTags.filter((x) => featureLabels.includes(x)).join(", "),
         customTags: existingTags.filter((x) => !featureLabels.includes(x)).join(", "),
@@ -3233,7 +3266,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
     const prefillPhone = splitPhoneByDialCode(profile?.phone, profile?.country);
     return {
       title: "", cat: "", type: "Shitje", city: CITIES_LIST[0], area: "", address: "", addressNumber: "",
-      price: "", m2: "", rooms: "", floor: "", desc: "", tags: "", customTags: "", website: "",
+      price: "", m2: "", rooms: "", floor: "", yearBuilt: "", heatingType: "", desc: "", tags: "", customTags: "", website: "",
       agency: (profile?.accountType === "agency" && profile?.company?.trim()) ? profile.company.trim() : "Privat",
       contactFirstName: "", contactLastName: "",
       contactPhone: prefillPhone.local, contactEmail: profile?.email || "", contactCountry: prefillPhone.code,
@@ -3292,6 +3325,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
       title: form.title.trim(), cat: form.cat, type: form.type, city: form.city,
       area: form.area.trim() || "-", address: form.address.trim(), addressNumber: form.addressNumber.trim(), price: Number(form.price), m2: Number(form.m2),
       rooms: Number(form.rooms) || 0, floor: form.floor.trim() || "-",
+      yearBuilt: form.yearBuilt ? Number(form.yearBuilt) : null, heatingType: form.heatingType.trim(),
       desc: form.desc.trim() || "", tags: [...form.tags.split(",").map((x) => x.trim()).filter(Boolean), ...form.customTags.split(",").map((x) => x.trim()).filter(Boolean)],
       images, image: images[0] || null, agency: isAgencyAccount ? (form.agency.trim() || "Privat") : "Privat",
       website: form.website.trim(),
@@ -3622,6 +3656,28 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                   <input style={inputStyle} type="number" min="1" value={form.m2} onChange={set("m2")} placeholder={t.areaM2Placeholder} />
                 </div>
               </div>
+              {(!NON_PROPERTY_CATS.includes(form.cat) || form.cat === "hotel") && (
+                <div style={{ display: "flex", gap: 10 }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={labelStyle}>{t.yearBuiltLabel}</label>
+                    <input style={inputStyle} type="number" value={form.yearBuilt} onChange={set("yearBuilt")} placeholder={t.yearBuiltPlaceholder} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={labelStyle}>{t.heatingTypeLabel}</label>
+                    <select style={inputStyle} value={form.heatingType} onChange={set("heatingType")}>
+                      <option value="">{t.chooseOption}</option>
+                      <option value={t.heatingCentral}>{t.heatingCentral}</option>
+                      <option value={t.heatingGas}>{t.heatingGas}</option>
+                      <option value={t.heatingOil}>{t.heatingOil}</option>
+                      <option value={t.heatingDistrict}>{t.heatingDistrict}</option>
+                      <option value={t.heatingHeatPump}>{t.heatingHeatPump}</option>
+                      <option value={t.heatingElectric}>{t.heatingElectric}</option>
+                      <option value={t.heatingWoodPellet}>{t.heatingWoodPellet}</option>
+                      <option value={t.heatingNone}>{t.heatingNone}</option>
+                    </select>
+                  </div>
+                </div>
+              )}
               {(!NON_PROPERTY_CATS.includes(form.cat) || form.cat === "hotel") && (
                 <div style={{ display: "flex", gap: 10 }}>
                   <div style={{ flex: 1 }}>

@@ -169,6 +169,7 @@ const STRINGS = {
     accountScreenTitle: "Llogaria ime", sectionAccountDetails: "Të dhënat e llogarisë",
     memberSince: "Anëtar që nga", emailVerified: "Email i verifikuar", verified: "I verifikuar", notVerified: "Pa verifikuar",
     listingsCountLabel: (n) => `${n} shpallje`, reportListingLabel: "Raporto", reportTitle: "Pse po e raporton këtë shpallje?",
+    providerListingsTitle: "Shpalljet e ofertuesit",
     reportReasonSpam: "Spam ose mashtrim", reportReasonWrongInfo: "Informacion i pasaktë", reportReasonInappropriate: "Përmbajtje e papërshtatshme",
     reportReasonSold: "Shitur/dhënë me qera tashmë", reportReasonOther: "Diçka tjetër", reportSubmitBtn: "Dërgo raportimin",
     reportThanks: "Faleminderit! E kemi marrë raportimin tënd.", registrationNumberLabel: "Numri i regjistrimit të biznesit",
@@ -364,6 +365,7 @@ const STRINGS = {
     accountScreenTitle: "Mein Konto", sectionAccountDetails: "Kontodaten",
     memberSince: "Mitglied seit", emailVerified: "E-Mail verifiziert", verified: "Verifiziert", notVerified: "Nicht verifiziert",
     listingsCountLabel: (n) => `${n} Anzeigen`, reportListingLabel: "Melden", reportTitle: "Warum meldest du diese Anzeige?",
+    providerListingsTitle: "Anzeigen dieses Anbieters",
     reportReasonSpam: "Spam oder Betrug", reportReasonWrongInfo: "Falsche Angaben", reportReasonInappropriate: "Unangemessener Inhalt",
     reportReasonSold: "Bereits verkauft/vermietet", reportReasonOther: "Etwas anderes", reportSubmitBtn: "Meldung senden",
     reportThanks: "Danke! Deine Meldung ist bei uns eingegangen.", registrationNumberLabel: "Gewerbe-/Handelsregisternummer",
@@ -559,6 +561,7 @@ const STRINGS = {
     accountScreenTitle: "My Account", sectionAccountDetails: "Account details",
     memberSince: "Member since", emailVerified: "Email verified", verified: "Verified", notVerified: "Not verified",
     listingsCountLabel: (n) => `${n} listings`, reportListingLabel: "Report", reportTitle: "Why are you reporting this listing?",
+    providerListingsTitle: "Listings from this provider",
     reportReasonSpam: "Spam or scam", reportReasonWrongInfo: "Incorrect information", reportReasonInappropriate: "Inappropriate content",
     reportReasonSold: "Already sold/rented", reportReasonOther: "Something else", reportSubmitBtn: "Send report",
     reportThanks: "Thanks! Your report has been received.", registrationNumberLabel: "Business Registration Number",
@@ -2907,7 +2910,7 @@ function ListingCard({ listing, isFav, onToggleFav, onOpen }) {
 // ---------------------------------------------------------------------------
 // Detail screen
 // ---------------------------------------------------------------------------
-function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, onContactAgent, onMessageOwner, listings, onReport }) {
+function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, onContactAgent, onMessageOwner, listings, onReport, onViewOwnerListings }) {
   const { t, lang } = useLang();
   const Icon = CAT_ICON[listing.cat] || Building2;
   const categories = CATEGORIES(t);
@@ -3077,7 +3080,14 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
               {listing.ownerMemberSince && (
                 <div style={{ fontSize: 12, color: "var(--ph-text-muted)" }}>
                   {t.memberSince} {new Date(listing.ownerMemberSince).toLocaleDateString(lang === "de" ? "de-DE" : lang === "en" ? "en-GB" : "sq-AL", { year: "numeric", month: "long" })}
-                  {ownerListingCount > 0 ? ` · ${t.listingsCountLabel(ownerListingCount)}` : ""}
+                  {ownerListingCount > 0 && (
+                    <> · <button
+                      onClick={() => onViewOwnerListings?.(listing.owner_id)}
+                      style={{ border: "none", background: "none", padding: 0, color: "var(--ph-accent)", fontWeight: 600, fontSize: 12, textDecoration: "underline", cursor: "pointer" }}
+                    >
+                      {t.listingsCountLabel(ownerListingCount)}
+                    </button></>
+                  )}
                 </div>
               )}
             </div>
@@ -3404,7 +3414,14 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             {listing.ownerMemberSince && (
               <div style={{ fontSize: 12, color: "var(--ph-text-muted)" }}>
                 {t.memberSince} {new Date(listing.ownerMemberSince).toLocaleDateString(lang === "de" ? "de-DE" : lang === "en" ? "en-GB" : "sq-AL", { year: "numeric", month: "long" })}
-                {ownerListingCount > 0 ? ` · ${t.listingsCountLabel(ownerListingCount)}` : ""}
+                {ownerListingCount > 0 && (
+                  <> · <button
+                    onClick={() => onViewOwnerListings?.(listing.owner_id)}
+                    style={{ border: "none", background: "none", padding: 0, color: "var(--ph-accent)", fontWeight: 600, fontSize: 12, textDecoration: "underline", cursor: "pointer" }}
+                  >
+                    {t.listingsCountLabel(ownerListingCount)}
+                  </button></>
+                )}
               </div>
             )}
           </div>
@@ -3521,6 +3538,35 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
       )}
       {showReport && <ReportModal />}
       {showCallOptions && <CallOptionsSheet />}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// All listings from one provider (tapped from the "X listings" link)
+// ---------------------------------------------------------------------------
+function OwnerListingsScreen({ listings, favorites, toggleFav, onOpen, onBack }) {
+  const { t } = useLang();
+  return (
+    <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 28 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY, flexShrink: 0 }}>
+        <button onClick={onBack} style={{ width: 34, height: 34, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+          <ChevronLeft size={18} color="#fff" />
+        </button>
+        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{t.providerListingsTitle}</span>
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "18px 18px 24px", display: "flex", flexWrap: "wrap", gap: 12, alignContent: "flex-start" }}>
+        {listings.map((l) => (
+          <div key={l.id} style={{ width: "calc(50% - 6px)" }}>
+            <ListingCard listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={() => onOpen(l)} />
+          </div>
+        ))}
+        {listings.length === 0 && (
+          <div style={{ width: "100%", textAlign: "center", color: "var(--ph-text-muted)", fontSize: 13, marginTop: 40 }}>
+            {t.noResults}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -5433,6 +5479,7 @@ export default function PronaHomeApp() {
   const [guestMode, setGuestMode] = useState(false);
   const [showGuestPrompt, setShowGuestPrompt] = useState(false);
   const [openListing, setOpenListing] = useState(null);
+  const [viewingOwnerId, setViewingOwnerId] = useState(null);
   const [showNewListing, setShowNewListing] = useState(false);
   const [editingListing, setEditingListing] = useState(null);
   const [showMyListings, setShowMyListings] = useState(false);
@@ -5975,6 +6022,7 @@ export default function PronaHomeApp() {
                   onBack={() => setOpenListing(null)} isMine={myIds.has(openListing.id)} onDelete={deleteListing}
                   listings={listings}
                   onReport={(listingId, reason) => submitListingReport(listingId, userId, reason)}
+                  onViewOwnerListings={(ownerId) => setViewingOwnerId(ownerId)}
                   onContactAgent={() => requireAuth(() => {
                     if (!openListing.owner_id || openListing.owner_id === userId) return;
                     const otherName = openListing.contactFirstName
@@ -5991,6 +6039,14 @@ export default function PronaHomeApp() {
                     setOpenListing(null);
                     openThreadWith(openListing.owner_id, otherName, openListing.title);
                   })}
+                />
+              )}
+              {viewingOwnerId && (
+                <OwnerListingsScreen
+                  listings={listings.filter((l) => l.owner_id === viewingOwnerId)}
+                  favorites={favorites} toggleFav={toggleFav}
+                  onOpen={(l) => setOpenListing(l)}
+                  onBack={() => setViewingOwnerId(null)}
                 />
               )}
               {showMessages && (

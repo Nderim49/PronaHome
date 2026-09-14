@@ -3906,13 +3906,13 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                   )}
                 </div>
               </div>
-              <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
                 <div style={{ flex: 2 }}>
-                  <label style={labelStyle}>{t.listingAddressLabel}<Opt /></label>
+                  <label style={{ ...labelStyle, minHeight: 30 }}>{t.listingAddressLabel}<Opt /></label>
                   <GeoTypeahead value={form.address} onChange={(v) => setForm((f) => ({ ...f, address: v }))} placeholder={t.listingAddressPlaceholder} kind="address" />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.houseNumberLabel}<Opt /></label>
+                  <label style={{ ...labelStyle, minHeight: 30 }}>{t.houseNumberLabel}<Opt /></label>
                   <input style={inputStyle} value={form.addressNumber} onChange={set("addressNumber")} placeholder={t.houseNumberPlaceholder} />
                 </div>
               </div>

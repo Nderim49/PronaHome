@@ -81,7 +81,8 @@ const STRINGS = {
     newPasswordHint: "Kodi u konfirmua. Vendos një fjalëkalim të ri për llogarinë tënde.",
     newPasswordLabel: "Fjalëkalimi i ri", setNewPasswordBtn: "Ruaj fjalëkalimin e ri",
     firstNameLabel: "Emri", firstNamePlaceholder: "p.sh. Arben", lastNameLabel: "Mbiemri", lastNamePlaceholder: "p.sh. Leka",
-    dobLabel: "Data e lindjes", countryLabel: "Shteti", cityFreeTextPlaceholder: "p.sh. Prishtinë", phoneLocalPlaceholder: "44 123 456",
+    dobLabel: "Data e lindjes", dobDayLabel: "Dita", dobMonthLabel: "Muaji", dobYearLabel: "Viti",
+    countryLabel: "Shteti", cityFreeTextPlaceholder: "p.sh. Prishtinë", phoneLocalPlaceholder: "44 123 456",
     guestPromptMessage: "Për të ruajtur një pronë, kontaktuar agjentin, ose publikuar një shpallje, duhet së pari të regjistrohesh ose të kyçesh.",
     guestPromptRegister: "Regjistrohu tani",
     guestProfileTitle: "Nuk je i kyçur", guestProfileMessage: "Kyçu ose regjistrohu për të parë profilin tënd, për të ruajtur shpalljet e tua dhe më shumë.",
@@ -273,7 +274,8 @@ const STRINGS = {
     newPasswordHint: "Code bestätigt. Lege jetzt ein neues Passwort für dein Konto fest.",
     newPasswordLabel: "Neues Passwort", setNewPasswordBtn: "Neues Passwort speichern",
     firstNameLabel: "Vorname", firstNamePlaceholder: "z. B. Anna", lastNameLabel: "Nachname", lastNamePlaceholder: "z. B. Müller",
-    dobLabel: "Geburtsdatum", countryLabel: "Land", cityFreeTextPlaceholder: "z. B. Berlin", phoneLocalPlaceholder: "151 12345678",
+    dobLabel: "Geburtsdatum", dobDayLabel: "Tag", dobMonthLabel: "Monat", dobYearLabel: "Jahr",
+    countryLabel: "Land", cityFreeTextPlaceholder: "z. B. Berlin", phoneLocalPlaceholder: "151 12345678",
     guestPromptMessage: "Um eine Immobilie zu speichern, den Makler zu kontaktieren oder eine Anzeige zu veröffentlichen, musst du dich zuerst registrieren oder anmelden.",
     guestPromptRegister: "Jetzt registrieren",
     guestProfileTitle: "Du bist nicht angemeldet", guestProfileMessage: "Melde dich an oder registriere dich, um dein Profil zu sehen, Anzeigen zu speichern und mehr.",
@@ -465,7 +467,8 @@ const STRINGS = {
     newPasswordHint: "Code confirmed. Set a new password for your account.",
     newPasswordLabel: "New password", setNewPasswordBtn: "Save new password",
     firstNameLabel: "First name", firstNamePlaceholder: "e.g. John", lastNameLabel: "Last name", lastNamePlaceholder: "e.g. Smith",
-    dobLabel: "Date of birth", countryLabel: "Country", cityFreeTextPlaceholder: "e.g. London", phoneLocalPlaceholder: "7911 123456",
+    dobLabel: "Date of birth", dobDayLabel: "Day", dobMonthLabel: "Month", dobYearLabel: "Year",
+    countryLabel: "Country", cityFreeTextPlaceholder: "e.g. London", phoneLocalPlaceholder: "7911 123456",
     guestPromptMessage: "To save a property, contact the agent, or publish a listing, you need to register or sign in first.",
     guestPromptRegister: "Register now",
     guestProfileTitle: "You're not signed in", guestProfileMessage: "Sign in or register to see your profile, save listings, and more.",
@@ -1910,7 +1913,7 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
 
           <div style={{ marginBottom: 12 }}>
             <label style={labelStyle}>{t.dobLabel}</label>
-            <input style={{ ...inputStyle, display: "block", minWidth: 0, maxWidth: "100%", boxSizing: "border-box" }} type="date" value={dob} onChange={(e) => setDob(e.target.value)} max={new Date().toISOString().slice(0, 10)} />
+            <DobPicker value={dob} onChange={setDob} />
           </div>
 
           <div style={{ marginBottom: 12 }}>
@@ -2156,7 +2159,9 @@ function EditProfileScreen({ profile, onBack, onSave }) {
         <SettingsSection title={t.sectionMoreAboutYou}>
           <div style={{ padding: 14 }}>
             <label style={labelStyle}>{t.dobLabel}</label>
-            <input style={{ ...inputStyle, marginBottom: 12, display: "block", minWidth: 0, maxWidth: "100%", boxSizing: "border-box" }} type="date" value={dob} onChange={(e) => setDob(e.target.value)} max={new Date().toISOString().slice(0, 10)} />
+            <div style={{ marginBottom: 12 }}>
+              <DobPicker value={dob} onChange={setDob} />
+            </div>
             <label style={labelStyle}>{t.countryLabel}</label>
             <div style={{ marginBottom: 12 }}>
               <CountryTypeahead value={country} onChange={setCountry} placeholder={t.countryLabel} />
@@ -2545,6 +2550,39 @@ const Req = () => <span style={{ color: "#B0473C", fontWeight: 700 }}> *</span>;
 function Opt() {
   const { t } = useLang();
   return <span style={{ color: "var(--ph-text-muted)", fontWeight: 400 }}> ({t.optionalTag})</span>;
+}
+function DobPicker({ value, onChange }) {
+  const { t } = useLang();
+  const [y, m, d] = value ? value.split("-") : ["", "", ""];
+  const maxYear = new Date().getFullYear();
+  const years = Array.from({ length: 100 }, (_, i) => maxYear - i);
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+  const daysInMonth = y && m ? new Date(Number(y), Number(m), 0).getDate() : 31;
+  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const update = (part, val) => {
+    const next = { y, m, d, [part]: val };
+    if (next.y && next.m && next.d) {
+      onChange(`${next.y}-${String(next.m).padStart(2, "0")}-${String(next.d).padStart(2, "0")}`);
+    } else {
+      onChange("");
+    }
+  };
+  return (
+    <div style={{ display: "flex", gap: 8 }}>
+      <select style={{ ...inputStyle, flex: 1, minWidth: 0 }} value={d} onChange={(e) => update("d", e.target.value)}>
+        <option value="">{t.dobDayLabel}</option>
+        {days.map((n) => <option key={n} value={n}>{n}</option>)}
+      </select>
+      <select style={{ ...inputStyle, flex: 1.3, minWidth: 0 }} value={m} onChange={(e) => update("m", e.target.value)}>
+        <option value="">{t.dobMonthLabel}</option>
+        {months.map((n) => <option key={n} value={n}>{n}</option>)}
+      </select>
+      <select style={{ ...inputStyle, flex: 1.3, minWidth: 0 }} value={y} onChange={(e) => update("y", e.target.value)}>
+        <option value="">{t.dobYearLabel}</option>
+        {years.map((n) => <option key={n} value={n}>{n}</option>)}
+      </select>
+    </div>
+  );
 }
 function SettingsSection({ title, children }) {
   return (

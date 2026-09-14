@@ -204,7 +204,14 @@ const STRINGS = {
     groundFloorLabel: "Përdhesë", basementLabel: "Bodrum", atticLabel: "Papafingo / Mansardë",
     floorNotApplicableLabel: "Shtëpi", chooseOption: "Zgjidh", changeCategoryLabel: "Ndrysho kategorinë",
     descLabel: "Përshkrimi", descPlaceholder: "Përshkruaj pronën shkurtimisht...",
-    tagsLabel: "Karakteristikat (ndaj me presje)", tagsPlaceholder: "p.sh. Parking, Ashensor, Ballkon",
+    tagsLabel: "Karakteristikat", tagsPlaceholder: "p.sh. Parking, Ashensor, Ballkon",
+    featureParking: "Parking", featureElevator: "Ashensor", featureBalcony: "Ballkon", featureTerrace: "Tarracë",
+    featureGarden: "Kopsht", featureBasement: "Bodrum", featureAC: "Klimë", featureCentralHeating: "Ngrohje qendrore",
+    featureFurnished: "I mobiluar", featureFittedKitchen: "Kuzhinë e integruar", featureWashingMachine: "Makinë larëse",
+    featureInternet: "Internet/WiFi", featureCableTV: "TV kabllor", featureSecurityDoor: "Derë sigurie",
+    featureAlarm: "Alarm", featureVideoSurveillance: "Video-vëzhgim", featurePool: "Pishinë",
+    featureAccessible: "E përshtatshme për karrocë", featurePetsAllowed: "Kafshët e lejuara", featureStorage: "Depo",
+    customTagsLabel: "Karakteristika të tjera", customTagsPlaceholder: "p.sh. Vaskë me hidromasazh, Kopsht privat",
     agencyFieldLabel: "Ofertuesi", agencyFieldPlaceholder: "Privat, ose emri i agjencisë tënde",
     agencyFieldHint: "Lëre 'Privat' nëse shet/jep me qira si individ. Nëse shkruan një emër të ri agjencie, ai do të shfaqet automatikisht te 'Ofertuesit'.",
     agencyFieldLockedHint: "Vetëm llogaritë e regjistruara si 'Agjenci' mund të shpallin nën një emër tjetër. Ndrysho këtë te 'Ndrysho profilin'.",
@@ -365,7 +372,14 @@ const STRINGS = {
     groundFloorLabel: "Erdgeschoss", basementLabel: "Keller", atticLabel: "Dachgeschoss",
     floorNotApplicableLabel: "Haus", chooseOption: "Auswählen", changeCategoryLabel: "Kategorie ändern",
     descLabel: "Beschreibung", descPlaceholder: "Beschreibe die Immobilie kurz...",
-    tagsLabel: "Merkmale (durch Komma getrennt)", tagsPlaceholder: "z. B. Parkplatz, Aufzug, Balkon",
+    tagsLabel: "Merkmale", tagsPlaceholder: "z. B. Parkplatz, Aufzug, Balkon",
+    featureParking: "Parkplatz", featureElevator: "Aufzug", featureBalcony: "Balkon", featureTerrace: "Terrasse",
+    featureGarden: "Garten", featureBasement: "Keller", featureAC: "Klimaanlage", featureCentralHeating: "Zentralheizung",
+    featureFurnished: "Möbliert", featureFittedKitchen: "Einbauküche", featureWashingMachine: "Waschmaschine",
+    featureInternet: "Internet/WLAN", featureCableTV: "Kabel-TV", featureSecurityDoor: "Sicherheitstür",
+    featureAlarm: "Alarmanlage", featureVideoSurveillance: "Videoüberwachung", featurePool: "Pool",
+    featureAccessible: "Barrierefrei", featurePetsAllowed: "Haustiere erlaubt", featureStorage: "Lagerraum",
+    customTagsLabel: "Weitere Merkmale", customTagsPlaceholder: "z. B. Whirlpool, privater Garten",
     agencyFieldLabel: "Anbieter", agencyFieldPlaceholder: "Privat, oder der Name deiner Agentur",
     agencyFieldHint: "Lass 'Privat' stehen, wenn du als Privatperson anbietest. Gibst du einen neuen Agenturnamen ein, erscheint er automatisch unter 'Anbieter'.",
     agencyFieldLockedHint: "Nur Konten mit Kontotyp 'Agentur' können unter einem anderen Namen inserieren. Umstellbar unter 'Profil bearbeiten'.",
@@ -526,7 +540,14 @@ const STRINGS = {
     groundFloorLabel: "Ground floor", basementLabel: "Basement", atticLabel: "Attic / Loft",
     floorNotApplicableLabel: "House", chooseOption: "Choose", changeCategoryLabel: "Change category",
     descLabel: "Description", descPlaceholder: "Briefly describe the property...",
-    tagsLabel: "Features (comma-separated)", tagsPlaceholder: "e.g. Parking, Elevator, Balcony",
+    tagsLabel: "Features", tagsPlaceholder: "e.g. Parking, Elevator, Balcony",
+    featureParking: "Parking", featureElevator: "Elevator", featureBalcony: "Balcony", featureTerrace: "Terrace",
+    featureGarden: "Garden", featureBasement: "Basement", featureAC: "Air Conditioning", featureCentralHeating: "Central Heating",
+    featureFurnished: "Furnished", featureFittedKitchen: "Fitted Kitchen", featureWashingMachine: "Washing Machine",
+    featureInternet: "Internet/WiFi", featureCableTV: "Cable TV", featureSecurityDoor: "Security Door",
+    featureAlarm: "Alarm System", featureVideoSurveillance: "Video Surveillance", featurePool: "Pool",
+    featureAccessible: "Wheelchair Accessible", featurePetsAllowed: "Pets Allowed", featureStorage: "Storage Room",
+    customTagsLabel: "Other features", customTagsPlaceholder: "e.g. Whirlpool, private garden",
     agencyFieldLabel: "Provider", agencyFieldPlaceholder: "Private, or your agency's name",
     agencyFieldHint: "Leave 'Private' if you're listing as an individual. Enter a new agency name and it will automatically appear under 'Providers'.",
     agencyFieldLockedHint: "Only accounts registered as 'Agency' can list under a different name. Switch this under 'Edit profile'.",
@@ -593,6 +614,14 @@ const CATEGORIES = (t) => [
   { id: "statike", label: t.catStatike, icon: Building },
   { id: "notar", label: t.catNotar, icon: Briefcase },
   { id: "financim", label: t.catFinancim, icon: Wallet },
+];
+const FEATURE_OPTIONS = (t) => [
+  t.featureParking, t.featureElevator, t.featureBalcony, t.featureTerrace,
+  t.featureGarden, t.featureBasement, t.featureAC, t.featureCentralHeating,
+  t.featureFurnished, t.featureFittedKitchen, t.featureWashingMachine,
+  t.featureInternet, t.featureCableTV, t.featureSecurityDoor,
+  t.featureAlarm, t.featureVideoSurveillance, t.featurePool,
+  t.featureAccessible, t.featurePetsAllowed, t.featureStorage,
 ];
 // Categories that are NOT regular real-estate property listings — excluded
 // from the main property search/filters, and routed into their own
@@ -3181,13 +3210,17 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
   const [form, setForm] = useState(() => {
     if (editingListing) {
       const splitPhone = splitPhoneByDialCode(editingListing.contactPhone, editingListing.contactCountry);
+      const featureLabels = FEATURE_OPTIONS(t);
+      const existingTags = editingListing.tags || [];
       return {
         title: editingListing.title || "", cat: editingListing.cat || "banesa", type: editingListing.type || "Shitje",
         city: editingListing.city || CITIES_LIST[0], area: editingListing.area === "-" ? "" : (editingListing.area || ""),
         address: editingListing.address || "", addressNumber: editingListing.addressNumber || "",
         price: editingListing.price != null ? String(editingListing.price) : "", m2: editingListing.m2 != null ? String(editingListing.m2) : "",
         rooms: editingListing.rooms != null ? String(editingListing.rooms) : "", floor: editingListing.floor === "-" ? "" : (editingListing.floor || ""),
-        desc: editingListing.desc || "", tags: (editingListing.tags || []).join(", "), agency: editingListing.agency || "Privat",
+        desc: editingListing.desc || "", agency: editingListing.agency || "Privat",
+        tags: existingTags.filter((x) => featureLabels.includes(x)).join(", "),
+        customTags: existingTags.filter((x) => !featureLabels.includes(x)).join(", "),
         website: editingListing.website || "",
         contactFirstName: editingListing.contactFirstName || "", contactLastName: editingListing.contactLastName || "",
         contactPhone: splitPhone.local, contactEmail: editingListing.contactEmail || "", contactCountry: splitPhone.code,
@@ -3200,7 +3233,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
     const prefillPhone = splitPhoneByDialCode(profile?.phone, profile?.country);
     return {
       title: "", cat: "", type: "Shitje", city: CITIES_LIST[0], area: "", address: "", addressNumber: "",
-      price: "", m2: "", rooms: "", floor: "", desc: "", tags: "", website: "",
+      price: "", m2: "", rooms: "", floor: "", desc: "", tags: "", customTags: "", website: "",
       agency: (profile?.accountType === "agency" && profile?.company?.trim()) ? profile.company.trim() : "Privat",
       contactFirstName: "", contactLastName: "",
       contactPhone: prefillPhone.local, contactEmail: profile?.email || "", contactCountry: prefillPhone.code,
@@ -3259,7 +3292,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
       title: form.title.trim(), cat: form.cat, type: form.type, city: form.city,
       area: form.area.trim() || "-", address: form.address.trim(), addressNumber: form.addressNumber.trim(), price: Number(form.price), m2: Number(form.m2),
       rooms: Number(form.rooms) || 0, floor: form.floor.trim() || "-",
-      desc: form.desc.trim() || "", tags: form.tags.split(",").map((x) => x.trim()).filter(Boolean),
+      desc: form.desc.trim() || "", tags: [...form.tags.split(",").map((x) => x.trim()).filter(Boolean), ...form.customTags.split(",").map((x) => x.trim()).filter(Boolean)],
       images, image: images[0] || null, agency: isAgencyAccount ? (form.agency.trim() || "Privat") : "Privat",
       website: form.website.trim(),
       contactPhone: form.contactPhone.trim() ? `${selectedContactCountry.dial} ${form.contactPhone.trim()}` : "", contactEmail: form.contactEmail.trim(),
@@ -3623,7 +3656,35 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
               <textarea style={{ ...inputStyle, minHeight: 80, resize: "vertical" }} value={form.desc} onChange={set("desc")} placeholder={t.descPlaceholder} />
               <div>
                 <label style={labelStyle}>{t.tagsLabel}</label>
-                <input style={inputStyle} value={form.tags} onChange={set("tags")} placeholder={t.tagsPlaceholder} />
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 6 }}>
+                  {FEATURE_OPTIONS(t).map((label) => {
+                    const selectedTags = form.tags.split(",").map((x) => x.trim()).filter(Boolean);
+                    const active = selectedTags.includes(label);
+                    return (
+                      <button
+                        key={label} type="button"
+                        onClick={() => {
+                          const next = active ? selectedTags.filter((x) => x !== label) : [...selectedTags, label];
+                          setForm((f) => ({ ...f, tags: next.join(", ") }));
+                        }}
+                        style={{
+                          display: "flex", alignItems: "center", gap: 5,
+                          border: active ? "1.5px solid var(--ph-accent)" : "1px solid var(--ph-border)",
+                          background: active ? "var(--ph-accent-light)" : "var(--ph-bg)",
+                          borderRadius: 999, padding: "8px 13px", fontSize: 12.5, fontWeight: 500,
+                          color: active ? "var(--ph-text)" : "var(--ph-text-muted)", cursor: "pointer",
+                        }}
+                      >
+                        {active && <Check size={12} color="var(--ph-accent)" />}
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div>
+                <label style={labelStyle}>{t.customTagsLabel}</label>
+                <input style={inputStyle} value={form.customTags} onChange={set("customTags")} placeholder={t.customTagsPlaceholder} />
               </div>
             </div>
           </SettingsSection>

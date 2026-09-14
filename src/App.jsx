@@ -132,6 +132,7 @@ const STRINGS = {
     allCities: "Të gjitha qytetet", allPropertyTypes: "Të gjitha llojet", dealTypeSectionLabel: "Lloji i ofertës",
     sortNewest: "Më të fundit", sortPriceAsc: "Çmimi: I ulët → i lartë",
     sortPriceDesc: "Çmimi: I lartë → i ulët", sortM2Desc: "Sipërfaqja: më e madhe",
+    sortOldest: "Më të vjetrat", sortM2Asc: "Sipërfaqja: më e vogla", sortRoomsDesc: "Më shumë dhoma", sortYearDesc: "Viti i ndërtimit: më i ri",
     filterTitle: "Filtro kërkimin", cityLabel: "Qyteti", priceLabel: "Çmimi (€)",
     min: "Min", max: "Maks", m2MinLabel: "Sipërfaqja minimale (m²)", m2Placeholder: "p.sh. 50",
     roomsLabel: "Dhoma (minimumi)", anyNumber: "Çdo numër", sortLabel: "Rendit sipas",
@@ -325,6 +326,7 @@ const STRINGS = {
     allCities: "Alle Städte", allPropertyTypes: "Alle Typen", dealTypeSectionLabel: "Angebotsart",
     sortNewest: "Neueste", sortPriceAsc: "Preis: aufsteigend",
     sortPriceDesc: "Preis: absteigend", sortM2Desc: "Fläche: größte zuerst",
+    sortOldest: "Älteste", sortM2Asc: "Fläche: kleinste zuerst", sortRoomsDesc: "Meiste Zimmer", sortYearDesc: "Baujahr: neueste zuerst",
     filterTitle: "Suche filtern", cityLabel: "Stadt", priceLabel: "Preis (€)",
     min: "Min", max: "Max", m2MinLabel: "Mindestfläche (m²)", m2Placeholder: "z. B. 50",
     roomsLabel: "Zimmer (mindestens)", anyNumber: "Beliebige Anzahl", sortLabel: "Sortieren nach",
@@ -518,6 +520,7 @@ const STRINGS = {
     allCities: "All cities", allPropertyTypes: "All types", dealTypeSectionLabel: "Offer Type",
     sortNewest: "Newest", sortPriceAsc: "Price: low to high",
     sortPriceDesc: "Price: high to low", sortM2Desc: "Area: largest first",
+    sortOldest: "Oldest", sortM2Asc: "Area: smallest first", sortRoomsDesc: "Most rooms", sortYearDesc: "Year built: newest first",
     filterTitle: "Filter search", cityLabel: "City", priceLabel: "Price (€)",
     min: "Min", max: "Max", m2MinLabel: "Minimum area (m²)", m2Placeholder: "e.g. 50",
     roomsLabel: "Rooms (minimum)", anyNumber: "Any number", sortLabel: "Sort by",
@@ -4179,8 +4182,10 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
   const propertyTypes = CATEGORIES(t).filter((c) => c.id !== "all" && c.id !== "shitje" && c.id !== "qera" && !NON_PROPERTY_CATS.includes(c.id));
   const dealTabs = [{ id: "shitje", label: t.typeSale }, { id: "qera", label: t.typeRent }];
   const sortOptions = [
-    { id: "newest", label: t.sortNewest }, { id: "price_asc", label: t.sortPriceAsc },
-    { id: "price_desc", label: t.sortPriceDesc }, { id: "m2_desc", label: t.sortM2Desc },
+    { id: "newest", label: t.sortNewest }, { id: "oldest", label: t.sortOldest },
+    { id: "price_asc", label: t.sortPriceAsc }, { id: "price_desc", label: t.sortPriceDesc },
+    { id: "m2_desc", label: t.sortM2Desc }, { id: "m2_asc", label: t.sortM2Asc },
+    { id: "rooms_desc", label: t.sortRoomsDesc }, { id: "year_desc", label: t.sortYearDesc },
   ];
   const liveCount = useMemo(() => listings.filter((l) => matchesFilters(l, local)).length, [listings, local]);
   const roomsLabel = local.roomsMin <= 0 && local.roomsMax >= 6
@@ -4450,6 +4455,10 @@ function SearchScreen({ listings, favorites, toggleFav, onOpen, onAddNew, onOpen
     if (filters.sort === "price_asc") list = [...list].sort((a, b) => a.price - b.price);
     else if (filters.sort === "price_desc") list = [...list].sort((a, b) => b.price - a.price);
     else if (filters.sort === "m2_desc") list = [...list].sort((a, b) => b.m2 - a.m2);
+    else if (filters.sort === "m2_asc") list = [...list].sort((a, b) => a.m2 - b.m2);
+    else if (filters.sort === "rooms_desc") list = [...list].sort((a, b) => (b.rooms || 0) - (a.rooms || 0));
+    else if (filters.sort === "year_desc") list = [...list].sort((a, b) => (b.yearBuilt || 0) - (a.yearBuilt || 0));
+    else if (filters.sort === "oldest") list = [...list].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
     return list;
   }, [listings, query, filters]);
 

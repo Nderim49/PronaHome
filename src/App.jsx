@@ -3,7 +3,7 @@ import {
   Search, Heart, Bell, User, MapPin, ChevronLeft, SlidersHorizontal,
   BedDouble, Maximize2, Phone, Building2, Home as HomeIcon, KeyRound,
   Warehouse, Trees, Landmark, X, Check, Plus, Trash2, Loader2, Mail, LogOut, Pencil,
-  Camera, Globe, Hotel, Briefcase, Users, Car, Building, Store, Factory, UtensilsCrossed, Wrench, Download, Eye, Send, EyeOff, Wallet, Hammer, Handshake
+  Camera, Globe, Hotel, Briefcase, Users, Car, Building, Store, Factory, UtensilsCrossed, Wrench, Download, Eye, Send, EyeOff, Wallet, Hammer, Handshake, MessageCircle
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -245,7 +245,7 @@ const STRINGS = {
     publishBtn: "Publiko shpalljen", publishing: "Duke publikuar...",
     contactAgent: "Kontakto agjentin", descriptionLabel: "Përshkrimi", featuresLabel: "Karakteristikat",
     sectionPriceSize: "Çmimi & Madhësia", sectionProviderInfo: "Ofertuesi",
-    contactInfoLabel: "Të dhënat e kontaktit", callBtn: "Telefono", emailBtn: "Shkruaj Email",
+    contactInfoLabel: "Të dhënat e kontaktit", callBtn: "Telefono", emailBtn: "Shkruaj Email", whatsappBtn: "WhatsApp", viberBtn: "Viber",
     areaStat: "Sipërfaqja", roomsStat: "Dhoma", floorStat: "Kati",
     yourListing: "Shpallja jote", genericProperty: "Pronë",
     loadingText: "Duke ngarkuar...",
@@ -439,7 +439,7 @@ const STRINGS = {
     publishBtn: "Anzeige veröffentlichen", publishing: "Wird veröffentlicht...",
     contactAgent: "Makler kontaktieren", descriptionLabel: "Beschreibung", featuresLabel: "Merkmale",
     sectionPriceSize: "Preis & Größe", sectionProviderInfo: "Anbieter",
-    contactInfoLabel: "Kontaktdaten", callBtn: "Anrufen", emailBtn: "Mail schreiben",
+    contactInfoLabel: "Kontaktdaten", callBtn: "Anrufen", emailBtn: "Mail schreiben", whatsappBtn: "WhatsApp", viberBtn: "Viber",
     areaStat: "Wohnfläche", roomsStat: "Zimmer", floorStat: "Etage",
     yourListing: "Deine Anzeige", genericProperty: "Immobilie",
     loadingText: "Wird geladen...",
@@ -633,7 +633,7 @@ const STRINGS = {
     publishBtn: "Publish listing", publishing: "Publishing...",
     contactAgent: "Contact agent", descriptionLabel: "Description", featuresLabel: "Features",
     sectionPriceSize: "Price & Size", sectionProviderInfo: "Provider",
-    contactInfoLabel: "Contact details", callBtn: "Call", emailBtn: "Send email",
+    contactInfoLabel: "Contact details", callBtn: "Call", emailBtn: "Send email", whatsappBtn: "WhatsApp", viberBtn: "Viber",
     areaStat: "Area", roomsStat: "Rooms", floorStat: "Floor",
     yourListing: "Your listing", genericProperty: "Property",
     loadingText: "Loading...",
@@ -1191,6 +1191,12 @@ function splitPhoneByDialCode(fullPhone, storedCountryCode) {
 function formatRangeValue(min, max) {
   if (max != null && max !== "" && Number(max) !== Number(min)) return `${min}–${max}`;
   return `${min}`;
+}
+// Strips spaces/formatting from a stored "+49 1511234567"-style number down
+// to plain digits (with or without the leading +) for wa.me / Viber deep links.
+function phoneDigitsOnly(phone, keepPlus) {
+  const cleaned = (phone || "").replace(/[^\d+]/g, "");
+  return keepPlus ? cleaned : cleaned.replace(/^\+/, "");
 }
 function formatPrice(listing, t) {
   const n = Number(listing.price).toLocaleString("de-DE");
@@ -3116,6 +3122,22 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
               )}
             </div>
           )}
+          {listing.contactPhone && (
+            <div style={{ display: "flex", gap: 8 }}>
+              <a
+                href={`https://wa.me/${phoneDigitsOnly(listing.contactPhone)}`} target="_blank" rel="noopener noreferrer"
+                style={{ flex: 1, background: "#25D366", color: "#fff", border: "none", borderRadius: 12, padding: "11px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer", textDecoration: "none" }}
+              >
+                <MessageCircle size={14} /> {t.whatsappBtn}
+              </a>
+              <a
+                href={`viber://chat?number=${encodeURIComponent(phoneDigitsOnly(listing.contactPhone, true))}`}
+                style={{ flex: 1, background: "#7360F2", color: "#fff", border: "none", borderRadius: 12, padding: "11px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer", textDecoration: "none" }}
+              >
+                <MessageCircle size={14} /> {t.viberBtn}
+              </a>
+            </div>
+          )}
           {!isMine && listing.owner_id && (
             <button
               onClick={onMessageOwner}
@@ -3411,6 +3433,22 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
                 <Mail size={14} /> {t.emailBtn}
               </button>
             )}
+          </div>
+        )}
+        {listing.contactPhone && (
+          <div style={{ display: "flex", gap: 8 }}>
+            <a
+              href={`https://wa.me/${phoneDigitsOnly(listing.contactPhone)}`} target="_blank" rel="noopener noreferrer"
+              style={{ flex: 1, background: "#25D366", color: "#fff", border: "none", borderRadius: 12, padding: "11px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer", textDecoration: "none" }}
+            >
+              <MessageCircle size={14} /> {t.whatsappBtn}
+            </a>
+            <a
+              href={`viber://chat?number=${encodeURIComponent(phoneDigitsOnly(listing.contactPhone, true))}`}
+              style={{ flex: 1, background: "#7360F2", color: "#fff", border: "none", borderRadius: 12, padding: "11px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer", textDecoration: "none" }}
+            >
+              <MessageCircle size={14} /> {t.viberBtn}
+            </a>
           </div>
         )}
         {!isMine && listing.owner_id && (

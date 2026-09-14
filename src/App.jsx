@@ -197,6 +197,7 @@ const STRINGS = {
     photoHint: "Fotografia ruhet bashkë me shpalljen dhe u shfaqet të gjithë përdoruesve.",
     titleLabel: "Titulli i shpalljes", titlePlaceholder: "p.sh. Banesë 2+1 në qendër",
     categoryLabel: "Kategoria", typeLabel: "Lloji", typeSale: "Blerje", typeRent: "Qera",
+    typeSellLabel: "Shes", typeRentOutLabel: "Jap me Qera",
     areaLabel: "Lagjja", areaPlaceholder: "p.sh. Dardania", cityCenterLabel: "Qendra e qytetit",
     priceEurLabel: "Çmimi (€)", pricePlaceholder: "p.sh. 95000",
     priceFromLabel: "Çmimi nga (€)", priceToLabel: "Çmimi deri (€)", priceToPlaceholder: "p.sh. 200",
@@ -379,6 +380,7 @@ const STRINGS = {
     photoHint: "Das Foto wird zusammen mit der Anzeige gespeichert und allen Nutzern angezeigt.",
     titleLabel: "Titel der Anzeige", titlePlaceholder: "z. B. Wohnung 2+1 im Zentrum",
     categoryLabel: "Kategorie", typeLabel: "Typ", typeSale: "Kaufen", typeRent: "Mieten",
+    typeSellLabel: "Verkaufen", typeRentOutLabel: "Vermieten",
     areaLabel: "Viertel", areaPlaceholder: "z. B. Dardania", cityCenterLabel: "Stadtzentrum",
     priceEurLabel: "Preis (€)", pricePlaceholder: "z. B. 95000",
     priceFromLabel: "Preis von (€)", priceToLabel: "Preis bis (€)", priceToPlaceholder: "z. B. 200",
@@ -561,6 +563,7 @@ const STRINGS = {
     photoHint: "The photo is saved with the listing and shown to all users.",
     titleLabel: "Listing title", titlePlaceholder: "e.g. 2+1 apartment in the center",
     categoryLabel: "Category", typeLabel: "Type", typeSale: "Buy", typeRent: "Rent",
+    typeSellLabel: "Sell", typeRentOutLabel: "Rent Out",
     areaLabel: "Neighborhood", areaPlaceholder: "e.g. Dardania", cityCenterLabel: "City center",
     priceEurLabel: "Price (€)", pricePlaceholder: "e.g. 95000",
     priceFromLabel: "Price from (€)", priceToLabel: "Price to (€)", priceToPlaceholder: "e.g. 200",
@@ -3674,8 +3677,8 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
               <div>
                 <label style={labelStyle}>{t.typeLabel}</label>
                 <select style={inputStyle} value={form.type} onChange={set("type")}>
-                  <option value="Shitje">{t.typeSale}</option>
-                  <option value="Qera">{t.typeRent}</option>
+                  <option value="Shitje">{t.typeSellLabel}</option>
+                  <option value="Qera">{t.typeRentOutLabel}</option>
                 </select>
               </div>
               <div style={{ display: "flex", gap: 10 }}>

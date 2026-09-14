@@ -2985,25 +2985,40 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
     try { await onReport?.(listing.id, reason); } catch (e) { /* best-effort, still show thanks */ }
   };
   const ReportModal = () => (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.5)", zIndex: 60, display: "flex", alignItems: "flex-end" }} onClick={() => setShowReport(false)}>
-      <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", background: "var(--ph-bg)", borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: "18px 18px calc(env(safe-area-inset-bottom, 0px) + 18px)" }}>
+    <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 60, display: "flex", alignItems: "flex-end" }} onClick={() => setShowReport(false)}>
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: "100%", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26,
+          padding: "10px 18px calc(env(safe-area-inset-bottom, 0px) + 18px)", boxShadow: "0 -8px 30px rgba(15,23,41,0.18)",
+        }}
+      >
+        <div style={{ width: 40, height: 5, borderRadius: 999, background: "var(--ph-border)", margin: "0 auto 16px" }} />
         {reportSent ? (
           <div style={{ textAlign: "center", padding: "20px 0" }}>
-            <Check size={28} color="#2F7A56" style={{ marginBottom: 8 }} />
+            <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(47,122,86,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+              <Check size={24} color="#2F7A56" />
+            </div>
             <div style={{ fontSize: 14, color: "var(--ph-text)" }}>{t.reportThanks}</div>
           </div>
         ) : (
           <>
-            <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 15.5, color: "var(--ph-text)", marginBottom: 14 }}>{t.reportTitle}</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 15.5, color: "var(--ph-text)", textAlign: "center", marginBottom: 16 }}>{t.reportTitle}</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {[t.reportReasonSpam, t.reportReasonWrongInfo, t.reportReasonInappropriate, t.reportReasonSold, t.reportReasonOther].map((reason) => (
                 <button
                   key={reason} onClick={() => sendReport(reason)}
-                  style={{ textAlign: "left", padding: "13px 14px", borderRadius: 12, border: "1px solid var(--ph-border)", background: "var(--ph-surface)", fontSize: 13.5, color: "var(--ph-text)", cursor: "pointer" }}
+                  style={{ textAlign: "left", padding: "14px 16px", borderRadius: 16, border: "1px solid var(--ph-border)", background: "var(--ph-surface)", fontSize: 14, fontWeight: 500, color: "var(--ph-text)", cursor: "pointer" }}
                 >
                   {reason}
                 </button>
               ))}
+              <button
+                onClick={() => setShowReport(false)}
+                style={{ padding: "14px 16px", borderRadius: 16, border: "none", background: "var(--ph-surface)", color: "var(--ph-text-muted)", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: "pointer", marginTop: 4 }}
+              >
+                {t.cancel}
+              </button>
             </div>
           </>
         )}
@@ -6022,7 +6037,7 @@ export default function PronaHomeApp() {
                   onBack={() => setOpenListing(null)} isMine={myIds.has(openListing.id)} onDelete={deleteListing}
                   listings={listings}
                   onReport={(listingId, reason) => submitListingReport(listingId, userId, reason)}
-                  onViewOwnerListings={(ownerId) => setViewingOwnerId(ownerId)}
+                  onViewOwnerListings={(ownerId) => { setOpenListing(null); setViewingOwnerId(ownerId); }}
                   onContactAgent={() => requireAuth(() => {
                     if (!openListing.owner_id || openListing.owner_id === userId) return;
                     const otherName = openListing.contactFirstName

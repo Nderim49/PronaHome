@@ -221,6 +221,7 @@ const STRINGS = {
     groundFloorLabel: "Përdhesë", basementLabel: "Bodrum", atticLabel: "Papafingo / Mansardë",
     floorNotApplicableLabel: "Shtëpi", chooseOption: "Zgjidh", changeCategoryLabel: "Ndrysho kategorinë",
     optionalTag: "opsionale", contactRequiredNote: "telefoni ose email-i i detyrueshëm",
+    contactBothRequiredNote: "telefoni dhe email-i të detyrueshëm",
     descLabel: "Përshkrimi", descPlaceholder: "Përshkruaj pronën shkurtimisht...",
     tagsLabel: "Karakteristikat", tagsPlaceholder: "p.sh. Parking, Ashensor, Ballkon",
     featureParking: "Parking", featureElevator: "Ashensor", featureBalcony: "Ballkon", featureTerrace: "Tarracë",
@@ -407,6 +408,7 @@ const STRINGS = {
     groundFloorLabel: "Erdgeschoss", basementLabel: "Keller", atticLabel: "Dachgeschoss",
     floorNotApplicableLabel: "Haus", chooseOption: "Auswählen", changeCategoryLabel: "Kategorie ändern",
     optionalTag: "optional", contactRequiredNote: "Telefon oder E-Mail erforderlich",
+    contactBothRequiredNote: "Telefon und E-Mail erforderlich",
     descLabel: "Beschreibung", descPlaceholder: "Beschreibe die Immobilie kurz...",
     tagsLabel: "Merkmale", tagsPlaceholder: "z. B. Parkplatz, Aufzug, Balkon",
     featureParking: "Parkplatz", featureElevator: "Aufzug", featureBalcony: "Balkon", featureTerrace: "Terrasse",
@@ -593,6 +595,7 @@ const STRINGS = {
     groundFloorLabel: "Ground floor", basementLabel: "Basement", atticLabel: "Attic / Loft",
     floorNotApplicableLabel: "House", chooseOption: "Choose", changeCategoryLabel: "Change category",
     optionalTag: "optional", contactRequiredNote: "Phone or email required",
+    contactBothRequiredNote: "Phone and email required",
     descLabel: "Description", descPlaceholder: "Briefly describe the property...",
     tagsLabel: "Features", tagsPlaceholder: "e.g. Parking, Elevator, Balcony",
     featureParking: "Parking", featureElevator: "Elevator", featureBalcony: "Balcony", featureTerrace: "Terrace",
@@ -3371,7 +3374,11 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
   const selectedContactCountry = WORLD_COUNTRIES.find((c) => c.code === form.contactCountry) || WORLD_COUNTRIES[0];
   const NO_M2_CATS = ["mobilje", "zejtar", "arkitekt", "statike"];
   const canSubmit = isBusinessCard
-    ? form.contactFirstName.trim() && form.contactLastName.trim() && (form.contactPhone.trim() || form.contactEmail.trim())
+    ? form.contactFirstName.trim() && form.contactLastName.trim() && form.contactPhone.trim() && form.contactEmail.trim()
+      && form.city.trim() && images.length > 0 && form.desc.trim()
+    : isHotel
+    ? form.title.trim() && form.price && form.city && form.m2 && images.length > 0 && form.desc.trim()
+      && form.contactPhone.trim() && form.contactEmail.trim()
     : form.cat.trim() && form.title.trim() && form.price && form.city && (NO_M2_CATS.includes(form.cat) || form.m2) && (form.contactPhone.trim() || form.contactEmail.trim());
 
   const handleImagePick = async (e) => {
@@ -3508,7 +3515,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
 
         {isBusinessCard ? (
         <>
-          <SettingsSection title={<>{t.businessPhotoLabel}<Opt /></>}>
+          <SettingsSection title={<>{t.businessPhotoLabel}<Req /></>}>
             <div style={{ padding: 14 }}>
               {images.length > 0 ? (
                 <div style={{ position: "relative", width: 110, aspectRatio: "1", borderRadius: 12, overflow: "hidden" }}>
@@ -3566,7 +3573,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
               <div style={{ display: "flex", gap: 10 }}>
                 <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>{t.cityLabel}<Opt /></label>
+                  <label style={labelStyle}>{t.cityLabel}<Req /></label>
                   <select
                     style={inputStyle} value={form.city}
                     onChange={(e) => setForm((f) => ({ ...f, city: e.target.value, area: "" }))}
@@ -3603,10 +3610,10 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             </div>
           </SettingsSection>
 
-          <SettingsSection title={<>{t.contactInfoLabel} <span style={{ color: "var(--ph-text-muted)", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>({t.contactRequiredNote})</span></>}>
+          <SettingsSection title={<>{t.contactInfoLabel} <span style={{ color: "var(--ph-text-muted)", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>({t.contactBothRequiredNote})</span></>}>
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
               <div>
-                <label style={labelStyle}>{t.phoneLabel}</label>
+                <label style={labelStyle}>{t.phoneLabel}<Req /></label>
                 <div style={{ display: "flex", gap: 8 }}>
                   <div style={{ width: 132, flexShrink: 0 }}>
                     <CountryTypeahead value={form.contactCountry} onChange={(v) => setForm((f) => ({ ...f, contactCountry: v }))} placeholder={t.countryLabel} />
@@ -3615,13 +3622,13 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                 </div>
               </div>
               <div>
-                <label style={labelStyle}>{t.onboardEmailLabel}</label>
+                <label style={labelStyle}>{t.onboardEmailLabel}<Req /></label>
                 <input style={inputStyle} type="email" value={form.contactEmail} onChange={set("contactEmail")} placeholder={t.onboardEmailPlaceholder} />
               </div>
             </div>
           </SettingsSection>
 
-          <SettingsSection title={<>{t.businessBioLabel}<Opt /></>}>
+          <SettingsSection title={<>{t.businessBioLabel}<Req /></>}>
             <div style={{ padding: 14 }}>
               <textarea style={{ ...inputStyle, minHeight: 90, resize: "vertical" }} value={form.desc} onChange={set("desc")} placeholder={t.businessBioPlaceholder} />
             </div>
@@ -3635,7 +3642,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
         </>
         ) : (
         <>
-          <SettingsSection title={<>{t.photoLabel}<Opt /></>}>
+          <SettingsSection title={<>{t.photoLabel}{isHotel ? <Req /> : <Opt />}</>}>
             <div style={{ padding: 14 }}>
               <div style={{ marginBottom: 4 }}>
                 {images.length > 0 && <span style={{ fontSize: 11, color: "var(--ph-text-muted)" }}>{images.length}/{MAX_IMAGES}</span>}
@@ -3859,7 +3866,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             </div>
           </SettingsSection>
 
-          <SettingsSection title={<>{t.descriptionLabel}<Opt /></>}>
+          <SettingsSection title={<>{t.descriptionLabel}{isHotel ? <Req /> : <Opt />}</>}>
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
               <textarea style={{ ...inputStyle, minHeight: 80, resize: "vertical" }} value={form.desc} onChange={set("desc")} placeholder={t.descPlaceholder} />
               <div>
@@ -3897,10 +3904,10 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
             </div>
           </SettingsSection>
 
-          <SettingsSection title={<>{t.contactInfoLabel} <span style={{ color: "var(--ph-text-muted)", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>({t.contactRequiredNote})</span></>}>
+          <SettingsSection title={<>{t.contactInfoLabel} <span style={{ color: "var(--ph-text-muted)", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>({isHotel ? t.contactBothRequiredNote : t.contactRequiredNote})</span></>}>
             <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
               <div>
-                <label style={labelStyle}>{t.phoneLabel}</label>
+                <label style={labelStyle}>{t.phoneLabel}{isHotel && <Req />}</label>
                 <div style={{ display: "flex", gap: 8 }}>
                   <div style={{ width: 132, flexShrink: 0 }}>
                     <CountryTypeahead value={form.contactCountry} onChange={(v) => setForm((f) => ({ ...f, contactCountry: v }))} placeholder={t.countryLabel} />
@@ -3909,7 +3916,7 @@ function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile
                 </div>
               </div>
               <div>
-                <label style={labelStyle}>{t.onboardEmailLabel}</label>
+                <label style={labelStyle}>{t.onboardEmailLabel}{isHotel && <Req />}</label>
                 <input style={inputStyle} type="email" value={form.contactEmail} onChange={set("contactEmail")} placeholder={t.onboardEmailPlaceholder} />
               </div>
             </div>

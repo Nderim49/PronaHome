@@ -2437,10 +2437,6 @@ function AccountScreen({ profile, favorites, myListingIds, listings, onBack, onD
             label={t.emailVerified} hint={profile.email}
             control={<VerifyBadgeOrButton field="email" isVerified={!!profile.emailVerified} />}
           />
-          <SettingsRow
-            label={t.phoneVerification} hint={profile.phone || t.noPhoneOnFile}
-            control={<VerifyBadgeOrButton field="phone" isVerified={!!profile.phoneVerified} disabled={!profile.phone} />}
-          />
           <SettingsRow label={t.memberSince} control={<span style={{ fontSize: 12.5, color: "var(--ph-text-muted)" }}>{memberSinceLabel}</span>} isLast />
         </SettingsSection>
 

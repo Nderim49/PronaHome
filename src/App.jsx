@@ -2917,7 +2917,32 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
   const [showDetails, setShowDetails] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [reportSent, setReportSent] = useState(false);
+  const [showCallOptions, setShowCallOptions] = useState(false);
   const ownerListingCount = listings ? listings.filter((l) => l.owner_id === listing.owner_id).length : 0;
+  const CallOptionsSheet = () => (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.5)", zIndex: 60, display: "flex", alignItems: "flex-end" }} onClick={() => setShowCallOptions(false)}>
+      <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", background: "var(--ph-bg)", borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: "18px 18px calc(env(safe-area-inset-bottom, 0px) + 18px)", display: "flex", flexDirection: "column", gap: 8 }}>
+        <button
+          onClick={() => { window.location.href = `tel:${listing.contactPhone}`; setShowCallOptions(false); }}
+          style={{ display: "flex", alignItems: "center", gap: 10, padding: "13px 14px", borderRadius: 12, border: "none", background: NAVY, color: "#fff", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14, cursor: "pointer" }}
+        >
+          <Phone size={16} /> {t.callBtn}
+        </button>
+        <a
+          href={`https://wa.me/${phoneDigitsOnly(listing.contactPhone)}`} target="_blank" rel="noopener noreferrer" onClick={() => setShowCallOptions(false)}
+          style={{ display: "flex", alignItems: "center", gap: 10, padding: "13px 14px", borderRadius: 12, background: "#25D366", color: "#fff", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14, cursor: "pointer", textDecoration: "none" }}
+        >
+          <MessageCircle size={16} /> {t.whatsappBtn}
+        </a>
+        <a
+          href={`viber://chat?number=${encodeURIComponent(phoneDigitsOnly(listing.contactPhone, true))}`} onClick={() => setShowCallOptions(false)}
+          style={{ display: "flex", alignItems: "center", gap: 10, padding: "13px 14px", borderRadius: 12, background: "#7360F2", color: "#fff", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14, cursor: "pointer", textDecoration: "none" }}
+        >
+          <MessageCircle size={16} /> {t.viberBtn}
+        </a>
+      </div>
+    </div>
+  );
   const onGalleryScroll = (e) => {
     const w = e.currentTarget.clientWidth;
     if (w) setPhotoIdx(Math.round(e.currentTarget.scrollLeft / w));
@@ -3106,7 +3131,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             <div style={{ display: "flex", gap: 8 }}>
               {listing.contactPhone && (
                 <button
-                  onClick={() => (window.location.href = `tel:${listing.contactPhone}`)}
+                  onClick={() => setShowCallOptions(true)}
                   style={{ flex: 1, background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "11px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer" }}
                 >
                   <Phone size={14} /> {t.callBtn}
@@ -3120,22 +3145,6 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
                   <Mail size={14} /> {t.emailBtn}
                 </button>
               )}
-            </div>
-          )}
-          {listing.contactPhone && (
-            <div style={{ display: "flex", gap: 8 }}>
-              <a
-                href={`https://wa.me/${phoneDigitsOnly(listing.contactPhone)}`} target="_blank" rel="noopener noreferrer"
-                style={{ flex: 1, background: "#25D366", color: "#fff", border: "none", borderRadius: 12, padding: "11px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer", textDecoration: "none" }}
-              >
-                <MessageCircle size={14} /> {t.whatsappBtn}
-              </a>
-              <a
-                href={`viber://chat?number=${encodeURIComponent(phoneDigitsOnly(listing.contactPhone, true))}`}
-                style={{ flex: 1, background: "#7360F2", color: "#fff", border: "none", borderRadius: 12, padding: "11px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer", textDecoration: "none" }}
-              >
-                <MessageCircle size={14} /> {t.viberBtn}
-              </a>
             </div>
           )}
           {!isMine && listing.owner_id && (
@@ -3160,6 +3169,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           </div>
         )}
         {showReport && <ReportModal />}
+        {showCallOptions && <CallOptionsSheet />}
       </div>
     );
   }
@@ -3419,7 +3429,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           <div style={{ display: "flex", gap: 8 }}>
             {listing.contactPhone && (
               <button
-                onClick={() => (window.location.href = `tel:${listing.contactPhone}`)}
+                onClick={() => setShowCallOptions(true)}
                 style={{ flex: 1, background: NAVY, color: "#fff", border: "none", borderRadius: 12, padding: "11px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer" }}
               >
                 <Phone size={14} /> {t.callBtn}
@@ -3433,22 +3443,6 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
                 <Mail size={14} /> {t.emailBtn}
               </button>
             )}
-          </div>
-        )}
-        {listing.contactPhone && (
-          <div style={{ display: "flex", gap: 8 }}>
-            <a
-              href={`https://wa.me/${phoneDigitsOnly(listing.contactPhone)}`} target="_blank" rel="noopener noreferrer"
-              style={{ flex: 1, background: "#25D366", color: "#fff", border: "none", borderRadius: 12, padding: "11px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer", textDecoration: "none" }}
-            >
-              <MessageCircle size={14} /> {t.whatsappBtn}
-            </a>
-            <a
-              href={`viber://chat?number=${encodeURIComponent(phoneDigitsOnly(listing.contactPhone, true))}`}
-              style={{ flex: 1, background: "#7360F2", color: "#fff", border: "none", borderRadius: 12, padding: "11px 0", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer", textDecoration: "none" }}
-            >
-              <MessageCircle size={14} /> {t.viberBtn}
-            </a>
           </div>
         )}
         {!isMine && listing.owner_id && (
@@ -3496,6 +3490,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
         </div>
       )}
       {showReport && <ReportModal />}
+      {showCallOptions && <CallOptionsSheet />}
     </div>
   );
 }

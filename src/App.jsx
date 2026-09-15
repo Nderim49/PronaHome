@@ -4831,7 +4831,7 @@ function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch, editin
                     fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: "pointer",
                   }}
                 >
-                  {t.saveBtn}
+                  {editingSearchName ? t.updateSearchBtn : t.saveBtn}
                 </button>
               </>
             )}

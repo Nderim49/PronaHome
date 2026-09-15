@@ -1534,10 +1534,21 @@ async function saveSavedSearchRemote(search) {
   if (!SUPABASE_CONFIGURED) return null;
   const rows = await supabaseFetch("saved_searches", {
     method: "POST",
-    headers: { Prefer: "resolution=merge-duplicates,return=representation" },
+    headers: { Prefer: "return=representation" },
     body: JSON.stringify([search]),
   });
   return rows && rows[0];
+}
+// For editing an existing row: a real PATCH by id, never sending "id" itself
+// in the body — the column is an auto-generated identity column, and Postgres
+// rejects any insert/upsert statement that tries to set it explicitly.
+async function updateSavedSearchRemote(id, fields) {
+  if (!SUPABASE_CONFIGURED) return;
+  await supabaseFetch(`saved_searches?id=eq.${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify(fields),
+  });
 }
 async function deleteSavedSearchRemote(id) {
   if (!SUPABASE_CONFIGURED) return;
@@ -5985,8 +5996,7 @@ export default function PronaHomeApp() {
   const handleSaveSearch = async (name, searchFilters) => {
     try {
       if (editingSearchId) {
-        const updated = { id: editingSearchId, owner_id: userId, name, filters: searchFilters };
-        await saveSavedSearchRemote(updated);
+        await updateSavedSearchRemote(editingSearchId, { name, filters: searchFilters });
         setSavedSearches((prev) => prev.map((s) => (s.id === editingSearchId ? { ...s, name, filters: searchFilters } : s)));
         // Give the "Suche gespeichert!" confirmation inside the sheet its usual
         // moment on screen, then return to the saved-search list so the update
@@ -6022,12 +6032,12 @@ export default function PronaHomeApp() {
     }
     const updated = { ...search, push_enabled: turningOn };
     setSavedSearches((prev) => prev.map((s) => (s.id === search.id ? updated : s)));
-    await saveSavedSearchRemote({ id: search.id, owner_id: userId, name: search.name, filters: search.filters, push_enabled: turningOn, email_enabled: search.email_enabled });
+    await updateSavedSearchRemote(search.id, { push_enabled: turningOn });
   };
   const handleToggleEmail = async (search) => {
     const updated = { ...search, email_enabled: !search.email_enabled };
     setSavedSearches((prev) => prev.map((s) => (s.id === search.id ? updated : s)));
-    await saveSavedSearchRemote({ id: search.id, owner_id: userId, name: search.name, filters: search.filters, push_enabled: search.push_enabled, email_enabled: updated.email_enabled });
+    await updateSavedSearchRemote(search.id, { email_enabled: updated.email_enabled });
   };
   const handleEditSearch = (search) => {
     setFilters(search.filters);

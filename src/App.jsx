@@ -1545,6 +1545,31 @@ async function deleteSavedSearchRemote(id) {
 function countMatchingListings(listings, filters) {
   return listings.filter((l) => !NON_PROPERTY_CATS.includes(l.cat) && matchesFilters(l, filters)).length;
 }
+// Turns a saved search's filter criteria into a short, readable summary line
+// — e.g. "Ferizaj · Wohnung · 50.000–100.000 € · 2+ Zimmer" — so people can
+// tell what a saved search actually covers without reopening the filters.
+function describeSearchFilters(filters, t) {
+  const parts = [];
+  if (filters.city) parts.push(filters.area && filters.area !== "-" ? `${filters.area}, ${filters.city}` : filters.city);
+  if (filters.propertyType && filters.propertyType !== "all") {
+    const cat = CATEGORIES(t).find((c) => c.id === filters.propertyType);
+    if (cat) parts.push(cat.label);
+  }
+  if (filters.priceMin || filters.priceMax) {
+    if (filters.priceMin && filters.priceMax) parts.push(`${Number(filters.priceMin).toLocaleString("de-DE")}–${Number(filters.priceMax).toLocaleString("de-DE")} €`);
+    else if (filters.priceMax) parts.push(`${t.maximumLabel} ${Number(filters.priceMax).toLocaleString("de-DE")} €`);
+    else parts.push(`${t.minimumLabel} ${Number(filters.priceMin).toLocaleString("de-DE")} €`);
+  }
+  if (filters.m2Min || filters.m2Max) {
+    if (filters.m2Min && filters.m2Max) parts.push(`${filters.m2Min}–${filters.m2Max} m²`);
+    else if (filters.m2Max) parts.push(`${t.maximumLabel} ${filters.m2Max} m²`);
+    else parts.push(`${t.minimumLabel} ${filters.m2Min} m²`);
+  }
+  if (filters.roomsMin > 0 || filters.roomsMax < 6) {
+    parts.push(`${filters.roomsMin}${filters.roomsMax < 6 ? "–" + filters.roomsMax : "+"} ${t.roomsUnit}`);
+  }
+  return parts.length ? parts.join(" · ") : t.anyPlaceholder;
+}
 // Asks the browser for real Notification permission. This is genuine
 // browser-native permission (works while the tab is open); actually waking
 // the browser up in the background needs a Firebase Cloud Messaging service
@@ -3699,10 +3724,45 @@ function OwnerListingsScreen({ listings, favorites, toggleFav, onOpen, onBack })
   );
 }
 
+// Dedicated results window for a single saved search — opened from "Meine
+// Suchaufträge" instead of just switching over to the main search tab, so
+// coming back returns to the saved-search list, not the general browse view.
+function SavedSearchResultsScreen({ listings, filters, title, favorites, toggleFav, onOpen, onBack }) {
+  const { t } = useLang();
+  const results = useMemo(() => {
+    return listings.filter((l) => !NON_PROPERTY_CATS.includes(l.cat) && matchesFilters(l, filters));
+  }, [listings, filters]);
+  return (
+    <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 29 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY, flexShrink: 0 }}>
+        <button onClick={onBack} style={{ width: 34, height: 34, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+          <ChevronLeft size={18} color="#fff" />
+        </button>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{title}</div>
+          <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.7)" }}>{describeSearchFilters(filters, t)}</div>
+        </div>
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "18px 18px 24px", display: "flex", flexWrap: "wrap", gap: 12, alignContent: "flex-start" }}>
+        {results.map((l) => (
+          <div key={l.id} style={{ width: "calc(50% - 6px)" }}>
+            <ListingCard listing={l} isFav={favorites.has(l.id)} onToggleFav={toggleFav} onOpen={() => onOpen(l)} />
+          </div>
+        ))}
+        {results.length === 0 && (
+          <div style={{ width: "100%", textAlign: "center", color: "var(--ph-text-muted)", fontSize: 13, marginTop: 40 }}>
+            {t.noResults}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Saved searches ("Suchaufträge")
 // ---------------------------------------------------------------------------
-function SavedSearchesScreen({ savedSearches, listings, onBack, onDelete, onTogglePush, onToggleEmail, onViewResults, onEdit }) {
+function SavedSearchesScreen({ savedSearches, listings, onBack, onDelete, onTogglePush, onViewResults, onEdit }) {
   const { t } = useLang();
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   return (
@@ -3738,6 +3798,16 @@ function SavedSearchesScreen({ savedSearches, listings, onBack, onDelete, onTogg
                     </div>
                   </div>
 
+                  <button
+                    onClick={() => onEdit(s)}
+                    style={{
+                      display: "flex", alignItems: "center", gap: 6, width: "100%", textAlign: "left", border: "none", background: "none", padding: 0,
+                      fontSize: 12.5, color: "var(--ph-accent)", textDecoration: "underline", marginBottom: 10, cursor: "pointer",
+                    }}
+                  >
+                    {describeSearchFilters(s.filters, t)}
+                  </button>
+
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderTop: "1px solid var(--ph-border-soft)" }}>
                     <div>
                       <div style={{ fontSize: 13, fontWeight: 600, color: "var(--ph-text)" }}>{t.pushNotifLabel}</div>
@@ -3745,16 +3815,9 @@ function SavedSearchesScreen({ savedSearches, listings, onBack, onDelete, onTogg
                     </div>
                     <ToggleSwitch checked={!!s.push_enabled} onChange={() => onTogglePush(s)} />
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderTop: "1px solid var(--ph-border-soft)" }}>
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: "var(--ph-text)" }}>{t.emailNotifLabel}</div>
-                      <div style={{ fontSize: 11, color: "var(--ph-text-muted)" }}>{t.emailNotifHint}</div>
-                    </div>
-                    <ToggleSwitch checked={!!s.email_enabled} onChange={() => onToggleEmail(s)} />
-                  </div>
 
                   <button
-                    onClick={() => onViewResults(s.filters)}
+                    onClick={() => onViewResults(s)}
                     style={{
                       width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 12,
                       background: "var(--ph-bg)", border: "1px solid var(--ph-border)", borderRadius: 12, padding: "11px 0",
@@ -5782,6 +5845,7 @@ export default function PronaHomeApp() {
   const [viewingOwnerId, setViewingOwnerId] = useState(null);
   const [savedSearches, setSavedSearches] = useState([]);
   const [showSavedSearches, setShowSavedSearches] = useState(false);
+  const [viewingSearchResults, setViewingSearchResults] = useState(null);
   const [editingSearchId, setEditingSearchId] = useState(null);
   const [showNewListing, setShowNewListing] = useState(false);
   const [editingListing, setEditingListing] = useState(null);
@@ -5942,10 +6006,8 @@ export default function PronaHomeApp() {
     setShowSavedSearches(false);
     setShowFilters(true);
   };
-  const handleViewSearchResults = (searchFilters) => {
-    setFilters(searchFilters);
-    setShowSavedSearches(false);
-    setTab("kerko");
+  const handleViewSearchResults = (search) => {
+    setViewingSearchResults(search);
   };
 
   const setLang = (l) => {
@@ -6455,8 +6517,15 @@ export default function PronaHomeApp() {
               {showSavedSearches && (
                 <SavedSearchesScreen
                   savedSearches={savedSearches} listings={listings} onBack={() => setShowSavedSearches(false)}
-                  onDelete={handleDeleteSearch} onTogglePush={handleTogglePush} onToggleEmail={handleToggleEmail}
+                  onDelete={handleDeleteSearch} onTogglePush={handleTogglePush}
                   onViewResults={handleViewSearchResults} onEdit={handleEditSearch}
+                />
+              )}
+              {viewingSearchResults && (
+                <SavedSearchResultsScreen
+                  listings={listings} filters={viewingSearchResults.filters} title={viewingSearchResults.name}
+                  favorites={favorites} toggleFav={toggleFav}
+                  onOpen={(l) => setOpenListing(l)} onBack={() => setViewingSearchResults(null)}
                 />
               )}
               {showHotelScreen && (

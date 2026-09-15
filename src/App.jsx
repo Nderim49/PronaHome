@@ -136,6 +136,15 @@ const STRINGS = {
     filterTitle: "Filtro kërkimin", cityLabel: "Qyteti", priceLabel: "Çmimi (€)",
     min: "Min", max: "Maks", m2MinLabel: "Sipërfaqja minimale (m²)", m2Placeholder: "p.sh. 50",
     roomsLabel: "Dhoma (minimumi)", anyNumber: "Çdo numër", sortLabel: "Rendit sipas",
+    savedSearchesTitle: "Kërkimet e mia", saveSearchBtn: "Ruaj këtë kërkim", saveSearchNameLabel: "Emri i kërkimit",
+    saveSearchNamePlaceholder: "p.sh. Shtëpi në Ferizaj deri 100.000", saveSearchSuccessMsg: "Kërkimi u ruajt!",
+    pushNotifLabel: "Njoftim Push", pushNotifHint: "Njoftim menjëherë kur ka shpallje të reja.",
+    emailNotifLabel: "Njoftim me Email", emailNotifHint: "Shpalljet e reja dërgohen 1× në ditë.",
+    viewResultsBtn: "Shiko rezultatet", noSavedSearches: "Ende nuk ke asnjë kërkim të ruajtur.",
+    noSavedSearchesHint: "Ruaj filtrat e kërkimit për t'u njoftuar për shpallje të reja.",
+    pushNotSupported: "Njoftimet push nuk mbështeten në këtë shfletues.", pushPermissionDenied: "Njoftimet janë të bllokuara në cilësimet e shfletuesit.",
+    savedSearchesMenuLabel: "Kërkimet e mia", deleteSavedSearchConfirm: "Ta fshij këtë kërkim të ruajtur?", confirmDeleteBtn: "Po, fshije",
+    newMatchesLabel: (n) => `${n} shpallje përputhen`, saveBtn: "Ruaj",
     clearFilters: "Fshi të gjithë filtrat", showResults: "Shfaq rezultatet",
     anyPlaceholder: "Çdo vlerë", propertyTypeLabel: "Lloji i pronës",
     priceRangeLabel: "Diapazoni i çmimit (€)", minimumLabel: "Minimumi", maximumLabel: "Maksimumi",
@@ -332,6 +341,15 @@ const STRINGS = {
     filterTitle: "Suche filtern", cityLabel: "Stadt", priceLabel: "Preis (€)",
     min: "Min", max: "Max", m2MinLabel: "Mindestfläche (m²)", m2Placeholder: "z. B. 50",
     roomsLabel: "Zimmer (mindestens)", anyNumber: "Beliebige Anzahl", sortLabel: "Sortieren nach",
+    savedSearchesTitle: "Meine Suchaufträge", saveSearchBtn: "Diese Suche speichern", saveSearchNameLabel: "Name der Suche",
+    saveSearchNamePlaceholder: "z. B. Häuser in Ferizaj bis 100.000", saveSearchSuccessMsg: "Suche gespeichert!",
+    pushNotifLabel: "Push-Mitteilung", pushNotifHint: "Sofortige Benachrichtigung bei neuen passenden Anzeigen.",
+    emailNotifLabel: "E-Mail-Benachrichtigung", emailNotifHint: "Neue Anzeigen werden 1× täglich per E-Mail verschickt.",
+    viewResultsBtn: "Ergebnisse anschauen", noSavedSearches: "Du hast noch keine gespeicherten Suchen.",
+    noSavedSearchesHint: "Speichere deine Suchfilter, um über neue passende Anzeigen informiert zu werden.",
+    pushNotSupported: "Push-Mitteilungen werden von diesem Browser nicht unterstützt.", pushPermissionDenied: "Benachrichtigungen sind in den Browser-Einstellungen blockiert.",
+    savedSearchesMenuLabel: "Meine Suchaufträge", deleteSavedSearchConfirm: "Diese gespeicherte Suche löschen?", confirmDeleteBtn: "Ja, löschen",
+    newMatchesLabel: (n) => `${n} passende Anzeigen`, saveBtn: "Speichern",
     clearFilters: "Alle Filter löschen", showResults: "Ergebnisse anzeigen",
     anyPlaceholder: "Egal", propertyTypeLabel: "Immobilientyp",
     priceRangeLabel: "Preisspanne in €", minimumLabel: "Minimum", maximumLabel: "Maximum",
@@ -528,6 +546,15 @@ const STRINGS = {
     filterTitle: "Filter search", cityLabel: "City", priceLabel: "Price (€)",
     min: "Min", max: "Max", m2MinLabel: "Minimum area (m²)", m2Placeholder: "e.g. 50",
     roomsLabel: "Rooms (minimum)", anyNumber: "Any number", sortLabel: "Sort by",
+    savedSearchesTitle: "My Saved Searches", saveSearchBtn: "Save this search", saveSearchNameLabel: "Search name",
+    saveSearchNamePlaceholder: "e.g. Houses in Ferizaj under 100,000", saveSearchSuccessMsg: "Search saved!",
+    pushNotifLabel: "Push Notification", pushNotifHint: "Instant alert when new matching listings appear.",
+    emailNotifLabel: "Email Notification", emailNotifHint: "New listings are sent once a day by email.",
+    viewResultsBtn: "View results", noSavedSearches: "You don't have any saved searches yet.",
+    noSavedSearchesHint: "Save your search filters to get notified about new matching listings.",
+    pushNotSupported: "Push notifications aren't supported in this browser.", pushPermissionDenied: "Notifications are blocked in your browser settings.",
+    savedSearchesMenuLabel: "My Saved Searches", deleteSavedSearchConfirm: "Delete this saved search?", confirmDeleteBtn: "Yes, delete",
+    newMatchesLabel: (n) => `${n} matching listings`, saveBtn: "Save",
     clearFilters: "Clear all filters", showResults: "Show results",
     anyPlaceholder: "Any", propertyTypeLabel: "Property type",
     priceRangeLabel: "Price range (€)", minimumLabel: "Minimum", maximumLabel: "Maximum",
@@ -1488,6 +1515,47 @@ async function submitListingReport(listingId, reporterId, reason) {
     headers: { Prefer: "return=minimal" },
     body: JSON.stringify([{ listing_id: listingId, reporter_id: reporterId || null, reason, created_at: new Date().toISOString() }]),
   });
+}
+// ---------------------------------------------------------------------------
+// Saved searches ("Suchaufträge")
+// ---------------------------------------------------------------------------
+async function loadSavedSearches(userId) {
+  if (!SUPABASE_CONFIGURED || !userId) return [];
+  const rows = await supabaseFetch(`saved_searches?owner_id=eq.${encodeURIComponent(userId)}&order=created_at.desc`);
+  return rows || [];
+}
+async function saveSavedSearchRemote(search) {
+  if (!SUPABASE_CONFIGURED) return null;
+  const rows = await supabaseFetch("saved_searches", {
+    method: "POST",
+    headers: { Prefer: "resolution=merge-duplicates,return=representation" },
+    body: JSON.stringify([search]),
+  });
+  return rows && rows[0];
+}
+async function deleteSavedSearchRemote(id) {
+  if (!SUPABASE_CONFIGURED) return;
+  await supabaseFetch(`saved_searches?id=eq.${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+// Counts how many currently-live listings match a saved search's filters —
+// used for the little "12 new" style badge and to open "Ergebnisse anschauen".
+function countMatchingListings(listings, filters) {
+  return listings.filter((l) => !NON_PROPERTY_CATS.includes(l.cat) && matchesFilters(l, filters)).length;
+}
+// Asks the browser for real Notification permission. This is genuine
+// browser-native permission (works while the tab is open); actually waking
+// the browser up in the background needs a Firebase Cloud Messaging service
+// worker on top of this, which is a separate deployment step — see setup notes.
+async function requestPushPermission() {
+  if (typeof window === "undefined" || !("Notification" in window)) return { granted: false, reason: "unsupported" };
+  if (Notification.permission === "granted") return { granted: true, reason: null };
+  if (Notification.permission === "denied") return { granted: false, reason: "denied" };
+  try {
+    const result = await Notification.requestPermission();
+    return { granted: result === "granted", reason: result === "granted" ? null : "denied" };
+  } catch {
+    return { granted: false, reason: "unsupported" };
+  }
 }
 async function deleteListingRemote(id) {
   if (!SUPABASE_CONFIGURED) return;
@@ -3580,6 +3648,116 @@ function OwnerListingsScreen({ listings, favorites, toggleFav, onOpen, onBack })
 }
 
 // ---------------------------------------------------------------------------
+// Saved searches ("Suchaufträge")
+// ---------------------------------------------------------------------------
+function SavedSearchesScreen({ savedSearches, listings, onBack, onDelete, onTogglePush, onToggleEmail, onViewResults, onEdit }) {
+  const { t } = useLang();
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  return (
+    <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 28 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY, flexShrink: 0 }}>
+        <button onClick={onBack} style={{ width: 34, height: 34, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+          <ChevronLeft size={18} color="#fff" />
+        </button>
+        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff" }}>{t.savedSearchesTitle}</span>
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: 18 }}>
+        {savedSearches.length === 0 ? (
+          <div style={{ textAlign: "center", color: "var(--ph-text-muted)", fontSize: 13, marginTop: 60, padding: "0 20px" }}>
+            <Bell size={28} color="var(--ph-border)" style={{ marginBottom: 10 }} />
+            <div style={{ fontWeight: 600, color: "var(--ph-text)", marginBottom: 4 }}>{t.noSavedSearches}</div>
+            {t.noSavedSearchesHint}
+          </div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {savedSearches.map((s) => {
+              const count = countMatchingListings(listings, s.filters);
+              return (
+                <div key={s.id} style={{ background: "var(--ph-surface)", border: "1px solid var(--ph-border)", borderTop: "2px solid var(--ph-accent-light)", borderRadius: 16, padding: 16 }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8, marginBottom: 10 }}>
+                    <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 15, color: "var(--ph-text)" }}>{s.name}</div>
+                    <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                      <button onClick={() => onEdit(s)} style={{ width: 30, height: 30, borderRadius: "50%", border: "1px solid var(--ph-border)", background: "var(--ph-bg)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                        <Pencil size={13} color="var(--ph-text-muted)" />
+                      </button>
+                      <button onClick={() => setConfirmDeleteId(s.id)} style={{ width: 30, height: 30, borderRadius: "50%", border: "1px solid var(--ph-border)", background: "var(--ph-bg)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                        <Trash2 size={13} color="var(--ph-text-muted)" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderTop: "1px solid var(--ph-border-soft)" }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: "var(--ph-text)" }}>{t.pushNotifLabel}</div>
+                      <div style={{ fontSize: 11, color: "var(--ph-text-muted)" }}>{t.pushNotifHint}</div>
+                    </div>
+                    <ToggleSwitch checked={!!s.push_enabled} onChange={() => onTogglePush(s)} />
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderTop: "1px solid var(--ph-border-soft)" }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: "var(--ph-text)" }}>{t.emailNotifLabel}</div>
+                      <div style={{ fontSize: 11, color: "var(--ph-text-muted)" }}>{t.emailNotifHint}</div>
+                    </div>
+                    <ToggleSwitch checked={!!s.email_enabled} onChange={() => onToggleEmail(s)} />
+                  </div>
+
+                  <button
+                    onClick={() => onViewResults(s.filters)}
+                    style={{
+                      width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 12,
+                      background: "var(--ph-bg)", border: "1px solid var(--ph-border)", borderRadius: 12, padding: "11px 0",
+                      color: "var(--ph-text)", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, cursor: "pointer",
+                    }}
+                  >
+                    {t.newMatchesLabel(count)} · {t.viewResultsBtn} <ChevronLeft size={13} style={{ transform: "rotate(180deg)" }} />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {confirmDeleteId && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 70, display: "flex", alignItems: "flex-end" }} onClick={() => setConfirmDeleteId(null)}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: "10px 18px calc(env(safe-area-inset-bottom, 0px) + 18px)" }}>
+            <div style={{ width: 40, height: 5, borderRadius: 999, background: "var(--ph-border)", margin: "0 auto 16px" }} />
+            <div style={{ fontSize: 14, color: "var(--ph-text)", textAlign: "center", marginBottom: 16 }}>{t.deleteSavedSearchConfirm}</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <button
+                onClick={() => { onDelete(confirmDeleteId); setConfirmDeleteId(null); }}
+                style={{ padding: "14px 16px", borderRadius: 16, border: "none", background: "#C0392B", color: "#fff", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: "pointer" }}
+              >
+                {t.confirmDeleteBtn}
+              </button>
+              <button
+                onClick={() => setConfirmDeleteId(null)}
+                style={{ padding: "14px 16px", borderRadius: 16, border: "none", background: "var(--ph-surface)", color: "var(--ph-text-muted)", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: "pointer" }}
+              >
+                {t.cancel}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+function ToggleSwitch({ checked, onChange }) {
+  return (
+    <button
+      onClick={onChange}
+      style={{
+        width: 44, height: 26, borderRadius: 999, border: "none", cursor: "pointer", padding: 3, flexShrink: 0,
+        background: checked ? "var(--ph-accent)" : "var(--ph-border)", display: "flex", justifyContent: checked ? "flex-end" : "flex-start", transition: "background 0.15s",
+      }}
+    >
+      <div style={{ width: 20, height: 20, borderRadius: "50%", background: "#fff" }} />
+    </button>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // New listing form
 // ---------------------------------------------------------------------------
 function NewListingScreen({ onBack, onPublish, agencies, editingListing, profile }) {
@@ -4292,9 +4470,12 @@ function matchesFilters(l, f) {
     && matchesRoomsMin && matchesRoomsMax;
 }
 
-function FilterScreen({ filters, listings, onBack, onApply }) {
+function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch }) {
   const { t } = useLang();
   const [local, setLocal] = useState(filters);
+  const [showSaveSearch, setShowSaveSearch] = useState(false);
+  const [searchName, setSearchName] = useState("");
+  const [searchSaved, setSearchSaved] = useState(false);
   const set = (k) => (e) => setLocal((f) => ({ ...f, [k]: e.target.value }));
   const propertyTypes = CATEGORIES(t).filter((c) => c.id !== "all" && c.id !== "shitje" && c.id !== "qera" && !NON_PROPERTY_CATS.includes(c.id));
   const dealTabs = [{ id: "shitje", label: t.typeSale }, { id: "qera", label: t.typeRent }];
@@ -4473,7 +4654,61 @@ function FilterScreen({ filters, listings, onBack, onApply }) {
             </select>
           </div>
         </SettingsSection>
+
+        {onSaveSearch && (
+          <button
+            onClick={() => setShowSaveSearch(true)}
+            style={{
+              width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+              border: "1.5px dashed var(--ph-accent)", background: "var(--ph-accent-light)", borderRadius: 14, padding: "13px 0",
+              color: "var(--ph-accent)", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13.5, cursor: "pointer", marginBottom: 18,
+            }}
+          >
+            <Bell size={15} /> {t.saveSearchBtn}
+          </button>
+        )}
       </div>
+
+      {showSaveSearch && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 70, display: "flex", alignItems: "flex-end" }} onClick={() => { setShowSaveSearch(false); setSearchSaved(false); }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: "10px 18px calc(env(safe-area-inset-bottom, 0px) + 18px)" }}>
+            <div style={{ width: 40, height: 5, borderRadius: 999, background: "var(--ph-border)", margin: "0 auto 16px" }} />
+            {searchSaved ? (
+              <div style={{ textAlign: "center", padding: "20px 0" }}>
+                <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(47,122,86,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+                  <Check size={24} color="#2F7A56" />
+                </div>
+                <div style={{ fontSize: 14, color: "var(--ph-text)" }}>{t.saveSearchSuccessMsg}</div>
+              </div>
+            ) : (
+              <>
+                <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 15.5, color: "var(--ph-text)", textAlign: "center", marginBottom: 16 }}>{t.saveSearchBtn}</div>
+                <label style={labelStyle}>{t.saveSearchNameLabel}</label>
+                <input
+                  style={{ ...inputStyle, marginBottom: 16 }} value={searchName} onChange={(e) => setSearchName(e.target.value)}
+                  placeholder={t.saveSearchNamePlaceholder} autoFocus
+                />
+                <button
+                  onClick={async () => {
+                    if (!searchName.trim()) return;
+                    await onSaveSearch(searchName.trim(), local);
+                    setSearchSaved(true);
+                    setSearchName("");
+                    setTimeout(() => { setShowSaveSearch(false); setSearchSaved(false); }, 1200);
+                  }}
+                  disabled={!searchName.trim()}
+                  style={{
+                    width: "100%", background: searchName.trim() ? "var(--ph-accent)" : "var(--ph-border)", color: "#fff", border: "none", borderRadius: 16, padding: "14px 0",
+                    fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: searchName.trim() ? "pointer" : "default",
+                  }}
+                >
+                  {t.saveBtn}
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       <div style={{ padding: "14px 18px calc(env(safe-area-inset-bottom, 0px) + 14px)", background: "var(--ph-surface)", borderTop: "1px solid var(--ph-border)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14 }}>
         <button
@@ -5376,12 +5611,13 @@ function MyListingsScreen({ listings, myIds, onBack, onOpen, onDelete, onEdit })
   );
 }
 
-function ProfileScreen({ profile, favCount, myCount, unreadMessages, onOpenMyListings, onAddNew, onEditProfile, onLogout, onAvatarChange, onOpenSettings, onOpenAccount, onOpenMessages }) {
+function ProfileScreen({ profile, favCount, myCount, unreadMessages, onOpenMyListings, onAddNew, onEditProfile, onLogout, onAvatarChange, onOpenSettings, onOpenAccount, onOpenMessages, onOpenSavedSearches }) {
   const { t } = useLang();
   const [avatarBusy, setAvatarBusy] = useState(false);
   const rows = [
     { label: t.myListingsRow(myCount), action: onOpenMyListings },
     { label: t.messagesRow, action: onOpenMessages, icon: Mail, badge: unreadMessages },
+    { label: t.savedSearchesMenuLabel, action: onOpenSavedSearches, icon: Bell },
     { label: t.publishRow, action: onAddNew, icon: Plus },
     { label: t.myAccountRow, action: onOpenAccount, icon: User },
     { label: t.editProfileRow, action: onEditProfile, icon: Pencil },
@@ -5488,6 +5724,9 @@ export default function PronaHomeApp() {
   const [showGuestPrompt, setShowGuestPrompt] = useState(false);
   const [openListing, setOpenListing] = useState(null);
   const [viewingOwnerId, setViewingOwnerId] = useState(null);
+  const [savedSearches, setSavedSearches] = useState([]);
+  const [showSavedSearches, setShowSavedSearches] = useState(false);
+  const [editingSearchId, setEditingSearchId] = useState(null);
   const [showNewListing, setShowNewListing] = useState(false);
   const [editingListing, setEditingListing] = useState(null);
   const [showMyListings, setShowMyListings] = useState(false);
@@ -5598,6 +5837,60 @@ export default function PronaHomeApp() {
       setMyIds(new Set(listings.filter((l) => l.owner_id === userId).map((l) => l.id)));
     }
   }, [listings, userId]);
+
+  useEffect(() => {
+    if (SUPABASE_CONFIGURED && userId) {
+      loadSavedSearches(userId).then(setSavedSearches).catch((e) => console.error(e));
+    } else {
+      setSavedSearches([]);
+    }
+  }, [userId]);
+
+  const handleSaveSearch = async (name, searchFilters) => {
+    if (editingSearchId) {
+      const updated = { id: editingSearchId, owner_id: userId, name, filters: searchFilters };
+      const saved = await saveSavedSearchRemote(updated);
+      setSavedSearches((prev) => prev.map((s) => (s.id === editingSearchId ? { ...s, name, filters: searchFilters } : s)));
+      setEditingSearchId(null);
+    } else {
+      const row = { owner_id: userId, name, filters: searchFilters, push_enabled: false, email_enabled: false, created_at: new Date().toISOString() };
+      const saved = await saveSavedSearchRemote(row);
+      if (saved) setSavedSearches((prev) => [saved, ...prev]);
+    }
+  };
+  const handleDeleteSearch = async (id) => {
+    setSavedSearches((prev) => prev.filter((s) => s.id !== id));
+    await deleteSavedSearchRemote(id);
+  };
+  const handleTogglePush = async (search) => {
+    const turningOn = !search.push_enabled;
+    if (turningOn) {
+      const { granted, reason } = await requestPushPermission();
+      if (!granted) {
+        setToast(reason === "unsupported" ? t.pushNotSupported : t.pushPermissionDenied);
+        return;
+      }
+    }
+    const updated = { ...search, push_enabled: turningOn };
+    setSavedSearches((prev) => prev.map((s) => (s.id === search.id ? updated : s)));
+    await saveSavedSearchRemote({ id: search.id, owner_id: userId, name: search.name, filters: search.filters, push_enabled: turningOn, email_enabled: search.email_enabled });
+  };
+  const handleToggleEmail = async (search) => {
+    const updated = { ...search, email_enabled: !search.email_enabled };
+    setSavedSearches((prev) => prev.map((s) => (s.id === search.id ? updated : s)));
+    await saveSavedSearchRemote({ id: search.id, owner_id: userId, name: search.name, filters: search.filters, push_enabled: search.push_enabled, email_enabled: updated.email_enabled });
+  };
+  const handleEditSearch = (search) => {
+    setFilters(search.filters);
+    setEditingSearchId(search.id);
+    setShowSavedSearches(false);
+    setShowFilters(true);
+  };
+  const handleViewSearchResults = (searchFilters) => {
+    setFilters(searchFilters);
+    setShowSavedSearches(false);
+    setTab("kerko");
+  };
 
   const setLang = (l) => {
     setLangState(l);
@@ -6016,6 +6309,7 @@ export default function PronaHomeApp() {
                     onEditProfile={() => setShowEditProfile(true)} onLogout={logout} onAvatarChange={updateAvatar}
                     onOpenSettings={() => setShowSettings(true)} onOpenAccount={() => setShowAccount(true)}
                     onOpenMessages={() => setShowMessages(true)}
+                    onOpenSavedSearches={() => requireAuth(() => setShowSavedSearches(true))}
                   />
                 ) : (
                   <GuestProfileScreen onLogin={() => setGuestMode(false)} />
@@ -6095,7 +6389,20 @@ export default function PronaHomeApp() {
                   onBack={() => setShowAccount(false)} onDeleteAccount={deleteAccount} onVerify={verifyField}
                 />
               )}
-              {showFilters && <FilterScreen filters={filters} listings={listings} onBack={() => setShowFilters(false)} onApply={(f) => { setFilters(f); setShowFilters(false); }} />}
+              {showFilters && (
+                <FilterScreen
+                  filters={filters} listings={listings} onBack={() => { setShowFilters(false); setEditingSearchId(null); }}
+                  onApply={(f) => { setFilters(f); setShowFilters(false); setEditingSearchId(null); }}
+                  onSaveSearch={userId ? handleSaveSearch : undefined}
+                />
+              )}
+              {showSavedSearches && (
+                <SavedSearchesScreen
+                  savedSearches={savedSearches} listings={listings} onBack={() => setShowSavedSearches(false)}
+                  onDelete={handleDeleteSearch} onTogglePush={handleTogglePush} onToggleEmail={handleToggleEmail}
+                  onViewResults={handleViewSearchResults} onEdit={handleEditSearch}
+                />
+              )}
               {showHotelScreen && (
                 <HotelScreen
                   listings={listings} favorites={favorites} toggleFav={toggleFav}

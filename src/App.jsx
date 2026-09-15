@@ -4713,8 +4713,8 @@ function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch }) {
             onClick={() => setShowSaveSearch(true)}
             style={{
               width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-              border: "1.5px dashed var(--ph-accent)", background: "var(--ph-accent-light)", borderRadius: 14, padding: "13px 0",
-              color: "var(--ph-accent)", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13.5, cursor: "pointer", marginBottom: 18,
+              border: "none", background: "var(--ph-accent)", borderRadius: 14, padding: "13px 0",
+              color: "#fff", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13.5, cursor: "pointer", marginBottom: 18,
             }}
           >
             <Bell size={15} /> {t.saveSearchBtn}
@@ -4724,7 +4724,7 @@ function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch }) {
 
       {showSaveSearch && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 70, display: "flex", alignItems: "flex-end" }} onClick={() => { setShowSaveSearch(false); setSearchSaved(false); setNameError(false); }}>
-          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: "10px 18px calc(env(safe-area-inset-bottom, 0px) + 18px)" }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: "10px 20px calc(env(safe-area-inset-bottom, 0px) + 18px)" }}>
             <div style={{ width: 40, height: 5, borderRadius: 999, background: "var(--ph-border)", margin: "0 auto 16px" }} />
             {searchSaved ? (
               <div style={{ textAlign: "center", padding: "20px 0" }}>

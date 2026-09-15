@@ -4821,10 +4821,16 @@ function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch, editin
                 <button
                   onClick={async () => {
                     if (!searchName.trim()) { setNameError(true); return; }
-                    await onSaveSearch(searchName.trim(), local);
-                    setSearchSaved(true);
-                    setSearchName("");
-                    setTimeout(() => { setShowSaveSearch(false); setSearchSaved(false); }, 1200);
+                    try {
+                      await onSaveSearch(searchName.trim(), local);
+                      setSearchSaved(true);
+                      setSearchName("");
+                      setTimeout(() => { setShowSaveSearch(false); setSearchSaved(false); }, 1200);
+                    } catch (e) {
+                      // handleSaveSearch already surfaced a toast with the
+                      // real error — just keep the sheet open so the person
+                      // can see the name they typed and try again.
+                    }
                   }}
                   style={{
                     width: "100%", background: "var(--ph-accent)", color: "#fff", border: "none", borderRadius: 16, padding: "14px 0",
@@ -5977,22 +5983,28 @@ export default function PronaHomeApp() {
   }, [userId]);
 
   const handleSaveSearch = async (name, searchFilters) => {
-    if (editingSearchId) {
-      const updated = { id: editingSearchId, owner_id: userId, name, filters: searchFilters };
-      const saved = await saveSavedSearchRemote(updated);
-      setSavedSearches((prev) => prev.map((s) => (s.id === editingSearchId ? { ...s, name, filters: searchFilters } : s)));
-      // Give the "Suche gespeichert!" confirmation inside the sheet its usual
-      // moment on screen, then return to the saved-search list so the update
-      // is immediately visible there instead of leaving the filters open.
-      setTimeout(() => {
-        setEditingSearchId(null);
-        setShowFilters(false);
-        setShowSavedSearches(true);
-      }, 1200);
-    } else {
-      const row = { owner_id: userId, name, filters: searchFilters, push_enabled: false, email_enabled: false, created_at: new Date().toISOString() };
-      const saved = await saveSavedSearchRemote(row);
-      if (saved) setSavedSearches((prev) => [saved, ...prev]);
+    try {
+      if (editingSearchId) {
+        const updated = { id: editingSearchId, owner_id: userId, name, filters: searchFilters };
+        await saveSavedSearchRemote(updated);
+        setSavedSearches((prev) => prev.map((s) => (s.id === editingSearchId ? { ...s, name, filters: searchFilters } : s)));
+        // Give the "Suche gespeichert!" confirmation inside the sheet its usual
+        // moment on screen, then return to the saved-search list so the update
+        // is immediately visible there instead of leaving the filters open.
+        setTimeout(() => {
+          setEditingSearchId(null);
+          setShowFilters(false);
+          setShowSavedSearches(true);
+        }, 1200);
+      } else {
+        const row = { owner_id: userId, name, filters: searchFilters, push_enabled: false, email_enabled: false, created_at: new Date().toISOString() };
+        const saved = await saveSavedSearchRemote(row);
+        if (saved) setSavedSearches((prev) => [saved, ...prev]);
+      }
+    } catch (e) {
+      console.error("Saved search update failed:", e);
+      setToast(e.message || t.requiredError);
+      throw e;
     }
   };
   const handleDeleteSearch = async (id) => {

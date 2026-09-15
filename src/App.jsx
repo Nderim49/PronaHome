@@ -2166,14 +2166,26 @@ function OnboardingScreen({ onSubmit, onLoginWithSession, onContinueAsGuest }) {
 // the rest of the app.
 function GuestPrompt({ onRegister, onCancel }) {
   const { t } = useLang();
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    const prevPosition = document.body.style.position;
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.body.style.position = prevPosition;
+      document.body.style.width = "";
+    };
+  }, []);
   return (
     <div style={{
       position: "fixed", inset: 0, zIndex: 60, background: "rgba(15,23,41,0.55)",
-      display: "flex", alignItems: "flex-end", justifyContent: "center",
+      display: "flex", alignItems: "flex-end", justifyContent: "center", touchAction: "none", overscrollBehavior: "none",
     }} onClick={onCancel}>
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{ width: "100%", maxWidth: 390, background: "var(--ph-surface)", borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: "22px 20px calc(env(safe-area-inset-bottom, 0px) + 20px)" }}
+        style={{ width: "100%", maxWidth: 390, maxHeight: "85vh", overflowY: "auto", touchAction: "pan-y", background: "var(--ph-surface)", borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: "22px 20px calc(env(safe-area-inset-bottom, 0px) + 20px)" }}
       >
         <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
           <BrandMark size={30} />
@@ -3084,13 +3096,28 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
   const [reportSent, setReportSent] = useState(false);
   const [showCallOptions, setShowCallOptions] = useState(false);
   const ownerListingCount = listings ? listings.filter((l) => l.owner_id === listing.owner_id).length : 0;
+  // Locks the page behind whichever bottom sheet is open so a press-and-drag
+  // on the dark backdrop can't drag the sheet (or the page) around with it.
+  useEffect(() => {
+    if (!showReport && !showCallOptions) return;
+    const prevOverflow = document.body.style.overflow;
+    const prevPosition = document.body.style.position;
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.body.style.position = prevPosition;
+      document.body.style.width = "";
+    };
+  }, [showReport, showCallOptions]);
   const CallOptionsSheet = () => (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 60, display: "flex", alignItems: "flex-end" }} onClick={() => setShowCallOptions(false)}>
+    <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 60, display: "flex", alignItems: "flex-end", touchAction: "none", overscrollBehavior: "none" }} onClick={() => setShowCallOptions(false)}>
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          width: "100%", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26,
-          padding: "10px 18px calc(env(safe-area-inset-bottom, 0px) + 18px)", boxShadow: "0 -8px 30px rgba(15,23,41,0.18)",
+          width: "100%", maxHeight: "85vh", overflowY: "auto", touchAction: "pan-y", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26,
+          padding: "10px 18px calc(env(safe-area-inset-bottom, 0px) + 18px)", boxShadow: "0 -8px 30px rgba(15,23,41,0.18)", boxSizing: "border-box",
         }}
       >
         <div style={{ width: 40, height: 5, borderRadius: 999, background: "var(--ph-border)", margin: "0 auto 16px" }} />
@@ -3144,12 +3171,12 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
     try { await onReport?.(listing.id, reason); } catch (e) { /* best-effort, still show thanks */ }
   };
   const ReportModal = () => (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 60, display: "flex", alignItems: "flex-end" }} onClick={() => setShowReport(false)}>
+    <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 60, display: "flex", alignItems: "flex-end", touchAction: "none", overscrollBehavior: "none" }} onClick={() => setShowReport(false)}>
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          width: "100%", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26,
-          padding: "10px 18px calc(env(safe-area-inset-bottom, 0px) + 18px)", boxShadow: "0 -8px 30px rgba(15,23,41,0.18)",
+          width: "100%", maxHeight: "85vh", overflowY: "auto", touchAction: "pan-y", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26,
+          padding: "10px 18px calc(env(safe-area-inset-bottom, 0px) + 18px)", boxShadow: "0 -8px 30px rgba(15,23,41,0.18)", boxSizing: "border-box",
         }}
       >
         <div style={{ width: 40, height: 5, borderRadius: 999, background: "var(--ph-border)", margin: "0 auto 16px" }} />
@@ -3779,6 +3806,19 @@ function SavedSearchResultsScreen({ listings, filters, title, favorites, toggleF
 function SavedSearchesScreen({ savedSearches, listings, onBack, onDelete, onTogglePush, onViewResults, onEdit, onCreateNew }) {
   const { t } = useLang();
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  useEffect(() => {
+    if (!confirmDeleteId) return;
+    const prevOverflow = document.body.style.overflow;
+    const prevPosition = document.body.style.position;
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.body.style.position = prevPosition;
+      document.body.style.width = "";
+    };
+  }, [confirmDeleteId]);
   return (
     <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 28 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 18px", background: NAVY, flexShrink: 0 }}>
@@ -3862,8 +3902,8 @@ function SavedSearchesScreen({ savedSearches, listings, onBack, onDelete, onTogg
       )}
 
       {confirmDeleteId && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 70, display: "flex", alignItems: "flex-end" }} onClick={() => setConfirmDeleteId(null)}>
-          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: "10px 18px calc(env(safe-area-inset-bottom, 0px) + 18px)" }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 70, display: "flex", alignItems: "flex-end", touchAction: "none", overscrollBehavior: "none" }} onClick={() => setConfirmDeleteId(null)}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxHeight: "85vh", overflowY: "auto", touchAction: "pan-y", boxSizing: "border-box", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: "10px 18px calc(env(safe-area-inset-bottom, 0px) + 18px)" }}>
             <div style={{ width: 40, height: 5, borderRadius: 999, background: "var(--ph-border)", margin: "0 auto 16px" }} />
             <div style={{ fontSize: 14, color: "var(--ph-text)", textAlign: "center", marginBottom: 16 }}>{t.deleteSavedSearchConfirm}</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -4620,6 +4660,22 @@ function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch, editin
   const [searchName, setSearchName] = useState("");
   const [searchSaved, setSearchSaved] = useState(false);
   const [nameError, setNameError] = useState(false);
+  // While the "save search" sheet is open, lock the page behind it from
+  // scrolling — otherwise a press-and-drag on the dark backdrop can drag
+  // the whole page (and the sheet along with it) on some mobile browsers.
+  useEffect(() => {
+    if (!showSaveSearch) return;
+    const prevOverflow = document.body.style.overflow;
+    const prevPosition = document.body.style.position;
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.body.style.position = prevPosition;
+      document.body.style.width = "";
+    };
+  }, [showSaveSearch]);
   const set = (k) => (e) => setLocal((f) => ({ ...f, [k]: e.target.value }));
   const propertyTypes = CATEGORIES(t).filter((c) => c.id !== "all" && c.id !== "shitje" && c.id !== "qera" && !NON_PROPERTY_CATS.includes(c.id));
   const dealTabs = [{ id: "shitje", label: t.typeSale }, { id: "qera", label: t.typeRent }];
@@ -4821,8 +4877,8 @@ function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch, editin
       </div>
 
       {showSaveSearch && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 70, display: "flex", alignItems: "flex-end" }} onClick={() => { setShowSaveSearch(false); setSearchSaved(false); setNameError(false); }}>
-          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxHeight: "78vh", overflowY: "auto", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: "10px 26px calc(env(safe-area-inset-bottom, 0px) + 32px)", boxSizing: "border-box", marginBottom: 10 }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 70, display: "flex", alignItems: "flex-end", touchAction: "none", overscrollBehavior: "none" }} onClick={() => { setShowSaveSearch(false); setSearchSaved(false); setNameError(false); }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxHeight: "72vh", overflowY: "auto", touchAction: "pan-y", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: "10px 26px calc(env(safe-area-inset-bottom, 0px) + 44px)", boxSizing: "border-box", marginBottom: 22 }}>
             <div style={{ width: 40, height: 5, borderRadius: 999, background: "var(--ph-border)", margin: "0 auto 16px" }} />
             {searchSaved ? (
               <div style={{ textAlign: "center", padding: "20px 0" }}>

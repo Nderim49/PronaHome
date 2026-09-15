@@ -138,6 +138,7 @@ const STRINGS = {
     roomsLabel: "Dhoma (minimumi)", anyNumber: "Çdo numër", sortLabel: "Rendit sipas",
     savedSearchesTitle: "Kërkimet e mia", saveSearchBtn: "Ruaj këtë kërkim", saveSearchNameLabel: "Emri i kërkimit",
     saveSearchNamePlaceholder: "p.sh. Shtëpi në Ferizaj deri 100.000", saveSearchSuccessMsg: "Kërkimi u ruajt!",
+    saveSearchNameRequired: "Ju lutemi shkruani një emër.",
     pushNotifLabel: "Njoftim Push", pushNotifHint: "Njoftim menjëherë kur ka shpallje të reja.",
     emailNotifLabel: "Njoftim me Email", emailNotifHint: "Shpalljet e reja dërgohen 1× në ditë.",
     viewResultsBtn: "Shiko rezultatet", noSavedSearches: "Ende nuk ke asnjë kërkim të ruajtur.",
@@ -343,6 +344,7 @@ const STRINGS = {
     roomsLabel: "Zimmer (mindestens)", anyNumber: "Beliebige Anzahl", sortLabel: "Sortieren nach",
     savedSearchesTitle: "Meine Suchaufträge", saveSearchBtn: "Diese Suche speichern", saveSearchNameLabel: "Name der Suche",
     saveSearchNamePlaceholder: "z. B. Häuser in Ferizaj bis 100.000", saveSearchSuccessMsg: "Suche gespeichert!",
+    saveSearchNameRequired: "Bitte einen Namen eingeben.",
     pushNotifLabel: "Push-Mitteilung", pushNotifHint: "Sofortige Benachrichtigung bei neuen passenden Anzeigen.",
     emailNotifLabel: "E-Mail-Benachrichtigung", emailNotifHint: "Neue Anzeigen werden 1× täglich per E-Mail verschickt.",
     viewResultsBtn: "Ergebnisse anschauen", noSavedSearches: "Du hast noch keine gespeicherten Suchen.",
@@ -548,6 +550,7 @@ const STRINGS = {
     roomsLabel: "Rooms (minimum)", anyNumber: "Any number", sortLabel: "Sort by",
     savedSearchesTitle: "My Saved Searches", saveSearchBtn: "Save this search", saveSearchNameLabel: "Search name",
     saveSearchNamePlaceholder: "e.g. Houses in Ferizaj under 100,000", saveSearchSuccessMsg: "Search saved!",
+    saveSearchNameRequired: "Please enter a name.",
     pushNotifLabel: "Push Notification", pushNotifHint: "Instant alert when new matching listings appear.",
     emailNotifLabel: "Email Notification", emailNotifHint: "New listings are sent once a day by email.",
     viewResultsBtn: "View results", noSavedSearches: "You don't have any saved searches yet.",
@@ -4525,6 +4528,7 @@ function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch }) {
   const [showSaveSearch, setShowSaveSearch] = useState(false);
   const [searchName, setSearchName] = useState("");
   const [searchSaved, setSearchSaved] = useState(false);
+  const [nameError, setNameError] = useState(false);
   const set = (k) => (e) => setLocal((f) => ({ ...f, [k]: e.target.value }));
   const propertyTypes = CATEGORIES(t).filter((c) => c.id !== "all" && c.id !== "shitje" && c.id !== "qera" && !NON_PROPERTY_CATS.includes(c.id));
   const dealTabs = [{ id: "shitje", label: t.typeSale }, { id: "qera", label: t.typeRent }];
@@ -4719,7 +4723,7 @@ function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch }) {
       </div>
 
       {showSaveSearch && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 70, display: "flex", alignItems: "flex-end" }} onClick={() => { setShowSaveSearch(false); setSearchSaved(false); }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 70, display: "flex", alignItems: "flex-end" }} onClick={() => { setShowSaveSearch(false); setSearchSaved(false); setNameError(false); }}>
           <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: "10px 18px calc(env(safe-area-inset-bottom, 0px) + 18px)" }}>
             <div style={{ width: 40, height: 5, borderRadius: 999, background: "var(--ph-border)", margin: "0 auto 16px" }} />
             {searchSaved ? (
@@ -4734,21 +4738,24 @@ function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch }) {
                 <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 15.5, color: "var(--ph-text)", textAlign: "center", marginBottom: 16 }}>{t.saveSearchBtn}</div>
                 <label style={labelStyle}>{t.saveSearchNameLabel}</label>
                 <input
-                  style={{ ...inputStyle, marginBottom: 16 }} value={searchName} onChange={(e) => setSearchName(e.target.value)}
+                  style={{ ...inputStyle, marginBottom: nameError ? 6 : 16, border: nameError ? "1.5px solid #C0392B" : inputStyle.border }}
+                  value={searchName} onChange={(e) => { setSearchName(e.target.value); if (nameError) setNameError(false); }}
                   placeholder={t.saveSearchNamePlaceholder} autoFocus
                 />
+                {nameError && (
+                  <div style={{ color: "#C0392B", fontSize: 12, marginBottom: 10 }}>{t.saveSearchNameRequired}</div>
+                )}
                 <button
                   onClick={async () => {
-                    if (!searchName.trim()) return;
+                    if (!searchName.trim()) { setNameError(true); return; }
                     await onSaveSearch(searchName.trim(), local);
                     setSearchSaved(true);
                     setSearchName("");
                     setTimeout(() => { setShowSaveSearch(false); setSearchSaved(false); }, 1200);
                   }}
-                  disabled={!searchName.trim()}
                   style={{
-                    width: "100%", background: searchName.trim() ? "var(--ph-accent)" : "var(--ph-border)", color: "#fff", border: "none", borderRadius: 16, padding: "14px 0",
-                    fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: searchName.trim() ? "pointer" : "default",
+                    width: "100%", background: "var(--ph-accent)", color: "#fff", border: "none", borderRadius: 16, padding: "14px 0",
+                    fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 14.5, cursor: "pointer",
                   }}
                 >
                   {t.saveBtn}

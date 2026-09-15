@@ -3085,32 +3085,6 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             </a>
           )}
 
-          {listing.ownerMemberSince && (
-            <div style={{ marginBottom: 10 }}>
-              <div style={{ fontSize: 12, color: "var(--ph-text-muted)" }}>
-                {t.memberSince} {new Date(listing.ownerMemberSince).toLocaleDateString(lang === "de" ? "de-DE" : lang === "en" ? "en-GB" : "sq-AL", { year: "numeric", month: "long" })}
-                {ownerListingCount > 0 && (
-                  <> · <button
-                    onClick={() => onViewOwnerListings?.(listing.owner_id)}
-                    style={{ border: "none", background: "none", padding: 0, color: "var(--ph-accent)", fontWeight: 600, fontSize: 12, textDecoration: "underline", cursor: "pointer" }}
-                  >
-                    {t.listingsCountLabel(ownerListingCount)}
-                  </button></>
-                )}
-              </div>
-            </div>
-          )}
-
-          {listing.created_at && (
-            <div style={{ fontSize: 11.5, color: "var(--ph-text-muted)", marginBottom: 8 }}>{t.postedOn(formatShortDate(listing.created_at, lang))}</div>
-          )}
-          <button
-            onClick={() => setShowReport(true)}
-            style={{ border: "none", background: "none", color: "var(--ph-text-muted)", fontSize: 12, textDecoration: "underline", cursor: "pointer", padding: 0, marginBottom: 18 }}
-          >
-            {t.reportListingLabel}
-          </button>
-
           {listing.desc && (
             <div
               role="button" tabIndex={0}
@@ -3159,8 +3133,31 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             </div>
           )}
 
+          {listing.ownerMemberSince && (
+            <div style={{ fontSize: 12, color: "var(--ph-text-muted)", marginTop: 16 }}>
+              {t.memberSince} {new Date(listing.ownerMemberSince).toLocaleDateString(lang === "de" ? "de-DE" : lang === "en" ? "en-GB" : "sq-AL", { year: "numeric", month: "long" })}
+              {ownerListingCount > 0 && (
+                <> · <button
+                  onClick={() => onViewOwnerListings?.(listing.owner_id)}
+                  style={{ border: "none", background: "var(--ph-accent-light)", padding: "2px 8px", borderRadius: 999, color: "var(--ph-accent)", fontWeight: 700, fontSize: 12, cursor: "pointer" }}
+                >
+                  {t.listingsCountLabel(ownerListingCount)}
+                </button></>
+              )}
+            </div>
+          )}
+          {listing.created_at && (
+            <div style={{ fontSize: 11.5, color: "var(--ph-text-muted)", marginTop: 6 }}>{t.postedOn(formatShortDate(listing.created_at, lang))}</div>
+          )}
+          <button
+            onClick={() => setShowReport(true)}
+            style={{ display: "block", border: "none", background: "none", color: "var(--ph-text-muted)", fontSize: 12, textDecoration: "underline", cursor: "pointer", padding: 0, marginTop: 6 }}
+          >
+            {t.reportListingLabel}
+          </button>
+
           {listing.ownerEmailVerified && (
-            <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10.5, fontWeight: 600, color: "#2F7A56", marginTop: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10.5, fontWeight: 600, color: "#2F7A56", marginTop: 10 }}>
               <Check size={11} /> {t.emailVerified}
             </div>
           )}
@@ -3425,7 +3422,7 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
               {ownerListingCount > 0 && (
                 <> · <button
                   onClick={() => onViewOwnerListings?.(listing.owner_id)}
-                  style={{ border: "none", background: "none", padding: 0, color: "var(--ph-accent)", fontWeight: 600, fontSize: 12, textDecoration: "underline", cursor: "pointer" }}
+                  style={{ border: "none", background: "var(--ph-accent-light)", padding: "2px 8px", borderRadius: 999, color: "var(--ph-accent)", fontWeight: 700, fontSize: 12, cursor: "pointer" }}
                 >
                   {t.listingsCountLabel(ownerListingCount)}
                 </button></>

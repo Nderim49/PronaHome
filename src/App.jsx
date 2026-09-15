@@ -1557,6 +1557,55 @@ async function requestPushPermission() {
     return { granted: false, reason: "unsupported" };
   }
 }
+
+// ---------------------------------------------------------------------------
+// Firebase Cloud Messaging — real push registration
+// ---------------------------------------------------------------------------
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAmn37ud7dG-ATiNn54NhkhPsKUHkRvvrw",
+  authDomain: "pronahome-c4c75.firebaseapp.com",
+  projectId: "pronahome-c4c75",
+  storageBucket: "pronahome-c4c75.firebasestorage.app",
+  messagingSenderId: "427400967277",
+  appId: "1:427400967277:web:906f4381f03ba5c53efb64",
+};
+const FIREBASE_VAPID_KEY = "BK3wzXRKu0UVxdgCsfXBT-sYH1c5huF0azfC5uia-3liuxeOxMVl0_fTNPrHhm1LIeLhyjzDFQAsr8eOZF2mPIc";
+const FIREBASE_SDK_VERSION = "10.13.1";
+let cachedMessaging = null;
+async function getFirebaseMessaging() {
+  if (cachedMessaging) return cachedMessaging;
+  const { initializeApp, getApps } = await import(`https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-app.js`);
+  const { getMessaging } = await import(`https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-messaging.js`);
+  const app = getApps().length ? getApps()[0] : initializeApp(FIREBASE_CONFIG);
+  cachedMessaging = getMessaging(app);
+  return cachedMessaging;
+}
+// Full push opt-in flow: browser permission → service worker → FCM device
+// token → saved against the user's account so the backend job can target it.
+async function registerForPush(userId) {
+  if (typeof window === "undefined" || !("serviceWorker" in navigator)) return { granted: false, reason: "unsupported" };
+  const perm = await requestPushPermission();
+  if (!perm.granted) return perm;
+  try {
+    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+    const { getToken } = await import(`https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-messaging.js`);
+    const messaging = await getFirebaseMessaging();
+    const token = await getToken(messaging, { vapidKey: FIREBASE_VAPID_KEY, serviceWorkerRegistration: registration });
+    if (!token) return { granted: false, reason: "unsupported" };
+    if (SUPABASE_CONFIGURED && userId) {
+      await supabaseFetch("push_tokens", {
+        method: "POST",
+        headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
+        body: JSON.stringify([{ user_id: userId, token, created_at: new Date().toISOString() }]),
+      });
+    }
+    return { granted: true, reason: null, token };
+  } catch (e) {
+    console.error("Push registration failed:", e);
+    return { granted: false, reason: "unsupported" };
+  }
+}
+
 async function deleteListingRemote(id) {
   if (!SUPABASE_CONFIGURED) return;
   await supabaseFetch(`listings?id=eq.${encodeURIComponent(id)}`, { method: "DELETE" });
@@ -5865,7 +5914,7 @@ export default function PronaHomeApp() {
   const handleTogglePush = async (search) => {
     const turningOn = !search.push_enabled;
     if (turningOn) {
-      const { granted, reason } = await requestPushPermission();
+      const { granted, reason } = await registerForPush(userId);
       if (!granted) {
         setToast(reason === "unsupported" ? t.pushNotSupported : t.pushPermissionDenied);
         return;

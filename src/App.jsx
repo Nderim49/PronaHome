@@ -4724,7 +4724,7 @@ function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch }) {
 
       {showSaveSearch && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 70, display: "flex", alignItems: "flex-end" }} onClick={() => { setShowSaveSearch(false); setSearchSaved(false); setNameError(false); }}>
-          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxHeight: "85vh", overflowY: "auto", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: "10px 26px calc(env(safe-area-inset-bottom, 0px) + 18px)", boxSizing: "border-box" }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxHeight: "78vh", overflowY: "auto", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: "10px 26px calc(env(safe-area-inset-bottom, 0px) + 32px)", boxSizing: "border-box", marginBottom: 10 }}>
             <div style={{ width: 40, height: 5, borderRadius: 999, background: "var(--ph-border)", margin: "0 auto 16px" }} />
             {searchSaved ? (
               <div style={{ textAlign: "center", padding: "20px 0" }}>

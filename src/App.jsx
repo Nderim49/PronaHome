@@ -6404,8 +6404,8 @@ export default function PronaHomeApp() {
   return (
     <LangContext.Provider value={{ lang, t, setLang }}>
       <div style={{
-        minHeight: "100vh", width: "100%", background: "#E7E2D6", display: "flex", alignItems: "center", justifyContent: "center",
-        padding: "24px 10px", fontFamily: "'Inter', sans-serif", overflowX: "hidden",
+        minHeight: "100vh", width: "100%", background: "var(--ph-bg)", display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "0", fontFamily: "'Inter', sans-serif", overflowX: "hidden",
         "--ph-accent": activeAccent.color, "--ph-accent-light": activeAccent.light,
         "--ph-bg": palette.bg, "--ph-surface": palette.surface, "--ph-text": palette.text,
         "--ph-text-muted": palette.textMuted, "--ph-border": palette.border, "--ph-border-soft": palette.borderSoft,
@@ -6466,7 +6466,7 @@ export default function PronaHomeApp() {
           .dual-thumb::-moz-range-track { background: transparent; height: 4px; }
         `}</style>
 
-        <div style={{ width: 390, maxWidth: "100%", height: 780, maxHeight: "92vh", background: "var(--ph-bg)", borderRadius: 34, boxShadow: "0 30px 60px -20px rgba(15,23,41,0.35)", overflow: "hidden", position: "relative", display: "flex", flexDirection: "column", border: `6px solid ${NAVY_DEEP}` }}>
+        <div style={{ width: "100%", maxWidth: "100%", height: "100vh", maxHeight: "100vh", background: "var(--ph-bg)", borderRadius: 0, boxShadow: "none", overflow: "hidden", position: "relative", display: "flex", flexDirection: "column"}}>
           {debugBanner && (
             <div style={{
               position: "absolute", top: 0, left: 0, right: 0, zIndex: 50, background: "#7A1E1E", color: "#fff",

@@ -137,7 +137,7 @@ const STRINGS = {
     min: "Min", max: "Maks", m2MinLabel: "Sipërfaqja minimale (m²)", m2Placeholder: "p.sh. 50",
     roomsLabel: "Dhoma (minimumi)", anyNumber: "Çdo numër", sortLabel: "Rendit sipas",
     savedSearchesTitle: "Kërkimet e mia", saveSearchBtn: "Ruaj këtë kërkim", saveSearchNameLabel: "Emri i kërkimit",
-    editingSearchLabel: "Duke ndryshuar",
+    editingSearchLabel: "Duke ndryshuar", updateSearchBtn: "Përditëso kërkimin",
     saveSearchNamePlaceholder: "p.sh. Shtëpi në Ferizaj deri 100.000", saveSearchSuccessMsg: "Kërkimi u ruajt!",
     saveSearchNameRequired: "Ju lutemi shkruani një emër.",
     pushNotifLabel: "Njoftim Push", pushNotifHint: "Njoftim menjëherë kur ka shpallje të reja.",
@@ -344,7 +344,7 @@ const STRINGS = {
     min: "Min", max: "Max", m2MinLabel: "Mindestfläche (m²)", m2Placeholder: "z. B. 50",
     roomsLabel: "Zimmer (mindestens)", anyNumber: "Beliebige Anzahl", sortLabel: "Sortieren nach",
     savedSearchesTitle: "Meine Suchaufträge", saveSearchBtn: "Diese Suche speichern", saveSearchNameLabel: "Name der Suche",
-    editingSearchLabel: "Bearbeite",
+    editingSearchLabel: "Bearbeite", updateSearchBtn: "Suche aktualisieren",
     saveSearchNamePlaceholder: "z. B. Häuser in Ferizaj bis 100.000", saveSearchSuccessMsg: "Suche gespeichert!",
     saveSearchNameRequired: "Bitte einen Namen eingeben.",
     pushNotifLabel: "Push-Mitteilung", pushNotifHint: "Sofortige Benachrichtigung bei neuen passenden Anzeigen.",
@@ -551,7 +551,7 @@ const STRINGS = {
     min: "Min", max: "Max", m2MinLabel: "Minimum area (m²)", m2Placeholder: "e.g. 50",
     roomsLabel: "Rooms (minimum)", anyNumber: "Any number", sortLabel: "Sort by",
     savedSearchesTitle: "My Saved Searches", saveSearchBtn: "Save this search", saveSearchNameLabel: "Search name",
-    editingSearchLabel: "Editing",
+    editingSearchLabel: "Editing", updateSearchBtn: "Update search",
     saveSearchNamePlaceholder: "e.g. Houses in Ferizaj under 100,000", saveSearchSuccessMsg: "Search saved!",
     saveSearchNameRequired: "Please enter a name.",
     pushNotifLabel: "Push Notification", pushNotifHint: "Instant alert when new matching listings appear.",
@@ -4783,14 +4783,14 @@ function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch, editin
 
         {onSaveSearch && (
           <button
-            onClick={() => setShowSaveSearch(true)}
+            onClick={() => { setSearchName(editingSearchName || ""); setShowSaveSearch(true); }}
             style={{
               width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
               border: "none", background: "var(--ph-accent)", borderRadius: 14, padding: "13px 0",
               color: "#fff", fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13.5, cursor: "pointer", marginBottom: 18,
             }}
           >
-            <Bell size={15} /> {t.saveSearchBtn}
+            <Bell size={15} /> {editingSearchName ? t.updateSearchBtn : t.saveSearchBtn}
           </button>
         )}
       </div>
@@ -4808,7 +4808,7 @@ function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch, editin
               </div>
             ) : (
               <>
-                <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 15.5, color: "var(--ph-text)", textAlign: "center", marginBottom: 16 }}>{t.saveSearchBtn}</div>
+                <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 15.5, color: "var(--ph-text)", textAlign: "center", marginBottom: 16 }}>{editingSearchName ? t.updateSearchBtn : t.saveSearchBtn}</div>
                 <label style={{ ...labelStyle, paddingLeft: 2 }}>{t.saveSearchNameLabel}</label>
                 <input
                   style={{ ...inputStyle, marginBottom: nameError ? 6 : 16, border: nameError ? "1.5px solid #C0392B" : inputStyle.border }}

@@ -4724,7 +4724,7 @@ function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch }) {
 
       {showSaveSearch && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 70, display: "flex", alignItems: "flex-end" }} onClick={() => { setShowSaveSearch(false); setSearchSaved(false); setNameError(false); }}>
-          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: "10px 20px calc(env(safe-area-inset-bottom, 0px) + 18px)" }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxHeight: "85vh", overflowY: "auto", background: "var(--ph-bg)", borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: "10px 20px calc(env(safe-area-inset-bottom, 0px) + 18px)" }}>
             <div style={{ width: 40, height: 5, borderRadius: 999, background: "var(--ph-border)", margin: "0 auto 16px" }} />
             {searchSaved ? (
               <div style={{ textAlign: "center", padding: "20px 0" }}>
@@ -4740,7 +4740,7 @@ function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch }) {
                 <input
                   style={{ ...inputStyle, marginBottom: nameError ? 6 : 16, border: nameError ? "1.5px solid #C0392B" : inputStyle.border }}
                   value={searchName} onChange={(e) => { setSearchName(e.target.value); if (nameError) setNameError(false); }}
-                  placeholder={t.saveSearchNamePlaceholder} autoFocus
+                  placeholder={t.saveSearchNamePlaceholder}
                 />
                 {nameError && (
                   <div style={{ color: "#C0392B", fontSize: 12, marginBottom: 10 }}>{t.saveSearchNameRequired}</div>

@@ -137,6 +137,7 @@ const STRINGS = {
     min: "Min", max: "Maks", m2MinLabel: "Sipërfaqja minimale (m²)", m2Placeholder: "p.sh. 50",
     roomsLabel: "Dhoma (minimumi)", anyNumber: "Çdo numër", sortLabel: "Rendit sipas",
     savedSearchesTitle: "Kërkimet e mia", saveSearchBtn: "Ruaj këtë kërkim", saveSearchNameLabel: "Emri i kërkimit",
+    editingSearchLabel: "Duke ndryshuar",
     saveSearchNamePlaceholder: "p.sh. Shtëpi në Ferizaj deri 100.000", saveSearchSuccessMsg: "Kërkimi u ruajt!",
     saveSearchNameRequired: "Ju lutemi shkruani një emër.",
     pushNotifLabel: "Njoftim Push", pushNotifHint: "Njoftim menjëherë kur ka shpallje të reja.",
@@ -343,6 +344,7 @@ const STRINGS = {
     min: "Min", max: "Max", m2MinLabel: "Mindestfläche (m²)", m2Placeholder: "z. B. 50",
     roomsLabel: "Zimmer (mindestens)", anyNumber: "Beliebige Anzahl", sortLabel: "Sortieren nach",
     savedSearchesTitle: "Meine Suchaufträge", saveSearchBtn: "Diese Suche speichern", saveSearchNameLabel: "Name der Suche",
+    editingSearchLabel: "Bearbeite",
     saveSearchNamePlaceholder: "z. B. Häuser in Ferizaj bis 100.000", saveSearchSuccessMsg: "Suche gespeichert!",
     saveSearchNameRequired: "Bitte einen Namen eingeben.",
     pushNotifLabel: "Push-Mitteilung", pushNotifHint: "Sofortige Benachrichtigung bei neuen passenden Anzeigen.",
@@ -549,6 +551,7 @@ const STRINGS = {
     min: "Min", max: "Max", m2MinLabel: "Minimum area (m²)", m2Placeholder: "e.g. 50",
     roomsLabel: "Rooms (minimum)", anyNumber: "Any number", sortLabel: "Sort by",
     savedSearchesTitle: "My Saved Searches", saveSearchBtn: "Save this search", saveSearchNameLabel: "Search name",
+    editingSearchLabel: "Editing",
     saveSearchNamePlaceholder: "e.g. Houses in Ferizaj under 100,000", saveSearchSuccessMsg: "Search saved!",
     saveSearchNameRequired: "Please enter a name.",
     pushNotifLabel: "Push Notification", pushNotifHint: "Instant alert when new matching listings appear.",
@@ -4585,7 +4588,7 @@ function matchesFilters(l, f) {
     && matchesRoomsMin && matchesRoomsMax;
 }
 
-function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch }) {
+function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch, editingSearchName }) {
   const { t } = useLang();
   const [local, setLocal] = useState(filters);
   const [showSaveSearch, setShowSaveSearch] = useState(false);
@@ -4611,7 +4614,14 @@ function FilterScreen({ filters, listings, onBack, onApply, onSaveSearch }) {
   return (
     <div style={{ position: "absolute", inset: 0, background: "var(--ph-bg)", display: "flex", flexDirection: "column", zIndex: 20 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 18px", background: NAVY }}>
-        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 19, color: "#fff" }}>{t.filterTitle}</span>
+        <div style={{ minWidth: 0 }}>
+          <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 19, color: "#fff" }}>{t.filterTitle}</span>
+          {editingSearchName && (
+            <div style={{ fontSize: 12, color: "var(--ph-accent)", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {t.editingSearchLabel}: {editingSearchName}
+            </div>
+          )}
+        </div>
         <button onClick={onBack} style={{ border: "none", background: "none", cursor: "pointer", padding: 4 }}>
           <X size={22} color="#fff" />
         </button>
@@ -5971,7 +5981,14 @@ export default function PronaHomeApp() {
       const updated = { id: editingSearchId, owner_id: userId, name, filters: searchFilters };
       const saved = await saveSavedSearchRemote(updated);
       setSavedSearches((prev) => prev.map((s) => (s.id === editingSearchId ? { ...s, name, filters: searchFilters } : s)));
-      setEditingSearchId(null);
+      // Give the "Suche gespeichert!" confirmation inside the sheet its usual
+      // moment on screen, then return to the saved-search list so the update
+      // is immediately visible there instead of leaving the filters open.
+      setTimeout(() => {
+        setEditingSearchId(null);
+        setShowFilters(false);
+        setShowSavedSearches(true);
+      }, 1200);
     } else {
       const row = { owner_id: userId, name, filters: searchFilters, push_enabled: false, email_enabled: false, created_at: new Date().toISOString() };
       const saved = await saveSavedSearchRemote(row);
@@ -6509,9 +6526,11 @@ export default function PronaHomeApp() {
               )}
               {showFilters && (
                 <FilterScreen
-                  filters={filters} listings={listings} onBack={() => { setShowFilters(false); setEditingSearchId(null); }}
-                  onApply={(f) => { setFilters(f); setShowFilters(false); setEditingSearchId(null); }}
+                  filters={filters} listings={listings}
+                  onBack={() => { setShowFilters(false); if (editingSearchId) { setEditingSearchId(null); setShowSavedSearches(true); } }}
+                  onApply={(f) => { setFilters(f); setShowFilters(false); if (editingSearchId) { setEditingSearchId(null); setShowSavedSearches(true); } }}
                   onSaveSearch={userId ? handleSaveSearch : undefined}
+                  editingSearchName={editingSearchId ? savedSearches.find((s) => s.id === editingSearchId)?.name : null}
                 />
               )}
               {showSavedSearches && (

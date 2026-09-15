@@ -3133,8 +3133,13 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
             </div>
           )}
 
+          {listing.ownerEmailVerified && (
+            <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10.5, fontWeight: 600, color: "#2F7A56", marginTop: 16 }}>
+              <Check size={11} /> {t.emailVerified}
+            </div>
+          )}
           {listing.ownerMemberSince && (
-            <div style={{ fontSize: 12, color: "var(--ph-text-muted)", marginTop: 16 }}>
+            <div style={{ fontSize: 12, color: "var(--ph-text-muted)", marginTop: 6 }}>
               {t.memberSince} {new Date(listing.ownerMemberSince).toLocaleDateString(lang === "de" ? "de-DE" : lang === "en" ? "en-GB" : "sq-AL", { year: "numeric", month: "long" })}
               {ownerListingCount > 0 && (
                 <> · <button
@@ -3155,12 +3160,6 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           >
             {t.reportListingLabel}
           </button>
-
-          {listing.ownerEmailVerified && (
-            <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10.5, fontWeight: 600, color: "#2F7A56", marginTop: 10 }}>
-              <Check size={11} /> {t.emailVerified}
-            </div>
-          )}
         </div>
 
         {showBio && (
@@ -3415,6 +3414,11 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
           </a>
         )}
 
+        {listing.ownerEmailVerified && (
+          <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10.5, fontWeight: 600, color: "#2F7A56", marginBottom: 8 }}>
+            <Check size={11} /> {t.emailVerified}
+          </div>
+        )}
         {listing.ownerMemberSince && (
           <div style={{ marginBottom: 10 }}>
             <div style={{ fontSize: 12, color: "var(--ph-text-muted)" }}>
@@ -3450,12 +3454,6 @@ function DetailScreen({ listing, isFav, onToggleFav, onBack, isMine, onDelete, o
         >
           {t.reportListingLabel}
         </button>
-
-        {listing.ownerEmailVerified && (
-          <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10.5, fontWeight: 600, color: "#2F7A56", marginTop: 16 }}>
-            <Check size={11} /> {t.emailVerified}
-          </div>
-        )}
       </div>
 
       {showDetails && (

@@ -3776,7 +3776,7 @@ function SavedSearchResultsScreen({ listings, filters, title, favorites, toggleF
 // ---------------------------------------------------------------------------
 // Saved searches ("Suchaufträge")
 // ---------------------------------------------------------------------------
-function SavedSearchesScreen({ savedSearches, listings, onBack, onDelete, onTogglePush, onViewResults, onEdit }) {
+function SavedSearchesScreen({ savedSearches, listings, onBack, onDelete, onTogglePush, onViewResults, onEdit, onCreateNew }) {
   const { t } = useLang();
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   return (
@@ -3846,6 +3846,20 @@ function SavedSearchesScreen({ savedSearches, listings, onBack, onDelete, onTogg
           </div>
         )}
       </div>
+
+      {onCreateNew && (
+        <button
+          onClick={onCreateNew}
+          style={{
+            position: "absolute", right: 18, bottom: "calc(env(safe-area-inset-bottom, 0px) + 18px)",
+            width: 52, height: 52, borderRadius: "50%", border: "none", background: "var(--ph-accent)",
+            display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+            boxShadow: "0 6px 18px rgba(178,138,58,0.4)",
+          }}
+        >
+          <Plus size={24} color="#fff" />
+        </button>
+      )}
 
       {confirmDeleteId && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,41,0.55)", zIndex: 70, display: "flex", alignItems: "flex-end" }} onClick={() => setConfirmDeleteId(null)}>
@@ -6560,6 +6574,7 @@ export default function PronaHomeApp() {
                   savedSearches={savedSearches} listings={listings} onBack={() => setShowSavedSearches(false)}
                   onDelete={handleDeleteSearch} onTogglePush={handleTogglePush}
                   onViewResults={handleViewSearchResults} onEdit={handleEditSearch}
+                  onCreateNew={() => { setShowSavedSearches(false); setFilters(DEFAULT_FILTERS); setEditingSearchId(null); setShowFilters(true); }}
                 />
               )}
               {viewingSearchResults && (
